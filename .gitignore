@@ -1,0 +1,7 @@
+/bin/
+/MTPs-Main-Container.txt
+/APDescription.txt
+.settings/
+target/
+*.log
+.idea/
