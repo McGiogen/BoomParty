@@ -1,0 +1,25 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% UNIQUE ID %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% inizializzo l'identificatore se non lo � gi�
+reaction(
+	rdp(nextUniqueId(Identifier, ID)),
+	(intra,invocation),
+	(
+		(nop(nextUniqueId(Identifier, X)) -> out(nextUniqueId(Identifier, 1)) ; !)
+	)
+).
+
+% Incremento l'id a disposizione, preparandolo per la prossima rd
+reaction(
+	rdp(nextUniqueId(Identifier, ID)),
+	(intra,completion,success),
+	(
+		unique(Identifier, X)
+	)
+).
+
+% metodo che ritorna un valore univoco per l'identificatore in input ad ogni invocazione
+unique(Identifier, UniqueId) :-
+	(nop(nextUniqueId(Identifier, X)) -> UniqueId is 1 ; in(nextUniqueId(Identifier, UniqueId))),
+	Next is UniqueId + 1,
+	out(nextUniqueId(Identifier, Next)).

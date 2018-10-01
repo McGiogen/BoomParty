@@ -1,0 +1,18 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% UTILITY %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% metodo per calcolare una lista composta dagli elementi in posizione N di un'altra lista
+get_list_arg([], [], _).
+get_list_arg([X], RES, N):-
+	arg(N, X, Value),
+	RES = [Value].
+get_list_arg([H,H2|T], RES, N):-
+ 	get_list_arg([H2|T], TempRes, N),
+ 	arg(N, H, Value),
+ 	RES = [Value|TempRes].
+
+% metodo per effettuare la somma degli elementi di una lista
+list_sum([], 0).
+list_sum([X|[]], X).
+list_sum([Item1,Item2 | Tail], Total) :-
+	list_sum([Item2|Tail], SubTotal),
+ 	Total is Item1+SubTotal.
