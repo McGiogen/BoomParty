@@ -4,6 +4,6 @@ import alice.tucson.service.TucsonOpCompletionEvent;
 
 public interface IHandlerOpCompletion {
 
-    public void handle(TucsonOpCompletionEvent toce);
+    void handle(TucsonOpCompletionEvent toce);
 }
 

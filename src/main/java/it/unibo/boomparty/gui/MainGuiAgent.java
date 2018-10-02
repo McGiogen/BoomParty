@@ -31,7 +31,6 @@ public class MainGuiAgent extends TucsonGuiAgent implements IMainGuiController {
 //        this.mainWindow.getRoomsManagerPane().setRooms(rooms);
 //    }
 
-
     @Override
     public AgentContainer getMainAgentContainer() {
         return this.getContainerController();
