@@ -1,0 +1,13 @@
+MAS boomparty {
+
+	infrastructure: Centralised
+
+	agents:
+		mathAgent;
+		//agent1 sample_agent;
+
+	classpath: "${user.home}/.m2/repository/**/*.jar";
+
+	aslSourcePath:
+		"src/asl";
+}
