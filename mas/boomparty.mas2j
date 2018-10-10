@@ -1,6 +1,8 @@
 MAS boomparty {
 
-	infrastructure: Centralised
+	infrastructure: Jade
+
+	environment: it.unibo.boomparty.env.BasicEnvironment
 
 	agents:
 		mathAgent;
