@@ -19,19 +19,26 @@ sourceSets {
 
 repositories {
     mavenCentral()
+    maven {
+        url "http://jade.tilab.com/maven/"
+    }
 }
 
 dependencies {
-    testCompile 'junit:junit:4.12'
+    implementation 'junit:junit:4.12'
+    
+    implementation 'net.sf.jason:jason:2.3'
+    
+    implementation 'com.tilab.jade:jade:4.5.0'
+    implementation 'it.unibo.alice.tuprolog:tuprolog:3.3.0'
+    
+    implementation 'org.apache.logging.log4j:log4j-core:2.11.1'
+    implementation 'org.apache.logging.log4j:log4j-api:2.11.1'
+    
     // File system
-    compile fileTree(dir: 'lib', include: 'jason-2.3.jar')
-    compile fileTree(dir: 'lib', include: 'jade-4.5.0.jar')
-	compile fileTree(dir: 'lib', include: 'tucson-1.12.jar')
-	compile fileTree(dir: 'lib', include: '2p-3.2.1.jar')
-	compile fileTree(dir: 'lib', include: 't4j-1.1-custom.jar')
-	
-	compile fileTree(dir: 'lib', include: 'log4j-api-2.11.1.jar')
-	compile fileTree(dir: 'lib', include: 'log4j-core-2.11.1.jar')
+	implementation fileTree(dir: 'lib', include: 'tucson-1.12.jar')
+	implementation fileTree(dir: 'lib', include: 't4j-1.1-custom.jar')
+
 }
 
 jar {
