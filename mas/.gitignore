@@ -6,3 +6,4 @@ APDescription.txt
 .settings/
 .gradle/
 .classpath
+build/
