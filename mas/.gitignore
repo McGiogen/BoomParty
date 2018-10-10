@@ -2,8 +2,3 @@ bin/
 MTPs-Main-Container.txt
 APDescription.txt
 *.log
-
-.settings/
-.gradle/
-.classpath
-build/
