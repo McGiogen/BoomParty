@@ -1,0 +1,69 @@
+apply plugin: 'java'
+apply plugin: 'eclipse' 
+apply plugin: 'jacoco'
+ 
+version = "1.0"
+sourceCompatibility = "1.8"
+sourceSets {
+    main {
+		java {
+			srcDirs = ['src/java','src/asl']
+		}
+	}
+    test {
+        java { 
+        	srcDirs 'test'   
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+    // File system
+    compile fileTree(dir: 'lib', include: 'jason-2.3.jar')
+    compile fileTree(dir: 'lib', include: 'jade-4.5.0.jar')
+	compile fileTree(dir: 'lib', include: 'tucson-1.12.jar')
+	compile fileTree(dir: 'lib', include: '2p-3.2.1.jar')
+	compile fileTree(dir: 'lib', include: 't4j-1.1-custom.jar')
+	
+	compile fileTree(dir: 'lib', include: 'log4j-api-2.11.1.jar')
+	compile fileTree(dir: 'lib', include: 'log4j-core-2.11.1.jar')
+}
+
+jar {
+    manifest {
+        attributes "Class-Path": configurations.compile.collect { "lib/"+it.getName() }.join(' ')
+        attributes 'Main-Class': 'Library'
+    }
+}
+
+test {
+	testLogging {
+		outputs.upToDateWhen { false }		
+		showStandardStreams = true		
+		events 'failed' , 'passed' //,  'started', 'skipped', 		
+	}
+	
+	//include '**/TestLed.class'
+	include '**/Test*.class'
+	test.afterSuite { TestDescriptor suite, TestResult result -> //add closure to be notified
+	if( !suite.parent && result.getTestCount() > 0) { //there is at least one test
+		long elapsedTestTime = result.getEndTime() - result.getStartTime()
+ 		System.out.println("""AFTERTEST Elapsed time for execution of ${result.getTestCount()} test(s):  $elapsedTestTime ms""");
+	}
+	}
+}
+
+test.finalizedBy jacocoTestReport
+
+jacocoTestReport {
+     reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination "${buildDir}/jacocoHtml"
+    }
+} 
