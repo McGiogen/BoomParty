@@ -5,8 +5,8 @@ MAS boomparty {
 	environment: it.unibo.boomparty.env.BasicEnvironment
 
 	agents:
-		mathAgent;
-		//agent1 sample_agent;
+		tucsonAgent
+		agentArchClass it.unibo.tucson4jason.architecture.T4JnArchImpl #1;
 
 	aslSourcePath:
 		"src/asl";
