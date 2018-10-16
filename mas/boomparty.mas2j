@@ -5,6 +5,7 @@ MAS boomparty {
 	environment: it.unibo.boomparty.env.BasicEnvironment
 
 	agents:
+		paolo basicAgent;
 		tucsonAgent
 		agentArchClass it.unibo.tucson4jason.architecture.T4JnArchImpl #1;
 
