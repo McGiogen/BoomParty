@@ -1,13 +1,15 @@
+{ include("basicAgent.asl") }
 
 /* Initial beliefs and rules */
 
 /* Initial goals */
 
-!boot.
+!start.
 
-+!boot
-    <- !!one;
-       !two.
++!start
+    <- 
+    	!!one;
+		!two.
 
 +!one
     <- .print("ONE START");
