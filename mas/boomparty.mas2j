@@ -6,7 +6,9 @@ MAS boomparty {
 
 	agents:
 		paolo basicAgent;
-		// fernando basicAgent;
+		fernando basicAgent;
+		giorgiovanni basicAgent;
+		lucaneri basicAgent;
 		ginetto tucsonAgent agentArchClass it.unibo.tucson4jason.architecture.T4JnArchImpl #1;
 
 	aslSourcePath:

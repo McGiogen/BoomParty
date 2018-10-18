@@ -5,18 +5,21 @@ import java.util.List;
 import it.unibo.boomparty.Main;
 import jason.asSyntax.Literal;
 import jason.asSyntax.Structure;
+import jason.asSyntax.Term;
 import jason.environment.Environment;
 import jason.environment.grid.Location;
 
 public class BasicEnvironment extends Environment{
 
     WorldModel model; // the model of the grid
+	private List<String> players;
 
 	@Override
 	public void init(final String[] args) {
-        this.model = new WorldModel(2);
-
-		Main.main(null);
+		this.players = List.of("paolo", "fernando", "giorgiovanni", "lucaneri");
+        this.model = new WorldModel(this.players.size());
+		
+        Main.main(null);
 	}
 	
 	public List<Literal> getPercepts(String agName) {
@@ -32,19 +35,28 @@ public class BasicEnvironment extends Environment{
      */
     @Override
     public boolean executeAction(final String ag, final Structure action) {
-        System.out.println("[" + ag + "] doing: " + action);
+        this.getLogger().info("[" + ag + "] doing: " + action);
         boolean result = false;
         
-        if (action.getFunctor().equals("move_towards")) {
-            //final String who = action.getTerm(0).toString(); // get who (or where) to move
-            Location dest = null;
-            
-            // TODO La destinazione dev'essere una certa persona
-            dest = this.model.getAgs()[1];
-            
-            result = this.model.moveTowards(dest);
-        } else {
-        	System.err.println("Failed to execute action " + action);
+        try {
+	        if (action.getFunctor().equals("move_towards")) {
+	        	// get who (or where) to move
+	        	Term term = action.getTerm(0);	// Ritorna il valore racchiuso da doppi apici
+	            final String toWho = term.toString().substring(1, term.toString().length() - 1);
+	            
+	        	int iFromWho = this.players.indexOf(ag);
+	        	int iToWho = this.players.indexOf(toWho);
+	            
+	            Location source = this.model.getAgPos(iFromWho);
+	            Location dest = this.model.getAgPos(iToWho);
+	            this.getLogger().info("[" + ag + "] is at " + source.x + "," + source.y + " and want to go to " + dest.x + "," + dest.y);
+	            
+	            result = this.model.moveTowards(iFromWho, dest);
+	        } else {
+	        	this.getLogger().info("[" + ag + "] Failed to execute action " + action);
+	        }
+        } catch (final Exception e) {
+        	this.getLogger().info("[" + ag + "] EXCEPTION: " + e.getMessage());
         }
         // only if action completed successfully, update agents' percepts
         if (result) {

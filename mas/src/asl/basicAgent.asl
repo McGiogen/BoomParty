@@ -35,14 +35,14 @@ stanza(1).
 !boot.
 
 +!boot
-    <- !init.
+    <-  !init;
+    	!at("fernando").
 
 +!init
     <-	?nome(X);
     	.print("PLAYER ", X, " START!");
     	.all_names(List);
-    	.print("All players: ", List);
-    	!at("fernando").
+    	.print("All players: ", List).
 
 /* Handle movement */
 /*
@@ -53,9 +53,6 @@ stanza(1).
 +!at(P) // if NOT arrived at destination P
 	//: not at(P)
 	: true
-	<- 
-    .print("PLAYER MOVE TOWARDS!");
-    move_towards(P);
-    .print("PLAYER MOVED!");
+	<- move_towards(P);
 	!at(P). // ...continue attempting to reach destination
 

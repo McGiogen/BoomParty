@@ -44,25 +44,25 @@ public class WorldModel extends GridWorldModel {
      * @param nbAgs 	Number of agents 
      */
     private void initWorld(int w, int h, int nbAgs) {
-    	width  = w;
-        height = h;
+    	this.width  = w;
+    	this.height = h;
 
         // int data
-        data = new int[width][height];
+    	this.data = new int[width][height];
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                data[i][j] = CLEAN;
+            	this.data[i][j] = CLEAN;
             }
         }
 
-        agPos = new Location[nbAgs];
-        for (int i = 0; i < agPos.length; i++) {
-            agPos[i] = new Location(-1, -1);
+        this.agPos = new Location[nbAgs];
+        for (int i = 0; i < this.agPos.length; i++) {
+        	this.agPos[i] = new Location(-1, -1);
         }
     }
 
-    boolean moveTowards(final Location dest) {
-        final Location r1 = this.getAgPos(0);
+    boolean moveTowards(final int ag, final Location dest) {
+        final Location r1 = this.getAgPos(ag);
         // compute where to move
         if (r1.x < dest.x) {
             r1.x++;
@@ -74,7 +74,7 @@ public class WorldModel extends GridWorldModel {
         } else if (r1.y > dest.y) {
             r1.y--;
         }
-        this.setAgPos(0, r1); // actually move the robot in the grid
+        this.setAgPos(ag, r1); // actually move the robot in the grid
         
         return true;
     }
