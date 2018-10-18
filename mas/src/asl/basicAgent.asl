@@ -41,4 +41,21 @@ stanza(1).
     <-	?nome(X);
     	.print("PLAYER ", X, " START!");
     	.all_names(List);
-    	.print("All players: ", List).
+    	.print("All players: ", List);
+    	!at("fernando").
+
+/* Handle movement */
+/*
+//+!at(P) // if arrived at destination P
+//	: at(P)
+//	<- true. // ...that's all, do nothing, the "original" intention (the "context") can continue
+*/
++!at(P) // if NOT arrived at destination P
+	//: not at(P)
+	: true
+	<- 
+    .print("PLAYER MOVE TOWARDS!");
+    move_towards(P);
+    .print("PLAYER MOVED!");
+	!at(P). // ...continue attempting to reach destination
+
