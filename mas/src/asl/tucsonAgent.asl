@@ -8,8 +8,13 @@
 
 +!start
     <- 
+    	!messaggia
     	!!one;
 		!two.
+
++!messaggia : true
+	<-
+		.send(paolo, tell, hello).
 
 +!one
     <- .print("ONE START");

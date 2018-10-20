@@ -56,3 +56,5 @@ stanza(1).
 	<- move_towards(P);
 	!at(P). // ...continue attempting to reach destination
 
++hello[source(A)]
+	<- .print("va che roba mi ha scritto quell'inetto di:", A).
