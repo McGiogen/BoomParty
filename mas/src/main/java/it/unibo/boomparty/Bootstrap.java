@@ -1,7 +1,9 @@
 package it.unibo.boomparty;
 
 import it.unibo.boomparty.gui.MainGuiAgent;
+import jason.JasonException;
 import jason.infra.MASLauncherInfraTier;
+import jason.infra.centralised.RunCentralisedMAS;
 import jason.mas2j.MAS2JProject;
 import jason.mas2j.parser.ParseException;
 import jason.mas2j.parser.TokenMgrError;
@@ -53,7 +55,7 @@ public class Bootstrap {
     public static void bootMasProject(final boolean debug) {
         System.out.println("Launching mas2j project");
 
-        new Thread(() -> {
+        /*new Thread(() -> {
             MAS2JProject project = parseProject();
             // launch the MAS
             try {
@@ -67,7 +69,13 @@ public class Bootstrap {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        }).start();
+        }).start();*/
+        
+        try {
+        	RunCentralisedMAS.main(new String[] {"boomparty.mas2j"});
+        } catch (JasonException e) {
+        	e.printStackTrace();
+		}
     }
 
     private static MAS2JProject parseProject() {
