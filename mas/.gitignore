@@ -1,4 +1,6 @@
-bin/
+bin/*
+!bin/c-boomparty.xml
+
 MTPs-Main-Container.txt
 APDescription.txt
 *.log
