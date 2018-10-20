@@ -9,7 +9,7 @@ public class Settings {
 
     //---- REACTIONS FILE ----
     public static final String UTILITY_REACTION_FILE = "reactions/utility.rsp";
-    public static final String UNIQUE_ID_REACTION_FILE = "reactions/uniqueIdManagement.rsp";
+    public static final String UNIQUE_ID_REACTION_FILE = "reactions/uniqueId.rsp";
 
     //---- JADE ----
     public static final String MC_HOST = "localhost";	//main container server
