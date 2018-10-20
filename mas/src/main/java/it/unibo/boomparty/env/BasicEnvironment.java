@@ -1,5 +1,6 @@
 package it.unibo.boomparty.env;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import it.unibo.boomparty.Main;
@@ -16,7 +17,12 @@ public class BasicEnvironment extends Environment{
 
 	@Override
 	public void init(final String[] args) {
-		this.players = List.of("paolo", "fernando", "giorgiovanni", "lucaneri");
+		this.players = new ArrayList<String>() {{
+		    add("paolo");
+		    add("fernando");
+		    add("giorgiovanni");
+		    add("lucaneri");
+		}};;
         this.model = new WorldModel(this.players.size());
 		
         Main.main(null);
