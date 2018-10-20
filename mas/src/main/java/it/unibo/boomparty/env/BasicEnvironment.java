@@ -3,7 +3,9 @@ package it.unibo.boomparty.env;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.unibo.boomparty.Bootstrap;
 import it.unibo.boomparty.Main;
+import jade.Boot;
 import jason.asSyntax.Literal;
 import jason.asSyntax.Structure;
 import jason.asSyntax.Term;
@@ -25,7 +27,7 @@ public class BasicEnvironment extends Environment{
 		}};;
         this.model = new WorldModel(this.players.size());
 		
-        Main.main(null);
+        Bootstrap.bootJadeAndTucson();
 	}
 	
 	public List<Literal> getPercepts(String agName) {
