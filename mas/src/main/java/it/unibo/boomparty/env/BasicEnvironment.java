@@ -27,6 +27,9 @@ public class BasicEnvironment extends Environment{
 		}};;
         this.model = new WorldModel(this.players.size());
 		
+        final WorldView view = new WorldView(this.model);
+        this.model.setView(view);
+        
         Bootstrap.bootJadeAndTucson();
 	}
 	

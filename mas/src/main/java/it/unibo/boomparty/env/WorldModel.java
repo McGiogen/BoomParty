@@ -16,7 +16,7 @@ public class WorldModel extends GridWorldModel {
 	public WorldModel(int numPlayers) {
     	super(0,0,0);
     	
-    	int roomSize = calculateRoomSize(numPlayers);
+    	int roomSize = calculateRoomSize(numPlayers, 10);
     	int worldWidth = roomSize*2 + 2;
     	int worldHeight = roomSize;
     	
@@ -27,7 +27,7 @@ public class WorldModel extends GridWorldModel {
     	this.hallway = new Area(roomSize, 0, roomSize+1, 0);
     	
     	// Put walls between the rooms
-    	Area walls = new Area(hallway.tl.x, hallway.br.y, hallway.br.x, hallway.br.y);
+    	Area walls = new Area(roomA.br.x+1, hallway.br.y+1, roomB.tl.x-1, worldHeight-1);
     	fillAreaWithWalls(this.data, walls);
     	
     	// Choose a random position for every player
@@ -108,8 +108,8 @@ public class WorldModel extends GridWorldModel {
     	return l1.distanceChebyshev(l2);
 	}
     
-    private static int calculateRoomSize(int numPlayers) {
-    	return (int) Math.ceil(numPlayers / 3.0 * 2.0);
+    private static int calculateRoomSize(int numPlayers, int minSize) {
+    	return Math.max(minSize, (int) Math.ceil(numPlayers / 3.0 * 2.0));
     }
     
     private static void fillAreaWithWalls(int[][] data, Area a) {
