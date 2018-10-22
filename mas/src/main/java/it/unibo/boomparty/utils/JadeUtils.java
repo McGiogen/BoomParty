@@ -34,7 +34,7 @@ public class JadeUtils {
         // Tucson4Jade
         profile.setParameter(Profile.SERVICES, "it.unibo.tucson.jade.service.TucsonService;jade.core.event.NotificationService");
 
-        // DF e AMS sono già inclusi
+        // DF e AMS sono gia' inclusi
         return rt.createMainContainer(profile);
     }
 
@@ -49,13 +49,13 @@ public class JadeUtils {
         // Tucson4Jade
         profile.setParameter(Profile.SERVICES, "it.unibo.tucson.jade.service.TucsonService;jade.core.event.NotificationService");
 
-        // DF e AMS sono già inclusi
+        // DF e AMS sono gia' inclusi
         return rt.createAgentContainer(profile);
     }
 
     /**
      * Helper per la creazione di un agente. L'agente viene creato aggiungendo un suffisso
-     * al nome in modo che sia il più possibile univoco. Per ora è univoco solo tra container diversi.
+     * al nome in modo che sia il piu' possibile univoco. Per ora e' univoco solo tra container diversi.
      * @param container container in cui creare l'agente
      * @param agentName nome semplice dell'agente
      * @param agentClass classe dell'agente

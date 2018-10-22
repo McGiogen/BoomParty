@@ -68,7 +68,7 @@ public class MainWindow extends JFrame {
 
         /****** MENU BAR *****/
 
-        // Menù file
+        // Menu' file
         JMenu fileMenu = new JMenu("File");
         JMenuItem exitItem = new JMenuItem("Esci");
         exitItem.addActionListener((ActionEvent event) -> {
@@ -77,7 +77,7 @@ public class MainWindow extends JFrame {
         fileMenu.add(exitItem);
 
 
-        // Menù degli strumenti
+        // Menu' degli strumenti
         JMenu toolsMenu = new JMenu("Tools");
         JMenuItem tucsonInspectorItem = new JMenuItem("Tucson Inspector");
         tucsonInspectorItem.addActionListener((ActionEvent event) -> {

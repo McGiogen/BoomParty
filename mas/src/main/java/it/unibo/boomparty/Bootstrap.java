@@ -1,12 +1,6 @@
 package it.unibo.boomparty;
 
-import it.unibo.boomparty.gui.MainGuiAgent;
 import jason.JasonException;
-import jason.infra.MASLauncherInfraTier;
-import jason.infra.centralised.RunCentralisedMAS;
-import jason.mas2j.MAS2JProject;
-import jason.mas2j.parser.ParseException;
-import jason.mas2j.parser.TokenMgrError;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,7 +11,6 @@ import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
 
-import java.io.*;
 
 public class Bootstrap {
 
@@ -55,75 +48,14 @@ public class Bootstrap {
     public static void bootMasProject(final boolean debug) {
         System.out.println("Launching mas2j project");
 
-        /*new Thread(() -> {
-            MAS2JProject project = parseProject();
-            // launch the MAS
-            try {
-                MASLauncherInfraTier masLauncher;
-                masLauncher = project.getInfrastructureFactory().createMASLauncher();
-                masLauncher.setProject(project);
-                //masLauncher.setListener(arg0)
-                if (masLauncher.writeScripts(debug, false)) {
-                    new Thread(masLauncher, "MAS-Launcher").start();
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }).start();*/
-        
+        Bootstrap.bootJadeAndTucson();
+
         try {
-        	RunCentralisedMAS.main(new String[] {"boomparty.mas2j"});
+            jason.infra.jade.RunJadeMAS.main(new String[] {"boomparty.mas2j", "-debug"});
         } catch (JasonException e) {
         	e.printStackTrace();
 		}
-    }
 
-    private static MAS2JProject parseProject() {
-        try {
-            System.out.println("Parsing project file... ");
-
-            // String projectDirectory = "C:\\Users\\Ale\\Documents\\BoomParty\\mas";
-            String projectDirectory = new File(".").getCanonicalPath();
-            String mas2jPath = projectDirectory + File.separator + "boomparty.mas2j";
-
-            //String text = loadFile(mainFile.getLocation().toString());
-            String text = loadFile(mas2jPath);
-
-            jason.mas2j.parser.mas2j parser = new jason.mas2j.parser.mas2j(new StringReader(text));
-            MAS2JProject project = parser.mas();
-            project.setDirectory(projectDirectory);
-            project.setProjectFile(new File(mas2jPath));
-            project.fixAgentsSrc();
-            System.out.println(" parsed successfully!\n");
-            return project;
-        } catch (ParseException ex) {
-            System.out.println("\nmas2j: syntactic errors found... \n" + ex + "\n");
-        } catch (TokenMgrError ex) {
-            System.out.println("\nmas2j: lexical errors found... \n" + ex + "\n");
-        } catch (Exception ex) {
-            System.out.println("Error: " + ex.getMessage());
-            ex.printStackTrace();
-        }
-        return null;
-    }
-
-    private static String loadFile(String archive) throws FileNotFoundException, IOException {
-
-        File file = new File(archive);
-
-        if (!file.exists()) {
-            return null;
-        }
-
-        BufferedReader br = new BufferedReader(new FileReader(archive));
-        StringBuffer outputBuf = new StringBuffer();
-
-        String line;
-        while( (line = br.readLine()) != null ){
-            outputBuf.append(line + "\n");
-        }
-        br.close();
-        return outputBuf.toString().trim();
     }
 
     public static void bootJadeAndTucson(/*ProgramArgumentsHelper pa*/) {
@@ -153,5 +85,76 @@ public class Bootstrap {
             log.error("Errere set up sistema: " + e.getMessage());
         }*/
     }
+
+//    /**
+//     * Nel caso si volesse simulare il comportamento del jason eclipse plugin
+//     * DO NOT REMOVE
+//     */
+//    private static void compileProject() {
+//        new Thread(() -> {
+//            MAS2JProject project = parseProject();
+//            // launch the MAS
+//            try {
+//                MASLauncherInfraTier masLauncher;
+//                masLauncher = project.getInfrastructureFactory().createMASLauncher();
+//                masLauncher.setProject(project);
+//                //masLauncher.setListener(arg0)
+//                if (masLauncher.writeScripts(true, false)) {
+//                    new Thread(masLauncher, "MAS-Launcher").start();
+//                }
+//            } catch (Exception ex) {
+//                ex.printStackTrace();
+//            }
+//        }).start();
+//    }
+
+//    private static MAS2JProject parseProject() {
+//        try {
+//            System.out.println("Parsing project file... ");
+//
+//            // String projectDirectory = "C:\\Users\\Ale\\Documents\\BoomParty\\mas";
+//            String projectDirectory = new File(".").getCanonicalPath();
+//            String mas2jPath = projectDirectory + File.separator + "boomparty.mas2j";
+//
+//            //String text = loadFile(mainFile.getLocation().toString());
+//            String text = loadFile(mas2jPath);
+//
+//            jason.mas2j.parser.mas2j parser = new jason.mas2j.parser.mas2j(new StringReader(text));
+//            MAS2JProject project = parser.mas();
+//            project.setDirectory(projectDirectory);
+//            project.setProjectFile(new File(mas2jPath));
+//            project.fixAgentsSrc();
+//            System.out.println(" parsed successfully!\n");
+//            return project;
+//        } catch (ParseException ex) {
+//            System.out.println("\nmas2j: syntactic errors found... \n" + ex + "\n");
+//        } catch (TokenMgrError ex) {
+//            System.out.println("\nmas2j: lexical errors found... \n" + ex + "\n");
+//        } catch (Exception ex) {
+//            System.out.println("Error: " + ex.getMessage());
+//            ex.printStackTrace();
+//        }
+//        return null;
+//    }
+//
+//    private static String loadFile(String archive) throws FileNotFoundException, IOException {
+//
+//        File file = new File(archive);
+//
+//        if (!file.exists()) {
+//            return null;
+//        }
+//
+//        BufferedReader br = new BufferedReader(new FileReader(archive));
+//        StringBuffer outputBuf = new StringBuffer();
+//
+//        String line;
+//        while( (line = br.readLine()) != null ){
+//            outputBuf.append(line + "\n");
+//        }
+//        br.close();
+//        return outputBuf.toString().trim();
+//    }
+
 }
 

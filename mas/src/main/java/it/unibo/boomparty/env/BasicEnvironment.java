@@ -29,8 +29,6 @@ public class BasicEnvironment extends Environment{
 		
         final WorldView view = new WorldView(this.model);
         this.model.setView(view);
-        
-        Bootstrap.bootJadeAndTucson();
 	}
 	
 	public List<Literal> getPercepts(String agName) {
