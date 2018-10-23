@@ -4,6 +4,8 @@ import jason.environment.grid.Area;
 import jason.environment.grid.GridWorldModel;
 import jason.environment.grid.Location;
 
+import java.util.LinkedList;
+
 public class WorldModel extends GridWorldModel {
 	Area roomA;
 	Area roomB;
@@ -17,23 +19,24 @@ public class WorldModel extends GridWorldModel {
     	super(0,0,0);
     	
     	int roomSize = calculateRoomSize(numPlayers, 10);
-    	int worldWidth = roomSize*2 + 2;
-    	int worldHeight = roomSize;
+    	int worldWidth = roomSize*2 + 1;
+    	int worldHeight = roomSize + 2;
     	
     	this.initWorld(worldWidth, worldHeight, numPlayers);
     	
-    	this.roomA = new Area(0, 0, roomSize-1, roomSize-1);
-    	this.roomB = new Area(roomSize + 2, 0, worldWidth-1, worldHeight-1);
-    	this.hallway = new Area(roomSize, 0, roomSize+1, 0);
+    	this.roomA = new Area(0, 2, roomSize-1, worldHeight-1);
+    	this.roomB = new Area(roomSize+1, 2, worldWidth-1, worldHeight-1);
+    	this.hallway = new Area(roomSize-2, 0, roomSize+2, 1);
     	
-    	// Put walls between the rooms
-    	Area walls = new Area(roomA.br.x+1, hallway.br.y+1, roomB.tl.x-1, worldHeight-1);
-    	fillAreaWithWalls(this.data, walls);
+    	// Clean areas from walls
+        digArea(this.data, this.roomA);
+        digArea(this.data, this.roomB);
+        digArea(this.data, this.hallway);
     	
     	// Choose a random position for every player
     	for (int i = 0; i < numPlayers; i++) {
     		Area room = i % 2 == 0 ? roomA : roomB;
-            this.setAgPos(i, this.getFreePos(room));;
+            this.setAgPos(i, this.getFreePos(room));
     	}
     }
 
@@ -51,7 +54,7 @@ public class WorldModel extends GridWorldModel {
     	this.data = new int[width][height];
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-            	this.data[i][j] = CLEAN;
+            	this.data[i][j] = OBSTACLE;
             }
         }
 
@@ -64,18 +67,11 @@ public class WorldModel extends GridWorldModel {
     boolean moveTowards(final int ag, final Location dest) {
         final Location r1 = this.getAgPos(ag);
         // compute where to move
-        if (r1.x < dest.x) {
-            r1.x++;
-        } else if (r1.x > dest.x) {
-            r1.x--;
+        LinkedList<PathFinder.Node> path = new PathFinder().findPath(this, r1, dest);
+        if (path.size() > 1) {
+            Location r2 = path.get(1).getLocation();
+            this.setAgPos(ag, r2); // actually move the robot in the grid
         }
-        if (r1.y < dest.y) {
-            r1.y++;
-        } else if (r1.y > dest.y) {
-            r1.y--;
-        }
-        this.setAgPos(ag, r1); // actually move the robot in the grid
-        
         return true;
     }
     
@@ -102,6 +98,10 @@ public class WorldModel extends GridWorldModel {
     	return this.agPos;
     }
 
+    int get(int x, int y) {
+        return this.data[x][y];
+    }
+
     /* Utilities*/
     
     public static int distance(Location l1, Location l2) {
@@ -112,10 +112,10 @@ public class WorldModel extends GridWorldModel {
     	return Math.max(minSize, (int) Math.ceil(numPlayers / 3.0 * 2.0));
     }
     
-    private static void fillAreaWithWalls(int[][] data, Area a) {
+    private static void digArea(int[][] data, Area a) {
 		for (int x = a.tl.x; x <= a.br.x; x++) {
 			for (int y = a.tl.y; y <= a.br.y; y++) {
-				data[x][y] = OBSTACLE;
+				data[x][y] = CLEAN;
 			}
 		}
 	}

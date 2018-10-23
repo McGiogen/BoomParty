@@ -24,7 +24,7 @@ public class BasicEnvironment extends Environment{
 		    add("fernando");
 		    add("giorgiovanni");
 		    add("lucaneri");
-		}};;
+		}};
         this.model = new WorldModel(this.players.size());
 		
         final WorldView view = new WorldView(this.model);
