@@ -63,17 +63,6 @@ public class WorldModel extends GridWorldModel {
         	this.agPos[i] = new Location(-1, -1);
         }
     }
-
-    boolean moveTowards(final int ag, final Location dest) {
-        final Location r1 = this.getAgPos(ag);
-        // compute where to move
-        LinkedList<PathFinder.Node> path = new PathFinder().findPath(this, r1, dest);
-        if (path.size() > 1) {
-            Location r2 = path.get(1).getLocation();
-            this.setAgPos(ag, r2); // actually move the robot in the grid
-        }
-        return true;
-    }
     
     /**
      * Returns a random free location using isFree to test the availability of some possible location (it means free of agents and obstacles)

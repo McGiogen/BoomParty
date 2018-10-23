@@ -17,7 +17,7 @@ public class PathFinder {
         this.m_closedList = new LinkedList<>();
     }
 
-    public LinkedList<Node> findPath(WorldModel map, Location start, Location goal) throws NullPointerException {
+    public Path findPath(WorldModel map, Location start, Location goal) throws NullPointerException {
         this.m_openList.clear();
         this.m_closedList.clear();
 
@@ -28,9 +28,12 @@ public class PathFinder {
         this.m_openList.add(temp);
         while (!this.m_openList.isEmpty()) {
             if (temp.getLocation().equals(goal)) {
-                return this.constructPath(temp);
+                return this.constructPath(startNode, temp);
             }
+
             temp = this.lookingForBestNode();
+            if (temp == null) break;
+
             this.m_closedList.addLast(temp);
             this.addNeighbor(temp, startNode, goalNode, map);
         }
@@ -119,13 +122,31 @@ public class PathFinder {
         return node;
     }
 
-    private LinkedList<Node> constructPath(Node goal) {
-        LinkedList<Node> path = new LinkedList<>();
+    private Path constructPath(Node start, Node goal) {
+        Path path = new Path(start, goal);
         while (goal != null) {
             path.addFirst(goal);
             goal = goal.getParent();
         }
         return path;
+    }
+
+    public class Path extends LinkedList<Node> {
+        private final Node start;
+        private final Node goal;
+
+        public Path(Node start, Node goal) {
+            this.start = start;
+            this.goal = goal;
+        }
+
+        public Node getStart() {
+            return start;
+        }
+
+        public Node getGoal() {
+            return goal;
+        }
     }
 
     public class Node {
