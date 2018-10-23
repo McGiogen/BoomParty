@@ -5,13 +5,12 @@ import java.util.List;
 
 import jason.asSyntax.Literal;
 import jason.asSyntax.Structure;
-import jason.asSyntax.Term;
 import jason.environment.Environment;
 import jason.environment.grid.Location;
 
 public class BasicEnvironment extends Environment{
 
-    WorldModel model; // the model of the grid
+    private WorldModel model; // the model of the grid
 	private List<HumanModel> players;
 
 	@Override
@@ -26,6 +25,9 @@ public class BasicEnvironment extends Environment{
 
         final WorldView view = new WorldView(this.model);
         this.model.setView(view);
+
+        // Update all agents with the initial state of the environment
+        this.updatePercepts();
 	}
 
 	public List<Literal> getPercepts(String agName) {
@@ -33,7 +35,7 @@ public class BasicEnvironment extends Environment{
 		return null;
 	}
 
-	/* public void updatePercepts() { } */
+	public void updatePercepts() { }
 
 	/**
      * The <code>boolean</code> returned represents the action "feedback"
@@ -43,21 +45,24 @@ public class BasicEnvironment extends Environment{
     public boolean executeAction(final String agName, final Structure action) {
         // this.getLogger().info("[" + agName + "] doing: " + action);
         boolean result = false;
+        int timeSpent = 0;
 
         try {
 	        if (action.getFunctor().equals("move_towards")) {
 	        	// get who (or where) to move
-	        	Term term = action.getTerm(0);	// Ritorna il valore racchiuso da doppi apici
-	            final String toWhoName = term.toString().substring(1, term.toString().length() - 1);
+	        	String arg1 = action.getTerm(0).toString();
+                // Strings are enclosed by double quotes
+	            final String goalName = arg1.substring(1, arg1.length() - 1);
 
-                HumanModel fromWho = this.getPlayer(agName);
-	        	HumanModel toWho = this.getPlayer(toWhoName);
+                HumanModel source = this.getPlayer(agName);
+	        	HumanModel target = this.getPlayer(goalName);
 
-	        	if (fromWho != null && toWho != null) {
-                    final Location start = this.model.getAgPos(fromWho.getIndex());
-                    final Location goal = this.model.getAgPos(toWho.getIndex());
+	        	if (source != null && target != null) {
+                    final Location start = this.model.getAgPos(source.getIndex());
+                    final Location goal = this.model.getAgPos(target.getIndex());
 
                     if (!start.equals(goal)) {
+                        timeSpent = 1000;
                         result = this.moveTowards(fromWho, goal);
                     } else {
                         result = true;
@@ -69,12 +74,11 @@ public class BasicEnvironment extends Environment{
         } catch (final Exception e) {
         	this.getLogger().info("[" + agName + "] EXCEPTION: " + e.getMessage());
         }
-        // only if action completed successfully, update agents' percepts
+
         if (result) {
-            // this.updatePercepts();
-            try {
-                Thread.sleep(1000);
-            } catch (final Exception e) { }
+            // Update all agents when the environment change
+            this.updatePercepts();
+            this.takeTime(timeSpent);
         }
         return result;
     }
@@ -105,11 +109,29 @@ public class BasicEnvironment extends Environment{
 		return true;
 	}
 
+    /**
+     *
+     * @param name
+     * @return
+     */
     private HumanModel getPlayer(String name) {
         for (HumanModel player : this.players) {
             if (player.getName().equals(name))
                 return player;
         }
         return null;
+    }
+
+    /**
+     * Impiega il tempo richiesto.
+     * @param timeSpent tempo da impiegare
+     */
+    private void takeTime(int timeSpent) {
+        if (timeSpent <= 0) {
+            return;
+        }
+        try {
+            Thread.sleep(timeSpent);
+        } catch (final Exception e) { }
     }
 }
