@@ -10,6 +10,7 @@ MAS boomparty {
 		giorgiovanni basicAgent;
 		lucaneri basicAgent;
 		ginetto tucsonAgent agentArchClass it.unibo.tucson4jason.architecture.T4JnArchImpl #1;
+	    // clockCreator clockCreator agentArchClass jaca.CAgentArch;
 
 	aslSourcePath:
 		"src/asl";
