@@ -5,16 +5,17 @@ import java.util.List;
 
 import jason.asSyntax.Literal;
 import jason.asSyntax.Structure;
-import jason.environment.Environment;
+import jaca.CartagoEnvironment;
 import jason.environment.grid.Location;
 
-public class BasicEnvironment extends Environment{
+public class BasicEnvironment extends CartagoEnvironment {
 
     private WorldModel model; // the model of the grid
 	private List<HumanModel> players;
 
 	@Override
 	public void init(final String[] args) {
+	    super.init(args);
 		this.players = new ArrayList<HumanModel>() {{
 		    add(new HumanModel("paolo", 0));
 		    add(new HumanModel("fernando", 1));
@@ -63,7 +64,7 @@ public class BasicEnvironment extends Environment{
 
                     if (!start.equals(goal)) {
                         timeSpent = 1000;
-                        result = this.moveTowards(fromWho, goal);
+                        result = this.moveTowards(source, goal);
                     } else {
                         result = true;
                     }
