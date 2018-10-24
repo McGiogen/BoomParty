@@ -4,6 +4,8 @@
  * - Ruolo(nomeRuolo, Team(blue|red|gray))
  * - Stanza(1|2)
  * - Posizione(x, y)
+ * - ? notifica nuovo giocatore vicino -> NuovoGiocatoreVicino(playerName)
+ * - ? tenere traccia dei giocatori col quale è stata avviata una conversazione, come?
  * 
  * Beliefs riguardo terzi:
  * - Numero giocatori totali
@@ -30,6 +32,9 @@ stanza(1).
 // TODO all_players deve ritornare i dati pubblici di tutti i giocatori
 //giocatori(List) :- all_players(List).
 
+// TODO all_players deve ritornare i dati pubblici di tutti i giocatori
+//giocatoriVicini(List) :- action.NearPlayers(nome(N)).
+
 /* Initial goals */
 
 !boot.
@@ -42,7 +47,9 @@ stanza(1).
     <-	?nome(X);
     	.print("PLAYER ", X, " START!");
     	.all_names(List);
-    	.print("All players: ", List).
+    	.print("All players: ", List);
+    	it.unibo.boomparty.action.nearPlayers(X, NearP);
+    	.print("I giocatori vicini a me sono: ", NearP).
 
 /* Handle movement */
 /*
