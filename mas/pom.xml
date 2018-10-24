@@ -84,6 +84,20 @@
             <scope>system</scope>
             <systemPath>${basedir}/lib/t4jn.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>it.unibo.cartago</groupId>
+            <artifactId>cartago</artifactId>
+            <version>2.3</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/cartago-2.3-SNAPSHOT.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>it.unibo.cartago</groupId>
+            <artifactId>jaca</artifactId>
+            <version>2.3</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/jaca-2.3-SNAPSHOT.jar</systemPath>
+        </dependency>
     </dependencies>
 
     <build>
