@@ -4,7 +4,9 @@ import jason.environment.grid.Area;
 import jason.environment.grid.GridWorldModel;
 import jason.environment.grid.Location;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 public class WorldModel extends GridWorldModel {
 	Area roomA;
@@ -107,5 +109,19 @@ public class WorldModel extends GridWorldModel {
 				data[x][y] = CLEAN;
 			}
 		}
+	}
+
+	public List<Integer> getNeighbors(Location pPosition) {
+		ArrayList<Integer> neighbors = new ArrayList<>(8);
+    	Area around = new Area(pPosition.x - 1, pPosition.y - 1, pPosition.x + 1, pPosition.y + 1);
+
+		Location[] agents = this.getAgs();
+    	for (int i = 0; i < agents.length; i++) {
+			if (around.contains(agents[i])) {
+				neighbors.add(i);
+			}
+		}
+
+		return neighbors;
 	}
 }

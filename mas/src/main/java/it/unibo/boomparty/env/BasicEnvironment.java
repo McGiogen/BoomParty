@@ -3,6 +3,7 @@ package it.unibo.boomparty.env;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.unibo.boomparty.PerceptsBuilder;
 import jason.asSyntax.Literal;
 import jason.asSyntax.Structure;
 import jaca.CartagoEnvironment;
@@ -31,12 +32,39 @@ public class BasicEnvironment extends CartagoEnvironment {
         this.updatePercepts();
 	}
 
-	public List<Literal> getPercepts(String agName) {
-		// TODO
-		return null;
-	}
+    /**
+     * Aggiorna i percepts (o beliefs) di tutti gli agenti ad ogni modifica dell'environment.
+     */
+	public void updatePercepts() {
+	    for (HumanModel player : this.players) {
+	        String pName = player.getName();
+            Location pPosition = this.model.getAgPos(player.getIndex());
 
-	public void updatePercepts() { }
+            this.clearPercepts(pName);
+
+            // Area
+            Literal at;
+            if (this.model.roomA.contains(pPosition)) {
+                at = PerceptsBuilder.at("roomA");
+            } else if (this.model.roomB.contains(pPosition)) {
+                at = PerceptsBuilder.at("roomB");
+            } else {
+                at = PerceptsBuilder.at("hallway");
+            }
+            this.addPercept(pName, at);
+
+                    // Neighbors
+            List<Integer> indexes = this.model.getNeighbors(pPosition);
+            List<String> playersNames = new ArrayList<>(indexes.size());
+            for (int i : indexes) {
+                playersNames.add(this.players.get(i).getName());
+            }
+            Literal neighbors = PerceptsBuilder.neighbors(playersNames);
+            this.addPercept(pName, neighbors);
+
+            this.getLogger().info("[" + pName + "] " + at.toString() + ", " + neighbors.toString());
+        }
+    }
 
 	/**
      * The <code>boolean</code> returned represents the action "feedback"
