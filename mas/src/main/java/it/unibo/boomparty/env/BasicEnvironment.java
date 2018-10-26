@@ -53,8 +53,8 @@ public class BasicEnvironment extends CartagoEnvironment {
             }
             this.addPercept(pName, at);
 
-                    // Neighbors
-            List<Integer> indexes = this.model.getNeighbors(pPosition);
+            // Neighbors
+            List<Integer> indexes = WorldUtils.getNeighbors(this.model.getAgs(), pPosition);
             List<String> playersNames = new ArrayList<>(indexes.size());
             for (int i : indexes) {
                 playersNames.add(this.players.get(i).getName());

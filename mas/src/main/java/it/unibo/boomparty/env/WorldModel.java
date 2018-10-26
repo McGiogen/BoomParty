@@ -4,10 +4,6 @@ import jason.environment.grid.Area;
 import jason.environment.grid.GridWorldModel;
 import jason.environment.grid.Location;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 public class WorldModel extends GridWorldModel {
 	Area roomA;
 	Area roomB;
@@ -20,7 +16,7 @@ public class WorldModel extends GridWorldModel {
 	public WorldModel(int numPlayers) {
     	super(0,0,0);
     	
-    	int roomSize = calculateRoomSize(numPlayers, 10);
+    	int roomSize = WorldUtils.calculateRoomSize(numPlayers, 10);
     	int worldWidth = roomSize*2 + 1;
     	int worldHeight = roomSize + 2;
     	
@@ -31,9 +27,9 @@ public class WorldModel extends GridWorldModel {
     	this.hallway = new Area(roomSize-2, 0, roomSize+2, 1);
     	
     	// Clean areas from walls
-        digArea(this.data, this.roomA);
-        digArea(this.data, this.roomB);
-        digArea(this.data, this.hallway);
+        WorldUtils.digArea(this.data, this.roomA);
+        WorldUtils.digArea(this.data, this.roomB);
+        WorldUtils.digArea(this.data, this.hallway);
     	
     	// Choose a random position for every player
     	for (int i = 0; i < numPlayers; i++) {
@@ -65,7 +61,7 @@ public class WorldModel extends GridWorldModel {
         	this.agPos[i] = new Location(-1, -1);
         }
     }
-    
+
     /**
      * Returns a random free location using isFree to test the availability of some possible location (it means free of agents and obstacles)
      * @param a Search only in this Area
@@ -85,43 +81,12 @@ public class WorldModel extends GridWorldModel {
         return null; // not found
     }
     
-    Location[] getAgs() {
+    public Location[] getAgs() {
     	return this.agPos;
     }
 
-    int get(int x, int y) {
+    public int get(int x, int y) {
         return this.data[x][y];
     }
 
-    /* Utilities*/
-    
-    public static int distance(Location l1, Location l2) {
-    	return l1.distanceChebyshev(l2);
-	}
-    
-    private static int calculateRoomSize(int numPlayers, int minSize) {
-    	return Math.max(minSize, (int) Math.ceil(numPlayers / 3.0 * 2.0));
-    }
-    
-    private static void digArea(int[][] data, Area a) {
-		for (int x = a.tl.x; x <= a.br.x; x++) {
-			for (int y = a.tl.y; y <= a.br.y; y++) {
-				data[x][y] = CLEAN;
-			}
-		}
-	}
-
-	public List<Integer> getNeighbors(Location pPosition) {
-		ArrayList<Integer> neighbors = new ArrayList<>(8);
-    	Area around = new Area(pPosition.x - 1, pPosition.y - 1, pPosition.x + 1, pPosition.y + 1);
-
-		Location[] agents = this.getAgs();
-    	for (int i = 0; i < agents.length; i++) {
-			if (around.contains(agents[i])) {
-				neighbors.add(i);
-			}
-		}
-
-		return neighbors;
-	}
 }
