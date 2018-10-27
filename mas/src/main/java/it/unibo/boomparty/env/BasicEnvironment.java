@@ -5,6 +5,7 @@ import java.util.List;
 
 import it.unibo.boomparty.PerceptsBuilder;
 import jason.asSyntax.Literal;
+import jason.asSyntax.StringTerm;
 import jason.asSyntax.Structure;
 import jaca.CartagoEnvironment;
 import jason.environment.grid.Location;
@@ -79,9 +80,7 @@ public class BasicEnvironment extends CartagoEnvironment {
         try {
 	        if (action.getFunctor().equals("move_towards")) {
 	        	// get who (or where) to move
-	        	String arg1 = action.getTerm(0).toString();
-                // Strings are enclosed by double quotes
-	            final String goalName = arg1.substring(1, arg1.length() - 1);
+	        	String goalName = ((StringTerm) action.getTerm(0)).getString();
 
                 HumanModel source = this.getPlayer(agName);
 	        	HumanModel target = this.getPlayer(goalName);
