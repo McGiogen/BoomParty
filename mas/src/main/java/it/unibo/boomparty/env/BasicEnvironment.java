@@ -6,6 +6,7 @@ import java.util.List;
 import it.unibo.boomparty.PerceptsBuilder;
 import jason.asSyntax.Literal;
 import jason.asSyntax.StringTerm;
+import jason.asSyntax.StringTermImpl;
 import jason.asSyntax.Structure;
 import jaca.CartagoEnvironment;
 import jason.environment.grid.Location;
@@ -74,80 +75,43 @@ public class BasicEnvironment extends CartagoEnvironment {
     @Override
     public boolean executeAction(final String agName, final Structure action) {
         // this.getLogger().info("[" + agName + "] doing: " + action);
-        boolean result = false;
+        EnvironmentActions.Result result = new EnvironmentActions.Result();
         int timeSpent = 0;
 
         try {
-	        if (action.getFunctor().equals("move_towards")) {
-	        	// get who (or where) to move
-	        	String goalName = ((StringTerm) action.getTerm(0)).getString();
+            switch(action.getFunctor()) {
+                case "move_towards": {
+                    // get who (or where) to move
+                    String goalName = ((StringTerm) action.getTerm(0)).getString();
 
-                HumanModel source = this.getPlayer(agName);
-	        	HumanModel target = this.getPlayer(goalName);
+                    HumanModel source = this.getPlayer(agName);
+                    HumanModel target = this.getPlayer(goalName);
 
-	        	if (source != null && target != null) {
-                    final Location start = this.model.getAgPos(source.getIndex());
-                    final Location goal = this.model.getAgPos(target.getIndex());
-
-                    if (!start.equals(goal)) {
-                        timeSpent = 1000;
-                        result = this.moveTowards(source, goal);
-                    } else {
-                        result = true;
+                    if (source != null && target != null) {
+                        final Location goal = this.model.getAgPos(target.getIndex());
+                        result = EnvironmentActions.moveTowards(this, source, goal);
                     }
+                    break;
                 }
-	        } else {
-	        	this.getLogger().info("[" + agName + "] Failed to execute action " + action);
-	        }
+                case "nearest": {
+                    HumanModel source = this.getPlayer(agName);
+                    EnvironmentActions.Result<HumanModel> res = EnvironmentActions.nearest(this, source);
+                    // un.unifies(action.getTerm(0), new StringTermImpl(res.getValue().getName()));
+
+                    result = res;
+                    break;
+                }
+                default:
+                    this.getLogger().info("[" + agName + "] Failed to execute action " + action);
+            }
         } catch (final Exception e) {
         	this.getLogger().info("[" + agName + "] EXCEPTION: " + e.getMessage());
         }
 
-        if (result) {
-            // Update all agents when the environment change
-            this.updatePercepts();
-            this.takeTime(timeSpent);
-        }
-        return result;
-    }
-
-	private boolean moveTowards(final HumanModel ag, final Location dest) {
-        if (ag.getPath() == null || !ag.getPath().getGoal().getLocation().equals(dest)) {
-            this.getLogger().info("Calculating path of [" + ag.getName() +  "] to " + dest.x + "," + dest.y);
-
-            // get agent location
-            final Location loc = this.model.getAgPos(ag.getIndex());
-
-            // compute where to move
-            PathFinder.Path path = new PathFinder().findPath(this.model, loc, dest);
-            ag.setPath(path);
-
-            // remove start node from path
-            path.pop();
-        }
-
-		if (ag.getPath().size() > 0) {
-		    // the path is defined, move one step to the goal
-			final Location loc = ag.getPath().pop().getLocation();
-			this.model.setAgPos(ag.getIndex(), loc); // actually move the robot in the grid
-		} else {
-		    // the agent reached the goal, path completed
-		    ag.setPath(null);
-        }
-		return true;
-	}
-
-    /**
-     *
-     * @param name
-     * @return
-     */
-    private HumanModel getPlayer(String name) {
-        for (HumanModel player : this.players) {
-            if (player.getName().equals(name))
-                return player;
-        }
-        return null;
+        // Update all agents when the environment change
+        this.updatePercepts();
+        this.takeTime(timeSpent);
+        return result.isSuccess();
     }
 
     /**
@@ -161,5 +125,39 @@ public class BasicEnvironment extends CartagoEnvironment {
         try {
             Thread.sleep(timeSpent);
         } catch (final Exception e) { }
+    }
+
+    public WorldModel getModel() {
+        return model;
+    }
+
+    public List<HumanModel> getPlayers() {
+        return players;
+    }
+
+    /**
+     * Returns the HumanModel from the actor unique name
+     * @param name name of the actor
+     * @return the model of the actor or null
+     */
+    public HumanModel getPlayer(String name) {
+        for (HumanModel player : this.players) {
+            if (player.getName().equals(name))
+                return player;
+        }
+        return null;
+    }
+
+    /**
+     * Returns the HumanModel from the WorldModel index
+     * @param index index of the actor
+     * @return the model of the actor or null
+     */
+    public HumanModel getPlayer(int index) {
+        for (HumanModel player : this.players) {
+            if (player.getIndex() == index)
+                return player;
+        }
+        return null;
     }
 }

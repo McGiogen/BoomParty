@@ -37,4 +37,33 @@ public class WorldUtils {
 
 		return neighbors;
 	}
+
+	public static Integer getNearest(WorldModel model, Location pPosition) {
+		Area pArea = getArea(model, pPosition);
+		Location[] agents = model.getAgs();
+
+		Integer nearest = null;
+		Integer minDistance = Integer.MAX_VALUE;
+
+		for (int i = 0; i < agents.length; i++) {
+		    int distance = distance(pPosition, agents[i]);
+			if (distance > 0 && distance < minDistance && pArea.contains(agents[i])) {
+				nearest = i;
+			}
+		}
+
+		return nearest;
+	}
+
+	public static Area getArea(WorldModel model, Location location) {
+		if (model.roomA.contains(location)) {
+			return model.roomA;
+		} else if (model.roomB.contains(location)) {
+			return model.roomB;
+		} else if (model.hallway.contains(location)) {
+			return model.hallway;
+		} else {
+			return null;
+		}
+	}
 }

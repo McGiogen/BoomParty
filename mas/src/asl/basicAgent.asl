@@ -49,7 +49,9 @@ stanza(1).
     	.all_names(List);
     	.print("All players: ", List);
     	it.unibo.boomparty.action.nearPlayers(X, NearP);
-    	.print("I giocatori vicini a me sono: ", NearP).
+    	.print("I giocatori vicini a me sono: ", NearP);
+        nearest(NearestP);
+        .print("Il più vicino è: ", NearestP).
 
 /* Handle movement */
 /*
