@@ -16,8 +16,7 @@ public class WorldView extends GridWorldView {
         this.setSize(this.getWidth(), this.getWidth()/model.getWidth()*model.getHeight());
         
         this.model = model;
-        this.defaultFont = new Font("Arial", Font.BOLD, 14); // change default
-                                                             // font
+        this.defaultFont = new Font("Arial", Font.BOLD, 14); // change default font
         this.setVisible(true);
         this.repaint();
     }
