@@ -23,17 +23,16 @@
 
 
 /* Initial beliefs and rules */
-nome(N) :- .my_name(N).
-//ruolo(Ruolo, team(Team)) :- .my_role(Ruolo, Team).
-stanza(1).
-// TODO my_position deve ritornare la posizione del giocatore che esegue l'internal action
-//posizione(X, Y) :- .my_position(X, Y).
+name(N) :- .my_name(N).
+// TODO ruolo(Ruolo, team(Team))
 
-// TODO all_players deve ritornare i dati pubblici di tutti i giocatori
-//giocatori(List) :- all_players(List).
+/* Environment percepts */
+// area(roomA|roomB|hallway)
+// position(X,Y)
+// players(List)
 
-// TODO all_players deve ritornare i dati pubblici di tutti i giocatori
-//giocatoriVicini(List) :- action.NearPlayers(nome(N)).
+// TODO giocatoriVicini(List) :- action.NearPlayers(name(N)).
+// REMOVE? neighbors(List)
 
 /* Initial goals */
 
@@ -44,7 +43,7 @@ stanza(1).
     	!at("fernando").
 
 +!init
-    <-	?nome(X);
+    <-	?name(X);
     	.print("PLAYER ", X, " START!");
     	.all_names(List);
     	.print("All players: ", List);

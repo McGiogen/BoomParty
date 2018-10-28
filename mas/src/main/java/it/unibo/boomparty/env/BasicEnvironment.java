@@ -6,7 +6,6 @@ import java.util.List;
 import it.unibo.boomparty.PerceptsBuilder;
 import jason.asSyntax.Literal;
 import jason.asSyntax.StringTerm;
-import jason.asSyntax.StringTermImpl;
 import jason.asSyntax.Structure;
 import jaca.CartagoEnvironment;
 import jason.environment.grid.Location;
@@ -39,33 +38,48 @@ public class BasicEnvironment extends CartagoEnvironment {
      */
 	public void updatePercepts() {
 	    for (HumanModel player : this.players) {
-	        String pName = player.getName();
-            Location pPosition = this.model.getAgPos(player.getIndex());
-
-            this.clearPercepts(pName);
-
-            // Area
-            Literal at;
-            if (this.model.roomA.contains(pPosition)) {
-                at = PerceptsBuilder.at("roomA");
-            } else if (this.model.roomB.contains(pPosition)) {
-                at = PerceptsBuilder.at("roomB");
-            } else {
-                at = PerceptsBuilder.at("hallway");
+            // Add percepts
+            for (Literal percept : getPercepts(player)) {
+                this.addPercept(player.getName(), percept);
             }
-            this.addPercept(pName, at);
-
-            // Neighbors
-            List<Integer> indexes = WorldUtils.getNeighbors(this.model.getAgs(), pPosition);
-            List<String> playersNames = new ArrayList<>(indexes.size());
-            for (int i : indexes) {
-                playersNames.add(this.players.get(i).getName());
-            }
-            Literal neighbors = PerceptsBuilder.neighbors(playersNames);
-            this.addPercept(pName, neighbors);
-
-            this.getLogger().info("[" + pName + "] " + at.toString() + ", " + neighbors.toString());
         }
+    }
+
+    public List<Literal> getPercepts(HumanModel player) {
+        String pName = player.getName();
+        Location pPosition = this.model.getAgPos(player.getIndex());
+
+        this.clearPercepts(pName);
+        ArrayList<Literal> percepts = new ArrayList<>();
+
+        // Area
+        if (this.model.roomA.contains(pPosition)) {
+            percepts.add(PerceptsBuilder.area("roomA"));
+        } else if (this.model.roomB.contains(pPosition)) {
+            percepts.add(PerceptsBuilder.area("roomB"));
+        } else {
+            percepts.add(PerceptsBuilder.area("hallway"));
+        }
+
+        // Position
+        percepts.add(PerceptsBuilder.position(pPosition));
+
+        // Players
+        List<String> playersNames = new ArrayList<>(this.players.size());
+        for (HumanModel p : this.players) {
+            playersNames.add(p.getName());
+        }
+        percepts.add(PerceptsBuilder.players(playersNames));
+
+        // Neighbors
+        List<Integer> neighborsIndexes = WorldUtils.getNeighbors(this.model.getAgs(), pPosition);
+        List<String> neighborsNames = new ArrayList<>(neighborsIndexes.size());
+        for (int i : neighborsIndexes) {
+            neighborsNames.add(this.players.get(i).getName());
+        }
+        percepts.add(PerceptsBuilder.neighbors(neighborsNames));
+
+        return percepts;
     }
 
 	/**
