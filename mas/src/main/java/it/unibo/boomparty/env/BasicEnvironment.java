@@ -9,6 +9,7 @@ import jason.asSyntax.StringTerm;
 import jason.asSyntax.Structure;
 import jaca.CartagoEnvironment;
 import jason.environment.grid.Location;
+import jason.util.Pair;
 
 public class BasicEnvironment extends CartagoEnvironment {
 
@@ -79,6 +80,15 @@ public class BasicEnvironment extends CartagoEnvironment {
         }
         percepts.add(PerceptsBuilder.neighbors(neighborsNames));
 
+        // Visible players
+        List<Pair<Integer, Integer>> visiblesIndexes = WorldUtils.getVisiblePlayers(this.model, pPosition);
+        List<Pair<String, Integer>> visiblesNamed = new ArrayList<>(visiblesIndexes.size());
+        for (Pair<Integer, Integer> pair : visiblesIndexes) {
+            String name = this.players.get(pair.getFirst()).getName();
+            visiblesNamed.add(new Pair<>(name, pair.getSecond()));
+        }
+        percepts.add(PerceptsBuilder.visible_players(visiblesNamed));
+
         return percepts;
     }
 
@@ -106,14 +116,14 @@ public class BasicEnvironment extends CartagoEnvironment {
                     }
                     break;
                 }
-                case "nearest": {
+                /*case "nearest": {
                     HumanModel source = this.getPlayer(agName);
                     EnvironmentActions.Result<HumanModel> res = EnvironmentActions.nearest(this, source);
                     // un.unifies(action.getTerm(0), new StringTermImpl(res.getValue().getName()));
 
                     result = res;
                     break;
-                }
+                }*/
                 default:
                     this.getLogger().info("[" + agName + "] Failed to execute action " + action);
             }

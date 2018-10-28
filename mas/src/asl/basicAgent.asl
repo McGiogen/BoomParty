@@ -39,8 +39,10 @@ name(N) :- .my_name(N).
 !boot.
 
 +!boot
-    <-  !init;
-    	!at("fernando").
+    <-  !init
+        ?visible_players(P);
+        .nth(1, P, X);
+        !at(X).
 
 +!init
     <-	?name(X);
@@ -48,9 +50,9 @@ name(N) :- .my_name(N).
     	.all_names(List);
     	.print("All players: ", List);
     	it.unibo.boomparty.action.nearPlayers(X, NearP);
-    	.print("I giocatori vicini a me sono: ", NearP);
-        nearest(NearestP);
-        .print("Il più vicino è: ", NearestP).
+    	.print("I giocatori vicini a me sono: ", NearP).
+        //nearest(NearestP);
+        //.print("Il più vicino è: ", NearestP).
 
 /* Handle movement */
 /*

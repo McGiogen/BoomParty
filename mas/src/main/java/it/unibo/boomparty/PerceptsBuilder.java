@@ -2,8 +2,10 @@ package it.unibo.boomparty;
 
 import jason.asSyntax.Literal;
 import jason.environment.grid.Location;
+import jason.util.Pair;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PerceptsBuilder {
     // belief literals
@@ -36,8 +38,9 @@ public class PerceptsBuilder {
         return Literal.parseLiteral("neighbors(" + players + ")");
     }
 
-    public static Literal visible_players(List<String> playersList) {
-        String players = listToString(playersList);
+    public static Literal visible_players(List<Pair<String, Integer>> playersList) {
+        List<String> stringList = playersList.stream().map(Pair::getFirst).collect(Collectors.toList());
+        String players = listToString(stringList);
         return Literal.parseLiteral("visible_players(" + players + ")");
     }
 

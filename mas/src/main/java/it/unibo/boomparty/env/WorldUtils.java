@@ -2,9 +2,10 @@ package it.unibo.boomparty.env;
 
 import jason.environment.grid.Area;
 import jason.environment.grid.Location;
+import jason.util.Pair;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static jason.environment.grid.GridWorldModel.CLEAN;
 
@@ -38,7 +39,26 @@ public class WorldUtils {
 		return neighbors;
 	}
 
-	public static Integer getNearest(WorldModel model, Location pPosition) {
+	public static List<Pair<Integer, Integer>> getVisiblePlayers(WorldModel model, Location pPosition) {
+		Area pArea = getArea(model, pPosition);
+		Location[] agents = model.getAgs();
+
+		// Lista di oggetti (index, distance)
+        List<Pair<Integer, Integer>> orderedList = new ArrayList<>(agents.length);
+
+		for (int i = 0; i < agents.length; i++) {
+			int distance = distance(pPosition, agents[i]);
+            if (pArea != null && pArea.contains(agents[i])) {
+                orderedList.add(new Pair<>(i, distance));
+            }
+		}
+
+		return orderedList.stream()
+                .sorted(Comparator.comparing(Pair::getSecond))
+                .collect(Collectors.toList());
+	}
+
+	/*public static Integer getNearest(WorldModel model, Location pPosition) {
 		Area pArea = getArea(model, pPosition);
 		Location[] agents = model.getAgs();
 
@@ -53,7 +73,7 @@ public class WorldUtils {
 		}
 
 		return nearest;
-	}
+	}*/
 
 	public static Area getArea(WorldModel model, Location location) {
 		if (model.roomA.contains(location)) {
