@@ -25,6 +25,6 @@ public class WorldView extends GridWorldView {
     public void drawAgent(final Graphics g, final int x, final int y, Color c, final int id) {
         super.drawAgent(g, x, y, c, -1);
         g.setColor(Color.white);
-        super.drawString(g, x, y, this.defaultFont, "Ag");
+        super.drawString(g, x, y, this.defaultFont, Integer.toString(id));
     }
 }
