@@ -42,6 +42,6 @@ public class PerceptsBuilder {
     }
 
     private static String listToString(List<String> list) {
-        return "[" + String.join(",", list) + "]";
+        return list.size() == 0 ? "[]" : "[\"" + String.join("\",\"", list) + "\"]";
     }
 }
