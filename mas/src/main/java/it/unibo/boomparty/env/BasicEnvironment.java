@@ -90,7 +90,6 @@ public class BasicEnvironment extends CartagoEnvironment {
     public boolean executeAction(final String agName, final Structure action) {
         // this.getLogger().info("[" + agName + "] doing: " + action);
         EnvironmentActions.Result result = new EnvironmentActions.Result();
-        int timeSpent = 0;
 
         try {
             switch(action.getFunctor()) {
@@ -124,7 +123,7 @@ public class BasicEnvironment extends CartagoEnvironment {
 
         // Update all agents when the environment change
         this.updatePercepts();
-        this.takeTime(timeSpent);
+        this.takeTime(result.getTimeSpent());
         return result.isSuccess();
     }
 
