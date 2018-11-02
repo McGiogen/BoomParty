@@ -23,20 +23,23 @@ public class EnvironmentActions {
             PathFinder.Path path = new PathFinder().findPath(env.getModel(), loc, goal);
             ag.setPath(path);
 
-            // remove start node from path
-            path.pop();
+            // remove start and destination nodes from path
+            path.removeFirst();
+            path.removeLast();
         }
 
-        // the path is defined, move one step to the goal
-        final Location loc = ag.getPath().pop().getLocation();
-        env.getModel().setAgPos(ag.getIndex(), loc); // actually move the agent in the grid
+        if (ag.getPath().size() > 0) {
+            // the path is defined, move one step to the goal
+            final Location loc = ag.getPath().pop().getLocation();
+            env.getModel().setAgPos(ag.getIndex(), loc); // actually move the agent in the grid
+            result.setTimeSpent(1000);
+        }
 
         if (ag.getPath().size() == 0) {
             // the agent reached the goal, path completed
             ag.setPath(null);
         }
 
-        result.setTimeSpent(1000);
         result.setSuccess(true);
 
         return result;
