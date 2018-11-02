@@ -41,7 +41,7 @@ name(N) :- .my_name(N).
 +!boot
     <-  !init
         ?visible_players(P);
-        .nth(1, P, X);
+        .nth(0, P, X);
         !at(X).
 
 +!init

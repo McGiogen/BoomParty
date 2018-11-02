@@ -73,7 +73,7 @@ public class BasicEnvironment extends CartagoEnvironment {
         percepts.add(PerceptsBuilder.players(playersNames));
 
         // Neighbors
-        List<Integer> neighborsIndexes = WorldUtils.getNeighbors(this.model.getAgs(), pPosition);
+        List<Integer> neighborsIndexes = WorldUtils.getNeighbors(this.model, player);
         List<String> neighborsNames = new ArrayList<>(neighborsIndexes.size());
         for (int i : neighborsIndexes) {
             neighborsNames.add(this.players.get(i).getName());
@@ -81,7 +81,7 @@ public class BasicEnvironment extends CartagoEnvironment {
         percepts.add(PerceptsBuilder.neighbors(neighborsNames));
 
         // Visible players
-        List<Pair<Integer, Integer>> visiblesIndexes = WorldUtils.getVisiblePlayers(this.model, pPosition);
+        List<Pair<Integer, Integer>> visiblesIndexes = WorldUtils.getVisiblePlayers(this.model, player);
         List<Pair<String, Integer>> visiblesNamed = new ArrayList<>(visiblesIndexes.size());
         for (Pair<Integer, Integer> pair : visiblesIndexes) {
             String name = this.players.get(pair.getFirst()).getName();

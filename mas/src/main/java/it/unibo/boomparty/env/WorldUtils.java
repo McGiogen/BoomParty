@@ -26,12 +26,14 @@ public class WorldUtils {
 		}
 	}
 
-	public static List<Integer> getNeighbors(Location[] agents, Location pPosition) {
-		ArrayList<Integer> neighbors = new ArrayList<>(8);
+	public static List<Integer> getNeighbors(WorldModel model, HumanModel player) {
+		Location[] agents = model.getAgs();
+		Location pPosition = model.getAgPos(player.getIndex());
 		Area around = new Area(pPosition.x - 1, pPosition.y - 1, pPosition.x + 1, pPosition.y + 1);
 
+		ArrayList<Integer> neighbors = new ArrayList<>(8);
 		for (int i = 0; i < agents.length; i++) {
-			if (around.contains(agents[i])) {
+			if (around.contains(agents[i]) && i != player.getIndex()) {
 				neighbors.add(i);
 			}
 		}
@@ -39,16 +41,18 @@ public class WorldUtils {
 		return neighbors;
 	}
 
-	public static List<Pair<Integer, Integer>> getVisiblePlayers(WorldModel model, Location pPosition) {
-		Area pArea = getArea(model, pPosition);
+	public static List<Pair<Integer, Integer>> getVisiblePlayers(WorldModel model, HumanModel player) {
 		Location[] agents = model.getAgs();
+		Location pPosition = model.getAgPos(player.getIndex());
+
+		Area pArea = getArea(model, pPosition);
 
 		// Lista di oggetti (index, distance)
         List<Pair<Integer, Integer>> orderedList = new ArrayList<>(agents.length);
 
 		for (int i = 0; i < agents.length; i++) {
 			int distance = distance(pPosition, agents[i]);
-            if (pArea != null && pArea.contains(agents[i])) {
+            if (pArea != null && pArea.contains(agents[i]) && i != player.getIndex()) {
                 orderedList.add(new Pair<>(i, distance));
             }
 		}
