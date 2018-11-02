@@ -63,11 +63,11 @@ at(P) :- neighbors(List) & list_contains(List, P).
 /* Handle movement */
 
 +!goto(Player) // if arrived at destination Player
-	: at(P)
+	: at(Player)
 	<- true. // that's all, do nothing
 
 +!goto(Player) // if NOT arrived at destination Player
-	: not at(P)
+	: not at(Player)
 	<- move_towards(Player);
 	!goto(Player). // continue attempting to reach destination
 
