@@ -45,18 +45,6 @@ public class EnvironmentActions {
         return result;
     }
 
-    /*public static Result<HumanModel> nearest(BasicEnvironment env, final HumanModel ag) {
-        Result<HumanModel> result = new Result<>();
-        Location agPosition = env.getModel().getAgPos(ag.getIndex());
-
-        int agNearestIndex = WorldUtils.getNearest(env.getModel(), agPosition);
-        HumanModel agNearest = env.getPlayer(agNearestIndex);
-
-        result.setValue(agNearest);
-        result.setSuccess(true);
-        return result;
-    }*/
-
     public static class Result<T> {
         private int timeSpent;
         private boolean success;

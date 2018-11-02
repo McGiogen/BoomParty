@@ -116,14 +116,6 @@ public class BasicEnvironment extends CartagoEnvironment {
                     }
                     break;
                 }
-                /*case "nearest": {
-                    HumanModel source = this.getPlayer(agName);
-                    EnvironmentActions.Result<HumanModel> res = EnvironmentActions.nearest(this, source);
-                    // un.unifies(action.getTerm(0), new StringTermImpl(res.getValue().getName()));
-
-                    result = res;
-                    break;
-                }*/
                 default:
                     this.getLogger().info("[" + agName + "] Failed to execute action " + action);
             }
