@@ -48,14 +48,25 @@ public class Bootstrap {
     public static void bootMasProject(final boolean debug) {
         System.out.println("Launching mas2j project");
 
-        Bootstrap.bootJadeAndTucson();
 
-        try {
-            jason.infra.jade.RunJadeMAS.main(new String[] {"boomparty.mas2j", "-debug"});
-        } catch (JasonException e) {
-        	e.printStackTrace();
-		}
+        String[] args;
+        if (debug) {
+            args = new String[]{"boomparty.mas2j", "-debug"};
+            try {
+                jason.infra.centralised.RunCentralisedMAS.main(args);
+            } catch (JasonException e) {
+                e.printStackTrace();
+            }
+        } else {
+             Bootstrap.bootJadeAndTucson();
 
+            args = new String[]{"boomparty.mas2j"};
+            try {
+                jason.infra.jade.RunJadeMAS.main(args);
+            } catch (JasonException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static void bootJadeAndTucson(/*ProgramArgumentsHelper pa*/) {
