@@ -17,7 +17,7 @@ public class PerceptsBuilder {
      * @param value name value
      * @return literal name("value")
      */
-    private static Literal name(String value) {
+    public static Literal name(String value) {
         Structure name = new Structure("name");
         name.addTerm(new StringTermImpl(value));
         return name;
@@ -27,7 +27,7 @@ public class PerceptsBuilder {
      * @param atom role atom
      * @return literal team(atom)
      */
-    private static Literal team(String atom) {
+    public static Literal team(String atom) {
         Structure team = new Structure("team");
         team.addTerm(new Atom(atom));
         return team;
@@ -37,7 +37,7 @@ public class PerceptsBuilder {
      * @param atom role atom
      * @return literal role(atom)
      */
-    private static Literal role(String atom) {
+    public static Literal role(String atom) {
         Structure role = new Structure("role");
         role.addTerm(new Atom(atom));
         return role;
