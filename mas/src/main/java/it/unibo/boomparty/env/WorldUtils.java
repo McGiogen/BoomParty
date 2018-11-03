@@ -77,4 +77,19 @@ public class WorldUtils {
 			return null;
 		}
 	}
+
+	public static String getAreaName(WorldModel model, Location location) {
+	    Area area = getArea(model, location);
+	    return getAreaName(model, area);
+    }
+
+    public static String getAreaName(WorldModel model, Area area) {
+        if (model.roomA.equals(area)) {
+            return "roomA";
+        } else if (model.roomB.equals(area)) {
+            return "roomB";
+        } else {
+            return "hallway";
+        }
+    }
 }

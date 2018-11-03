@@ -53,24 +53,20 @@ public class BasicEnvironment extends CartagoEnvironment {
         this.clearPercepts(pName);
         ArrayList<Literal> percepts = new ArrayList<>();
 
+        // Team
+        percepts.add(PerceptsBuilder.area(WorldUtils.getAreaName(model, pPosition)));
+
+        // Role
+        percepts.add(PerceptsBuilder.area(WorldUtils.getAreaName(model, pPosition)));
+
         // Area
-        if (this.model.roomA.contains(pPosition)) {
-            percepts.add(PerceptsBuilder.area("roomA"));
-        } else if (this.model.roomB.contains(pPosition)) {
-            percepts.add(PerceptsBuilder.area("roomB"));
-        } else {
-            percepts.add(PerceptsBuilder.area("hallway"));
-        }
+        percepts.add(PerceptsBuilder.area(WorldUtils.getAreaName(model, pPosition)));
 
         // Position
         percepts.add(PerceptsBuilder.position(pPosition));
 
         // Players
-        List<String> playersNames = new ArrayList<>(this.players.size());
-        for (HumanModel p : this.players) {
-            playersNames.add(p.getName());
-        }
-        percepts.add(PerceptsBuilder.players(playersNames));
+        percepts.add(PerceptsBuilder.players(this.players, model));
 
         // Neighbors
         List<Integer> neighborsIndexes = WorldUtils.getNeighbors(this.model, player);

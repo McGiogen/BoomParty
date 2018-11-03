@@ -24,12 +24,13 @@
 
 /* Initial beliefs */
 name(N) :- .my_name(N).
-// TODO ruolo(Ruolo, team(Team))
+team(null).  // TODO
+role(null).  // TODO
 
 /* Environment percepts */
 // area(roomA|roomB|hallway)
 // position(X,Y)
-// players(List)
+// players([ player( name(N), role(R), team(T) area(A), position(X,Y), confidence(C) ), ... ])
 
 // visible_players(List)
 // REMOVE? neighbors(List)
