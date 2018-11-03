@@ -12,12 +12,14 @@ import java.util.stream.Collectors;
 import static jason.environment.grid.GridWorldModel.CLEAN;
 
 public class WorldUtils {
+	public final static double areaPerPlayer = 25d;
+
 	public static int distance(Location l1, Location l2) {
 		return l1.distanceChebyshev(l2);
 	}
 
 	public static int calculateRoomSize(int numPlayers, int minSize) {
-		return Math.max(minSize, (int) Math.ceil(numPlayers / 3.0 * 2.0));
+		return Math.max(minSize, (int) Math.ceil(Math.sqrt(numPlayers / 2.0 * areaPerPlayer)));
 	}
 
 	public static void digArea(int[][] data, Area a) {
