@@ -18,7 +18,7 @@ public class PerceptsBuilder {
      * @return literal name("value")
      */
     public static Literal name(String value) {
-        Structure name = new Structure("name");
+        LiteralImpl name = new LiteralImpl("name");
         name.addTerm(new StringTermImpl(value));
         return name;
     }
@@ -28,7 +28,7 @@ public class PerceptsBuilder {
      * @return literal team(atom)
      */
     public static Literal team(String atom) {
-        Structure team = new Structure("team");
+        LiteralImpl team = new LiteralImpl("team");
         team.addTerm(new Atom(atom));
         return team;
     }
@@ -38,7 +38,7 @@ public class PerceptsBuilder {
      * @return literal role(atom)
      */
     public static Literal role(String atom) {
-        Structure role = new Structure("role");
+        LiteralImpl role = new LiteralImpl("role");
         role.addTerm(new Atom(atom));
         return role;
     }
@@ -49,7 +49,7 @@ public class PerceptsBuilder {
      * @return literal area(atom)
      */
     public static Literal area(String atom) {
-        Structure area = new Structure("area");
+        LiteralImpl area = new LiteralImpl("area");
         area.addTerm(new Atom(atom));
         return area;
     }
@@ -59,7 +59,7 @@ public class PerceptsBuilder {
      * @return literal position(x,y)
      */
     public static Literal position(Location location) {
-        Structure position = new Structure("position");
+        LiteralImpl position = new LiteralImpl("position");
         position.addTerms(
             new NumberTermImpl(location.x),
             new NumberTermImpl(location.y)
@@ -72,7 +72,7 @@ public class PerceptsBuilder {
      * @return literal confidence(value)
      */
     public static Literal confidence(int value) {
-        Structure confidence = new Structure("confidence");
+        LiteralImpl confidence = new LiteralImpl("confidence");
         confidence.addTerm(new NumberTermImpl(value));
         return confidence;
     }
@@ -83,7 +83,7 @@ public class PerceptsBuilder {
      * @return literal players([ player( ... ), ... ])
      */
     public static Literal players(List<HumanModel> playersList, WorldModel world) {
-        Structure players = new Structure("players");
+        LiteralImpl players = new LiteralImpl("players");
 
         List<Literal> terms = playersList.stream()
                 .map(p -> player(p, world))
@@ -126,7 +126,7 @@ public class PerceptsBuilder {
      * @return literal player( name(N), role(R), team(T) area(A), position(X,Y), confidence(C) )
      */
     private static Literal player(HumanModel model, WorldModel world) {
-        Structure player = new Structure("player");
+        LiteralImpl player = new LiteralImpl("player");
 
         Location location = world.getAgPos(model.getIndex());
         String area = WorldUtils.getAreaName(world, location);
