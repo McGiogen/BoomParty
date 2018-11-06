@@ -85,12 +85,12 @@ public class PerceptsBuilder {
     public static Literal players(List<HumanModel> playersList, WorldModel world) {
         LiteralImpl players = new LiteralImpl("players");
 
-        List<Literal> terms = playersList.stream()
+        List<Literal> literals = playersList.stream()
                 .map(p -> player(p, world))
                 .collect(Collectors.toList());
 
         ListTermImpl array = new ListTermImpl();
-        array.addAll(terms);
+        array.addAll(literals);
         players.addTerm(array);
 
         return players;
@@ -102,8 +102,17 @@ public class PerceptsBuilder {
      * @return literal neighbors([ name1, name2, name3, ... ])
      */
     public static Literal neighbors(List<String> playersList) {
-        String players = listToString(playersList);
-        return Literal.parseLiteral("neighbors(" + players + ")");
+        LiteralImpl neighbors = new LiteralImpl("neighbors");
+
+        List<Term> terms = playersList.stream()
+                .map(StringTermImpl::new)
+                .collect(Collectors.toList());
+
+        ListTermImpl array = new ListTermImpl();
+        array.addAll(terms);
+        neighbors.addTerm(array);
+
+        return neighbors;
     }
 
     /**
@@ -111,13 +120,18 @@ public class PerceptsBuilder {
      * @return literal visible_players([ name1, name2, name3, ... ])
      */
     public static Literal visible_players(List<Pair<String, Integer>> playersList) {
-        List<String> stringList = playersList.stream().map(Pair::getFirst).collect(Collectors.toList());
-        String players = listToString(stringList);
-        return Literal.parseLiteral("visible_players(" + players + ")");
-    }
+        LiteralImpl visible_players = new LiteralImpl("visible_players");
 
-    private static String listToString(List<String> list) {
-        return list.size() == 0 ? "[]" : "[\"" + String.join("\",\"", list) + "\"]";
+        List<Term> terms = playersList.stream()
+                .map(Pair::getFirst)
+                .map(StringTermImpl::new)
+                .collect(Collectors.toList());
+
+        ListTermImpl array = new ListTermImpl();
+        array.addAll(terms);
+        visible_players.addTerm(array);
+
+        return visible_players;
     }
 
     /**
