@@ -2,6 +2,8 @@ package it.unibo.boomparty.agents.impl;
 
 import java.io.IOException;
 
+import alice.tucson.asynchSupport.actions.ordinary.Out;
+import it.unibo.boomparty.dao.PlayerDAO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -38,13 +40,6 @@ public class SettingsAgent extends TucsonAgent {
     }
 
     /**
-     * Carica le configurazioni di default
-     */
-    private void loadDefaultSettings() {
-        // TODO
-    }
-
-    /**
      * Carica le reaction della simulazione
      */
     private void loadReaction(){
@@ -61,6 +56,16 @@ public class SettingsAgent extends TucsonAgent {
         } catch (ServiceException | IOException e) {
             log.error("Errore durante caricamento reactions: " + e.getMessage());
         }
+    }
+
+    /**
+     * Carica le configurazioni di default
+     */
+    private void loadDefaultSettings() {
+        /*this.actionAsync(Out.class, new PlayerDAO("paolo", null));
+        this.actionAsync(Out.class, new PlayerDAO("lucaneri", null));
+        this.actionAsync(Out.class, new PlayerDAO("fernando", null));
+        this.actionAsync(Out.class, new PlayerDAO("giorgiovanni", null));*/
     }
 
 }
