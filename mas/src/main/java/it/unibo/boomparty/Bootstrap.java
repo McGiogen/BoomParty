@@ -1,5 +1,6 @@
 package it.unibo.boomparty;
 
+import it.unibo.boomparty.gui.MainGuiAgent;
 import jason.JasonException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -83,7 +84,7 @@ public class Bootstrap {
 //        }
 
         // Avvio la gui e il relativo agente se richiesto
-        /*try {
+        try {
             AgentContainer agentContainer = JadeUtils.startPeripheralContainer();
             AgentController agGui = JadeUtils.createNewAgent(
                     agentContainer,
@@ -94,7 +95,7 @@ public class Bootstrap {
             agGui.start();
         } catch (StaleProxyException e) {
             log.error("Errere set up sistema: " + e.getMessage());
-        }*/
+        }
     }
 
 //    /**

@@ -46,22 +46,17 @@
             <artifactId>log4j-core</artifactId>
             <version>2.11.1</version>
         </dependency>
-        <!--<dependency>-->
-        <!--<groupId>java.tuprolog</groupId>-->
-        <!--<artifactId>2p</artifactId>-->
-        <!--<version>3.1</version>-->
-        <!--<scope>system</scope>-->
-        <!--<systemPath>${basedir}/lib/2p.jar</systemPath>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>java.tuprolog</groupId>
+            <artifactId>2p</artifactId>
+            <version>3.1</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/2p.jar</systemPath>
+        </dependency>
         <dependency>
             <groupId>net.sf.jason</groupId>
             <artifactId>jason</artifactId>
             <version>2.3</version>
-        </dependency>
-        <dependency>
-            <groupId>it.unibo.alice.tuprolog</groupId>
-            <artifactId>tuprolog</artifactId>
-            <version>3.2.1</version>
         </dependency>
         <dependency>
             <groupId>it.unibo.tucson</groupId>

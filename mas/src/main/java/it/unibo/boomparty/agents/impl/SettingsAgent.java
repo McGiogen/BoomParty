@@ -62,10 +62,18 @@ public class SettingsAgent extends TucsonAgent {
      * Carica le configurazioni di default
      */
     private void loadDefaultSettings() {
-        /*this.actionAsync(Out.class, new PlayerDAO("paolo", null));
+
+        // TODO: automatizzare asap
+
+        // inserisco i giocatori della partita (automatizzabile)
+        this.actionAsync(Out.class, new PlayerDAO("paolo", null));
         this.actionAsync(Out.class, new PlayerDAO("lucaneri", null));
         this.actionAsync(Out.class, new PlayerDAO("fernando", null));
-        this.actionAsync(Out.class, new PlayerDAO("giorgiovanni", null));*/
+        this.actionAsync(Out.class, new PlayerDAO("giorgiovanni", null));
+
+        // inserisco il token che tutti gli agenti proveranno a "claimare"
+        // il primo che riesce a prenderlo -> diventa mazziere
+        this.actionAsync(Out.class, "token(mazziere)");
     }
 
 }

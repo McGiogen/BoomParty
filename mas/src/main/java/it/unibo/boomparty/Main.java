@@ -8,6 +8,6 @@ public class Main {
     private static Logger log = LogManager.getRootLogger();
 
     public static void main(String[] args) {
-        Bootstrap.bootMasProject(true);
+        Bootstrap.bootMasProject(false);
     }
 }
