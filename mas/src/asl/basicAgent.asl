@@ -39,9 +39,6 @@ role(null).  // TODO
 list_contains([], _) :- false.
 list_contains([X|_], X) :- true.
 list_contains([Elem|Tail], X) :- list_contains(Tail, X).
-
-prova(token(Y), X) :- Y is X.
-
 at(P) :- neighbors(List) & list_contains(List, P).
 
 
@@ -60,8 +57,18 @@ at(P) :- neighbors(List) & list_contains(List, P).
     <-  t4jn.api.inp("default", "127.0.0.1", "20504", token(X), Op0);
         .print("Getting result for op #", Op0);
         t4jn.api.getResult(Op0, Result);
-        prova(Result, Y);
-        .print("ResultX: ", Result, " for op #", Op0, " X=", Y).
+        if(not(Result == null)) {
+            t4jn.api.getArg(Result, 0, TokenVal);
+            if(TokenVal == "mazziere"){
+                .print("Sono lo ", TokenVal);
+                +sonoMazziere;
+            } else {
+                .print("niente non dovrei aver pescato niente: ", TokenVal);
+            }
+        } else {
+            .print("Abbiamo problemo");
+        }
+        .print("fine boot").
 
 +!init
     <-	?name(X);
