@@ -80,9 +80,10 @@ at(P) :- neighbors(List) & list_contains(List, P).
                 ?name(Name);
                 .print("Ricevuto ruolo mazziere ", Name);
                 !assegnaRuoli;
-            } else {
-                !recuperaRuolo;
+                !assegnaStanze;
             }
+            !recuperaRuolo;
+            !recuperaStanza;
         } else {
             .print("Errore recupero token mazziere");
         }
@@ -92,11 +93,22 @@ at(P) :- neighbors(List) & list_contains(List, P).
     <-
         .print("Inizio assegnazione ruoli");
         /* TODO creazione artefatti cartE */
-        t4jn.api.out("default", "127.0.0.1", "20504", infoRuoloDisp(artifId(1)), Op1);
-        t4jn.api.out("default", "127.0.0.1", "20504", infoRuoloDisp(artifId(2)), Op2);
-        t4jn.api.out("default", "127.0.0.1", "20504", infoRuoloDisp(artifId(3)), Op3);
-        !recuperaRuolo;
+        t4jn.api.out("default", "127.0.0.1", "20504", infoRuoloDisp(artifId(1111)), Op1);
+        t4jn.api.out("default", "127.0.0.1", "20504", infoRuoloDisp(artifId(2222)), Op2);
+        t4jn.api.out("default", "127.0.0.1", "20504", infoRuoloDisp(artifId(3333)), Op3);
+        t4jn.api.out("default", "127.0.0.1", "20504", infoRuoloDisp(artifId(4444)), Op4);
         .print("Fine assegnazione ruoli").
+
++!assegnaStanze
+    <-
+        .print("Inizio assegnazione stanze");
+        /* TODO creazione stanza */
+        t4jn.api.out("default", "127.0.0.1", "20504", stanza(1), Op1);
+        t4jn.api.out("default", "127.0.0.1", "20504", stanza(2), Op2);
+        t4jn.api.out("default", "127.0.0.1", "20504", stanza(1), Op3);
+        t4jn.api.out("default", "127.0.0.1", "20504", stanza(2), Op4);
+        /* TODO creazione leader stanza */
+        .print("Fine assegnazione stanze").
 
 +!recuperaRuolo
     <-
@@ -106,12 +118,27 @@ at(P) :- neighbors(List) & list_contains(List, P).
         if(not(InfoRuoloDisp == null)) {
             t4jn.api.getArg(InfoRuoloDisp, 0, ArtifAtom);
             t4jn.api.getArg(ArtifAtom, 0, ArtifId);
+            +ruoloCorrente(ArtifId);
             .print("Ruolo assegnatomi ", ArtifId);
         } else {
             .print("Errore recupero ruolo");
         }
         .print("Fine recupero ruolo").
 
+
++!recuperaStanza
+    <-
+        .print("Inizio recupero stanza");
+        t4jn.api.uin("default", "127.0.0.1", "20504", stanza(St), Op0);
+        t4jn.api.getResult(Op0, StanzaAtom);
+        if(not(StanzaAtom == null)) {
+            t4jn.api.getArg(StanzaAtom, 0, StanzaId);
+            +stanzaCorrente(StanzaId);
+            .print("Stanza assegnatomi ", StanzaId);
+        } else {
+            .print("Errore recupero stanza");
+        }
+        .print("Fine recupero stanza").
 
 /* Handle movement */
 

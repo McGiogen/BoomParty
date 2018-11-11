@@ -3,7 +3,7 @@
 /* Initial beliefs and rules */
 
 /* Initial goals */
-
+/*
 !start.
 
 +!start
@@ -33,3 +33,5 @@
        t4jn.api.out("default", "127.0.0.1", "20504", hello(wonderful,world), Op2);
        .print("Op #", Op2, " done");
        .print("TWO END").
+
+ */
