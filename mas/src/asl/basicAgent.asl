@@ -103,11 +103,12 @@ at(P) :- neighbors(List) & list_contains(List, P).
     <-
         .print("Inizio assegnazione stanze");
         /* TODO creazione stanza */
-        t4jn.api.out("default", "127.0.0.1", "20504", stanza(1), Op1);
-        t4jn.api.out("default", "127.0.0.1", "20504", stanza(2), Op2);
-        t4jn.api.out("default", "127.0.0.1", "20504", stanza(1), Op3);
-        t4jn.api.out("default", "127.0.0.1", "20504", stanza(2), Op4);
         /* TODO creazione leader stanza */
+        t4jn.api.out("default", "127.0.0.1", "20504", stanzaAssegn(1, true), Op1);
+        t4jn.api.out("default", "127.0.0.1", "20504", stanzaAssegn(2, true), Op2);
+        /* TODO conto numero player, divido per due tolgo uno e faccio una out per stanza con false */
+        t4jn.api.out("default", "127.0.0.1", "20504", stanzaAssegn(1, false), Op3);
+        t4jn.api.out("default", "127.0.0.1", "20504", stanzaAssegn(2, false), Op4);
         .print("Fine assegnazione stanze").
 
 +!recuperaRuolo
@@ -129,12 +130,22 @@ at(P) :- neighbors(List) & list_contains(List, P).
 +!recuperaStanza
     <-
         .print("Inizio recupero stanza");
-        t4jn.api.uin("default", "127.0.0.1", "20504", stanza(St), Op0);
-        t4jn.api.getResult(Op0, StanzaAtom);
+        t4jn.api.uin("default", "127.0.0.1", "20504", stanzaAssegn(St, IsL), Op0);
+        t4jn.api.getResult(Op0, StanzaAssegnAtom);
         if(not(StanzaAtom == null)) {
-            t4jn.api.getArg(StanzaAtom, 0, StanzaId);
-            +stanzaCorrente(StanzaId);
-            .print("Stanza assegnatomi ", StanzaId);
+            t4jn.api.getArg(StanzaAssegnAtom, 0, StanzaAssegnId);
+            +stanzaCorrente(StanzaAssegnId);
+            .print("Stanza assegnatomi ", StanzaAssegnId);
+
+            t4jn.api.getArg(StanzaAssegnAtom, 1, IsLeader);
+            if(IsLeader == "true") {
+                .print("Mi è stato assegnato il ruolo di leader");
+                +ruoloLeader(true);
+                ?name(MioNome);
+                t4jn.api.out("default", "127.0.0.1", "20504", stanzaData(id(StanzaAssegnId), leader(MioNome)), OpL);
+            } else {
+                +ruoloLeader(false);
+            }
         } else {
             .print("Errore recupero stanza");
         }
