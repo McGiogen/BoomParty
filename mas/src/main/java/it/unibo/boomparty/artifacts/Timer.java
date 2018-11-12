@@ -4,6 +4,9 @@ import cartago.Artifact;
 import cartago.INTERNAL_OPERATION;
 import cartago.OPERATION;
 
+import java.util.Date;
+import java.sql.Timestamp;
+
 public class Timer extends Artifact {
 
     private final static long MILLISECONDS_IN_MINUTE = 60000;
@@ -37,7 +40,11 @@ public class Timer extends Artifact {
 
     @INTERNAL_OPERATION
     void doCountdown() {
+//        System.out.println("Starting timer for " + this.countdown + " milliseconds.");
+//        System.out.println(new Timestamp(new Date().getTime()));
         await_time(this.countdown);
+        System.out.println("Times up!");
+//        System.out.println(new Timestamp(new Date().getTime()));
         signal("timeUp");
         this.started = false;
     }
