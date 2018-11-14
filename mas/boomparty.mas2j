@@ -5,10 +5,10 @@ MAS boomparty {
 	environment: it.unibo.boomparty.env.BasicEnvironment
 
 	agents:
-		paolo tucsonAgent agentArchClass it.unibo.tucson4jason.architecture.T4JnArchImpl #1;
-		fernando tucsonAgent agentArchClass it.unibo.tucson4jason.architecture.T4JnArchImpl #1;
-		giorgiovanni tucsonAgent agentArchClass it.unibo.tucson4jason.architecture.T4JnArchImpl #1;
-		lucaneri tucsonAgent agentArchClass it.unibo.tucson4jason.architecture.T4JnArchImpl #1;
+		paolo tucsonAgent agentArchClass it.unibo.tucson4jason.architecture.BoomPartyAgentArch #1;
+		fernando tucsonAgent agentArchClass it.unibo.tucson4jason.architecture.BoomPartyAgentArch #1;
+		giorgiovanni tucsonAgent agentArchClass it.unibo.tucson4jason.architecture.BoomPartyAgentArch #1;
+		lucaneri tucsonAgent agentArchClass it.unibo.tucson4jason.architecture.BoomPartyAgentArch #1;
 		// ginetto tucsonAgent agentArchClass it.unibo.tucson4jason.architecture.T4JnArchImpl #1;
 	    // clockCreator clockCreator agentArchClass jaca.CAgentArch;
 

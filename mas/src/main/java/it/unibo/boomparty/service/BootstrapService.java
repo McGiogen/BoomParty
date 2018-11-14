@@ -29,7 +29,7 @@ public class BootstrapService {
         // mas project
         bootMasProject(false);
         // agenti
-        startAgents(players);
+        // startAgents(players);
     }
 
     private void bootMasProject(boolean debug) {
@@ -44,11 +44,12 @@ public class BootstrapService {
                 // jade
                 startJade();
 
+                startAgents(4);
+
                 // jason
                 RunJadeMAS.main(new String[]{"boomparty.mas2j"});
 
-                // agenti
-                // startAgents();
+                // qui non arriva fino a quando MAS è attivo
             }
         }catch (JasonException e) {
             e.printStackTrace();

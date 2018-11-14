@@ -92,8 +92,16 @@ at(P) :- neighbors(List) & list_contains(List, P).
 +!assegnaRuoli
     <-
         .print("Inizio assegnazione ruoli");
-        /* TODO creazione artefatti cartE */
-        t4jn.api.out("default", "127.0.0.1", "20504", infoRuoloDisp(artifId(1111)), Op1);
+        ?players(Playerlist);
+        // todo Luca: sostituire PlayerList con la tupla dei ruoli
+        .print(Playerlist);
+        for ( .member(X,Playerlist) ) {
+            .print(X);    // print all members of the list
+            // ?X(name(Y));
+            // makeArtifact("Card1", "it.unibo.boomparty.artifacts.Card", ["pagliaccio"], CardId);
+            // t4jn.api.out("default", "127.0.0.1", "20504", infoRuoloDisp(artifId(CardId)), Op1);
+        }
+         t4jn.api.out("default", "127.0.0.1", "20504", infoRuoloDisp(artifId(1111)), Op1);
         t4jn.api.out("default", "127.0.0.1", "20504", infoRuoloDisp(artifId(2222)), Op2);
         t4jn.api.out("default", "127.0.0.1", "20504", infoRuoloDisp(artifId(3333)), Op3);
         t4jn.api.out("default", "127.0.0.1", "20504", infoRuoloDisp(artifId(4444)), Op4);
