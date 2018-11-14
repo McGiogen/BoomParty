@@ -1,7 +1,9 @@
-package it.unibo.boomparty;
+package it.unibo.boomparty.service;
 
 import it.unibo.boomparty.gui.MainGuiAgent;
 import jason.JasonException;
+import jason.infra.centralised.RunCentralisedMAS;
+import jason.infra.jade.RunJadeMAS;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -13,75 +15,55 @@ import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
 
 
-public class Bootstrap {
+public class BootstrapService {
 
     private static Logger log = LogManager.getLogger();
-    private AgentContainer mainContainer;
+    private AgentContainer mainJadeContainer;
     private String tname;
 
-    public Bootstrap() {
-        init();
-        startAgents();
+
+    public BootstrapService() {
     }
 
-    private void init() {
+    public void startSimulation(int players){
+        // mas project
+        bootMasProject(false);
+        // agenti
+        startAgents(players);
+    }
+
+    private void bootMasProject(boolean debug) {
+        System.out.println("Launching mas2j project");
+        try {
+            if (debug) {
+                RunCentralisedMAS.main(new String[]{"boomparty.mas2j", "-debug"});
+            } else {
+                // tucson
+                startTucson();
+
+                // jade
+                startJade();
+
+                // jason
+                RunJadeMAS.main(new String[]{"boomparty.mas2j"});
+
+                // agenti
+                // startAgents();
+            }
+        }catch (JasonException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void startTucson() {
         // Tucson Node Service
         this.tname = TucsonUtils.startNS();
         log.info("Istanziato Tucson: " + tname);
-
-        this.mainContainer = JadeUtils.startMainContainer();
     }
 
-    private void startAgents() {
-        try {
-            // Avvio l'agente che gestisce le configurazioni del sistema
-            AgentController agSetting = this.mainContainer.createNewAgent(
-                    "settingsAgent",
-                    SettingsAgent.class.getName(),
-                    new Object[] { tname }
-            );
-            agSetting.start();
-        } catch (StaleProxyException e) {
-            log.error("Errore durante creazione agenti: " + e.getMessage());
-        }
-    }
+    private void startJade() {
 
-    public static void bootMasProject(final boolean debug) {
-        System.out.println("Launching mas2j project");
-
-
-        String[] args;
-        if (debug) {
-            args = new String[]{"boomparty.mas2j", "-debug"};
-            try {
-                jason.infra.centralised.RunCentralisedMAS.main(args);
-            } catch (JasonException e) {
-                e.printStackTrace();
-            }
-        } else {
-             Bootstrap.bootJadeAndTucson();
-
-            args = new String[]{"boomparty.mas2j"};
-            try {
-                jason.infra.jade.RunJadeMAS.main(args);
-            } catch (JasonException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public static void bootJadeAndTucson(/*ProgramArgumentsHelper pa*/) {
-        String tname = TucsonUtils.getNSId();
-
-        // Avvio il main se richiesto
-//        if (pa.isMain()) {
-        new Bootstrap();
-//        }
-
-        // Avvio un device se richiesto
-//        if (pa.getDevice() != null) {
-//            DeviceUtils.createInstance(pa.getDevice(), tname);
-//        }
+        this.mainJadeContainer = JadeUtils.startMainContainer();
 
         // Avvio la gui e il relativo agente se richiesto
         try {
@@ -94,7 +76,21 @@ public class Bootstrap {
             );
             agGui.start();
         } catch (StaleProxyException e) {
-            log.error("Errere set up sistema: " + e.getMessage());
+            log.error("Errore set up sistema: " + e.getMessage());
+        }
+    }
+
+    private void startAgents(int players) {
+        try {
+            // Avvio l'agente che gestisce le configurazioni del sistema
+            AgentController agSetting = this.mainJadeContainer.createNewAgent(
+                    "settingsAgent",
+                    SettingsAgent.class.getName(),
+                    new Object[] { tname }
+            );
+            agSetting.start();
+        } catch (StaleProxyException e) {
+            log.error("Errore durante creazione agenti: " + e.getMessage());
         }
     }
 

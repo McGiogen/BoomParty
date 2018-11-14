@@ -3,7 +3,7 @@ package it.unibo.boomparty.env;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.unibo.boomparty.PerceptsBuilder;
+import it.unibo.boomparty.service.PerceptsBuilder;
 import jason.asSyntax.Literal;
 import jason.asSyntax.StringTerm;
 import jason.asSyntax.Structure;

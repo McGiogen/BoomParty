@@ -1,4 +1,4 @@
-package it.unibo.boomparty;
+package it.unibo.boomparty.service;
 
 import it.unibo.boomparty.env.HumanModel;
 import it.unibo.boomparty.env.WorldModel;
