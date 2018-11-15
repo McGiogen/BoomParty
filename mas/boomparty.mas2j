@@ -6,6 +6,7 @@ MAS boomparty {
 	environment: it.unibo.boomparty.env.BasicEnvironment
 
 	agents:
+	    // dummy dummy agentArchClass it.unibo.tucson4jason.architecture.BoomPartyAgentArch;
 		paolo tucsonAgent agentArchClass it.unibo.tucson4jason.architecture.BoomPartyAgentArch #1 at "c1";
 		fernando tucsonAgent agentArchClass it.unibo.tucson4jason.architecture.BoomPartyAgentArch #1 at "c1";
 		giorgiovanni tucsonAgent agentArchClass it.unibo.tucson4jason.architecture.BoomPartyAgentArch #1 at "c1";
