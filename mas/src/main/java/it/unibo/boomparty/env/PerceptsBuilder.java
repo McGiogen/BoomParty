@@ -1,8 +1,5 @@
-package it.unibo.boomparty.service;
+package it.unibo.boomparty.env;
 
-import it.unibo.boomparty.env.HumanModel;
-import it.unibo.boomparty.env.WorldModel;
-import it.unibo.boomparty.env.WorldUtils;
 import jason.asSyntax.*;
 import jason.environment.grid.Location;
 import jason.util.Pair;

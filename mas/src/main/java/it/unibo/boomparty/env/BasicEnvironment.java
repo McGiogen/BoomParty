@@ -1,15 +1,14 @@
 package it.unibo.boomparty.env;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import it.unibo.boomparty.service.PerceptsBuilder;
+import jaca.CartagoEnvironment;
 import jason.asSyntax.Literal;
 import jason.asSyntax.StringTerm;
 import jason.asSyntax.Structure;
-import jaca.CartagoEnvironment;
 import jason.environment.grid.Location;
 import jason.util.Pair;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BasicEnvironment extends CartagoEnvironment {
 
@@ -89,12 +88,12 @@ public class BasicEnvironment extends CartagoEnvironment {
     }
 
 	/**
-     * The <code>boolean</code> returned represents the action "feedback"
+     * The <code>boolean</code> returned represents the operations "feedback"
      * (success/failure)
      */
     @Override
     public boolean executeAction(final String agName, final Structure action) {
-        // this.getLogger().info("[" + agName + "] doing: " + action);
+        // this.getLogger().info("[" + agName + "] doing: " + operations);
         EnvironmentActions.Result result = new EnvironmentActions.Result();
 
         try {
@@ -113,7 +112,7 @@ public class BasicEnvironment extends CartagoEnvironment {
                     break;
                 }
                 default:
-                    this.getLogger().info("[" + agName + "] Failed to execute action " + action);
+                    this.getLogger().info("[" + agName + "] Failed to execute operations " + action);
             }
         } catch (final Exception e) {
         	this.getLogger().info("[" + agName + "] EXCEPTION: " + e.getMessage());

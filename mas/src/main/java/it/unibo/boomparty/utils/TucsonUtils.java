@@ -1,20 +1,23 @@
 package it.unibo.boomparty.utils;
 
+import alice.logictuple.LogicTuple;
+import alice.logictuple.Value;
+import alice.tucson.api.TucsonTupleCentreId;
+import alice.tucson.api.exceptions.TucsonInvalidTupleCentreIdException;
+import alice.tucson.asynchSupport.actions.specification.SetS;
+import alice.tucson.introspection.tools.InspectorGUI;
+import alice.tucson.service.TucsonNodeService;
+import alice.tucson.utilities.Utils;
+import it.unibo.boomparty.service.Settings;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import alice.tucson.api.TucsonAgentId;
-import alice.tucson.api.TucsonTupleCentreId;
-import alice.tucson.api.exceptions.TucsonInvalidAgentIdException;
-import alice.tucson.api.exceptions.TucsonInvalidTupleCentreIdException;
-import alice.tucson.introspection.tools.InspectorGUI;
-import alice.tucson.service.TucsonNodeService;
-import it.unibo.boomparty.constants.Settings;
 
 /**
  * Classe di Util per la gestione del node service
@@ -30,13 +33,11 @@ public class TucsonUtils {
      * The listening port for the TuCSoN Node service is read from Settings
      * @return String l'identificatore del tucson node service
      */
-    public static String startNS() {
+    public static TucsonTupleCentreId startTucsonNS(int port) {
 
         if (tnsMap == null) {
-            tnsMap = new HashMap<Integer, TucsonNodeService>();
+            tnsMap = new HashMap<>();
         }
-
-        int port = Settings.TNS_PORT;
 
         if (tnsMap.containsKey(port)) {
             log.warn("Un altro tns potrebbe essere attivo su questa porta..");
@@ -55,7 +56,16 @@ public class TucsonUtils {
 
         log.info("TNS avviato correttamente sulla porta " + port);
 
-        return TucsonUtils.getLocalNSId();
+        String test = TucsonUtils.getLocalNSId(port);
+
+        TucsonTupleCentreId tid = null;
+        try {
+            tid = new TucsonTupleCentreId("default", "localhost", String.valueOf(port));
+        } catch (TucsonInvalidTupleCentreIdException e) {
+            e.printStackTrace();
+            tid = null;
+        }
+        return tid;
     }
 
     /**
@@ -92,17 +102,52 @@ public class TucsonUtils {
      * Avvia un tucson inspector sulla porta di default
      */
     public static void launchInspector() {
+        //SwingUtilities.invokeLater(() -> {
+//        new Thread(() -> {
+//        EventQueue.invokeLater(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    new InspectorGUI(
+//                            new TucsonAgentId("myInspector"),
+//                            new TucsonTupleCentreId(Settings.TNS_NAME, Settings.getTNSServer(), String.valueOf(Settings.TNS_PORT)));
+//                } catch (TucsonInvalidAgentIdException | TucsonInvalidTupleCentreIdException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//            try {
+//                new InspectorGUI(
+//                        new TucsonAgentId("myInspector"),
+//                        new TucsonTupleCentreId(Settings.TNS_NAME, Settings.getTNSServer(), String.valueOf(Settings.TNS_PORT)));
+//            } catch (TucsonInvalidAgentIdException | TucsonInvalidTupleCentreIdException e) {
+//                e.printStackTrace();
+//            }
+//        }).start();
+        // {-tname tuple centre name} {-netid ip address} {-portno listening port number} {-aid agent identifier} {-?}
+        //SwingUtilities.invokeLater(() -> {
+        //new Thread(() -> {
+                //InspectorGUI.main(new String[]{"-tname", Settings.TNS_NAME, "-netip", Settings.getTNSServer(), "-portno", String.valueOf(Settings.TNS_PORT), "-aid", "myInspector"});
+        //});
+
+        Class klass = InspectorGUI.class;
+        String javaHome = System.getProperty("java.home");
+        String javaBin = javaHome + File.separator + "bin" + File.separator + "java";
+        String classpath = System.getProperty("java.class.path");
+        String className = klass.getCanonicalName();
+
+        ProcessBuilder builder = new ProcessBuilder(javaBin, "-cp", classpath, className);
+
         try {
-            new InspectorGUI(
-                    new TucsonAgentId("myInspector"),
-                    new TucsonTupleCentreId(Settings.TNS_NAME, Settings.getTNSServer(), String.valueOf(Settings.TNS_PORT))
-            );
-        } catch (TucsonInvalidAgentIdException | TucsonInvalidTupleCentreIdException e) {
+            Process process = builder.start();
+        } catch (IOException e) {
             e.printStackTrace();
         }
+        //return;
+
     }
 
-    private static String getLocalNSId() {
+    private static String getLocalNSId(int port) {
         String currentHostname = "localhost";
 
         try {
@@ -110,7 +155,7 @@ public class TucsonUtils {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-        return TucsonUtils.buildNSId(Settings.TNS_NAME, currentHostname, Settings.TNS_PORT);
+        return TucsonUtils.buildNSId(Settings.TNS_NAME, currentHostname, port);
     }
 
     public static String getNSId() {
@@ -120,4 +165,22 @@ public class TucsonUtils {
     public static String buildNSId(String nsname, String ip, int port) {
         return nsname + "@" + ip + ":" + port;
     }
+
+    public static String buildNSId(TucsonTupleCentreId ttci) {
+        return ttci.getName() + "@" + ttci.getNode() + ":" + ttci.getPort();
+    }
+
+    /**
+     * Carica le reaction da un file
+     */
+    public static void loadReactionFromFile(TucsonChannel tc, String path){
+        try {
+            String utility = Utils.fileToString(path);
+            LogicTuple specT = new LogicTuple("spec", new Value(utility));
+            tc.actionAsync(SetS.class, specT);
+        } catch (IOException e) {
+            log.error("Errore durante caricamento reactions: " + e.getMessage());
+        }
+    }
+
 }

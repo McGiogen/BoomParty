@@ -1,13 +1,13 @@
 !startFour.
 
 +!startOne
-    <- makeArtifact("Card1", "it.unibo.boomparty.artifacts.Card", ["pagliaccio"], Card1);
+    <- makeArtifact("Card1", "it.unibo.boomparty.domain.artifacts.Card", ["pagliaccio"], Card1);
        focus(Card1);
        getRole(CardRole);
        .print("Card role: ", CardRole).
 
 +!startTwo
-    <- makeArtifact("Timer1", "it.unibo.boomparty.artifacts.Timer", [], Timer1);
+    <- makeArtifact("Timer1", "it.unibo.boomparty.domain.artifacts.Timer", [], Timer1);
        focus(Timer1);
        setMinutes(1);
        startTimer;
@@ -20,7 +20,7 @@
     <- .print("Tick percieved").
 
 +!startFour
-    <- makeArtifact("Card1", "it.unibo.boomparty.artifacts.Card", ["pagliaccio"], Card1);
+    <- makeArtifact("Card1", "it.unibo.boomparty.domain.artifacts.Card", ["pagliaccio"], Card1);
        focus(Card1);
        getRole(CardRole);
        .print("Card role: ", CardRole);

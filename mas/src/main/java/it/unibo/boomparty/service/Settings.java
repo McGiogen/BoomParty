@@ -1,4 +1,4 @@
-package it.unibo.boomparty.constants;
+package it.unibo.boomparty.service;
 
 public class Settings {
 
@@ -8,12 +8,18 @@ public class Settings {
     public static final int TNS_PORT = 20504;
 
     //---- REACTIONS FILE ----
-    public static final String UTILITY_REACTION_FILE = "reactions/utility.rsp";
-    public static final String UNIQUE_ID_REACTION_FILE = "reactions/uniqueId.rsp";
+    public static final String REACTION_FILE = "reactions/reactions.rsp";
 
     //---- JADE ----
-    public static final String MC_HOST = "localhost";	//main container server
-    public static final int MC_PORT = 2500; // main container port
+    /**
+     * jade main container server
+     */
+    public static final String MC_HOST = "localhost";
+
+    /**
+     * jade main container port
+     */
+    public static final int MC_PORT = 2500;
 
     //---- AGENT ----
     public static final long TICK_TIME_SLOW = 5000L;

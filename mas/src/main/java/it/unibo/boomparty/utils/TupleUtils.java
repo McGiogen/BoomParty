@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import alice.logictuple.TupleArgument;
 
-public class TucsonDataUtils {
+public class TupleUtils {
 
     private static Logger log = LogManager.getLogger();
 

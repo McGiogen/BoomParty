@@ -1,6 +1,6 @@
 // CArtAgO artifact code for project BoomParty
 
-package it.unibo.boomparty.artifacts;
+package it.unibo.boomparty.domain.artifacts;
 
 import cartago.*;
 

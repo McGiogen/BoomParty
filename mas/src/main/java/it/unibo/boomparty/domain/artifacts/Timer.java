@@ -1,11 +1,8 @@
-package it.unibo.boomparty.artifacts;
+package it.unibo.boomparty.domain.artifacts;
 
 import cartago.Artifact;
 import cartago.INTERNAL_OPERATION;
 import cartago.OPERATION;
-
-import java.util.Date;
-import java.sql.Timestamp;
 
 public class Timer extends Artifact {
 

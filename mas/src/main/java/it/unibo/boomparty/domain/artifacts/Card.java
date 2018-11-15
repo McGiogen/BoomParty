@@ -1,4 +1,4 @@
-package it.unibo.boomparty.artifacts;
+package it.unibo.boomparty.domain.artifacts;
 
 import cartago.Artifact;
 import cartago.OPERATION;

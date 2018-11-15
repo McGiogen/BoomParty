@@ -1,35 +1,22 @@
-package it.unibo.boomparty.dao;
+package it.unibo.boomparty.domain.tuples;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import it.unibo.boomparty.utils.TupleUtils;
 
 import alice.logictuple.LogicTuple;
 import alice.logictuple.exceptions.InvalidLogicTupleException;
-import it.unibo.boomparty.utils.TucsonDataUtils;
 
-public class PlayerDAO extends BaseDAO {
-
-    private static final long serialVersionUID = 9125825413877912156L;
-    private static Logger log = LogManager.getLogger();
+public class PlayerTuple extends BaseTuple {
 
     public static final String TEMPLATE = asTupleString("X", "Y");
 
     private String name;
     private String room;
 
-    public PlayerDAO(String name, String room) {
+    public PlayerTuple(String name, String room) {
         super();
 
         this.name = name;
         this.room = room;
-    }
-
-    public PlayerDAO(LogicTuple tupla) {
-        super(tupla);
-    }
-
-    public PlayerDAO() {
-        this(null, null);
     }
 
     @Override
@@ -51,8 +38,8 @@ public class PlayerDAO extends BaseDAO {
     @SuppressWarnings("unchecked")
     @Override
     public void fillFromTuple(LogicTuple tuple) {
-        this.name = TucsonDataUtils.stringValue(tuple.getArg("name").getArg(0));
-        this.room = TucsonDataUtils.stringValue(tuple.getArg("room").getArg(0));
+        this.name = TupleUtils.stringValue(tuple.getArg("name").getArg(0));
+        this.room = TupleUtils.stringValue(tuple.getArg("room").getArg(0));
     }
 
     @Override

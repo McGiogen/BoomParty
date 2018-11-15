@@ -1,15 +1,16 @@
 MAS boomparty {
 
-	infrastructure: Jade
-
+    // sembrerebbe utile solo per la generazione del file ant
+	// infrastructure: Jade(main_container_host("172.16.90.21"))
+    infrastructure: Centralised
 	environment: it.unibo.boomparty.env.BasicEnvironment
 
 	agents:
-		paolo tucsonAgent agentArchClass it.unibo.tucson4jason.architecture.BoomPartyAgentArch #1;
-		fernando tucsonAgent agentArchClass it.unibo.tucson4jason.architecture.BoomPartyAgentArch #1;
-		giorgiovanni tucsonAgent agentArchClass it.unibo.tucson4jason.architecture.BoomPartyAgentArch #1;
-		lucaneri tucsonAgent agentArchClass it.unibo.tucson4jason.architecture.BoomPartyAgentArch #1;
-		// ginetto tucsonAgent agentArchClass it.unibo.tucson4jason.architecture.T4JnArchImpl #1;
+		paolo tucsonAgent agentArchClass it.unibo.tucson4jason.architecture.BoomPartyAgentArch #1 at "c1";
+		fernando tucsonAgent agentArchClass it.unibo.tucson4jason.architecture.BoomPartyAgentArch #1 at "c1";
+		giorgiovanni tucsonAgent agentArchClass it.unibo.tucson4jason.architecture.BoomPartyAgentArch #1 at "c1";
+		lucaneri tucsonAgent agentArchClass it.unibo.tucson4jason.architecture.BoomPartyAgentArch #1 at "c1";
+		// ginetto tucsonAgent agentArchClass it.unibo.tucson4jason.architecture.T4JnArchImpl #1 ;
 	    // clockCreator clockCreator agentArchClass jaca.CAgentArch;
 
 	aslSourcePath:
