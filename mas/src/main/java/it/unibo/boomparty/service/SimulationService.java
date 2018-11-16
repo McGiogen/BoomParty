@@ -4,13 +4,13 @@ import alice.logictuple.exceptions.InvalidLogicTupleException;
 import alice.tucson.api.TucsonTupleCentreId;
 import alice.tucson.asynchSupport.actions.ordinary.Out;
 import com.github.javafaker.Faker;
-import it.unibo.boomparty.agent.architecture.BoomPartyAgentArch;
 import it.unibo.boomparty.domain.tuples.PlayerTuple;
 import it.unibo.boomparty.env.BasicEnvironment;
 import it.unibo.boomparty.service.model.SimulationArgs;
 import it.unibo.boomparty.utils.JadeUtils;
 import it.unibo.boomparty.utils.TucsonChannel;
 import it.unibo.boomparty.utils.TucsonUtils;
+import it.unibo.tucson4jason.architecture.BoomPartyAgentArch;
 import jade.wrapper.AgentContainer;
 import jason.JasonException;
 import jason.infra.centralised.RunCentralisedMAS;
@@ -261,7 +261,7 @@ public class SimulationService {
         List<String> names = new ArrayList<>();
         for (int i = 0; i < players; i++){
             //names.add(f.gameOfThrones().character());
-            names.add(f.superhero().name().replaceAll("\\s", "").toLowerCase());
+            names.add(f.superhero().name().replaceAll("\\s|-", "").toLowerCase());
         }
         return names;
     }
