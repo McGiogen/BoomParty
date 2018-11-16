@@ -261,7 +261,9 @@ public class SimulationService {
         List<String> names = new ArrayList<>();
         for (int i = 0; i < players; i++){
             //names.add(f.gameOfThrones().character());
-            names.add(f.superhero().name().replaceAll("\\s|-", "").toLowerCase());
+            String normalizedName = f.superhero().name().replaceAll("\\s|-", "").toLowerCase();
+            log.info("Generated name: " + normalizedName);
+            names.add(normalizedName);
         }
         return names;
     }
