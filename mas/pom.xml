@@ -47,6 +47,11 @@
             <version>2.11.1</version>
         </dependency>
         <dependency>
+            <groupId>com.github.javafaker</groupId>
+            <artifactId>javafaker</artifactId>
+            <version>0.16</version>
+        </dependency>
+        <dependency>
             <groupId>java.tuprolog</groupId>
             <artifactId>2p</artifactId>
             <version>3.1</version>
@@ -102,6 +107,50 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.0</version>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>
+                                ${project.build.directory}/lib
+                            </outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <!--<useDefaultManifestFile>true</useDefaultManifestFile>-->
+                    <archive>
+                        <index>false</index>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>it.unibo.boomparty.Main</mainClass>
+                        </manifest>
+                        <manifestEntries>
+                            <!--<Class-Path>lib/2p.jar</Class-Path>-->
+                            <!--<Class-Path>lib/cartago-2.3-SNAPSHOT.jar</Class-Path>-->
+                            <!--<Class-Path>lib/jaca-2.3-SNAPSHOT.jar</Class-Path>-->
+                            <!--<Class-Path>lib/t4j-1.1-custom.jar</Class-Path>-->
+                            <!--<Class-Path>lib/t4jn.jar</Class-Path>-->
+                            <!--<Class-Path>lib/tucson-1.12.jar</Class-Path>-->
+                            <Class-Path>lib/2p.jar lib/cartago-2.3-SNAPSHOT.jar lib/jaca-2.3-SNAPSHOT.jar lib/t4j-1.1-custom.jar lib/t4jn.jar lib/tucson-1.12.jar</Class-Path>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
             <!--<plugin>-->
             <!--<artifactId>maven-assembly-plugin</artifactId>-->
             <!--<configuration>-->
@@ -126,6 +175,4 @@
             <!--</plugin>-->
         </plugins>
     </build>
-
-
 </project>

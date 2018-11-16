@@ -1,8 +1,12 @@
 package it.unibo.boomparty.service;
 
+import alice.logictuple.exceptions.InvalidLogicTupleException;
 import alice.tucson.api.TucsonTupleCentreId;
 import alice.tucson.asynchSupport.actions.ordinary.Out;
+import com.github.javafaker.Faker;
+import it.unibo.boomparty.agents.architecture.BoomPartyAgentArch;
 import it.unibo.boomparty.domain.tuples.PlayerTuple;
+import it.unibo.boomparty.env.BasicEnvironment;
 import it.unibo.boomparty.service.model.SimulationArgs;
 import it.unibo.boomparty.utils.JadeUtils;
 import it.unibo.boomparty.utils.TucsonChannel;
@@ -14,33 +18,40 @@ import jason.infra.jade.RunJadeMAS;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+
 public class SimulationService {
 
     private static Logger log = LogManager.getLogger();
     private String tname;
 
-    public SimulationService() {
-    }
-
+    /**
+     * Simulation entry point
+     */
     public void startSimulation(SimulationArgs args){
         try {
+            // generazione giocatori
+            List<String> playersName = generatePlayersName(args.getPlayers());
+
             // tucson
             TucsonChannel tucsonChannel = startTucson(args.isDebug());
 
-            // parse sim args
-            // inserisco i giocatori della partita (automatizzabile)
-            tucsonChannel.actionAsync(Out.class, new PlayerTuple("paolo", null).toTuple());
-            tucsonChannel.actionAsync(Out.class, new PlayerTuple("lucaneri", null).toTuple());
-            tucsonChannel.actionAsync(Out.class, new PlayerTuple("fernando", null).toTuple());
-            tucsonChannel.actionAsync(Out.class, new PlayerTuple("giorgiovanni", null).toTuple());
-
-            // inserisco il token che tutti gli agenti proveranno a "claimare"
-            // il primo che riesce a prenderlo -> diventa mazziere
-            tucsonChannel.actionAsync(Out.class, "token(mazziere)");
+            // settings
+            putSettingsOnTupleSpace(tucsonChannel, playersName);
 
             // mas project
-            startCentralisedMasProject(args.isDebug());
-            // startDistributedJadeMasProject(false);
+            if(args.isDistributed()){
+                // go jade
+                startDistributedJadeMasProject(false);
+            } else {
+                // go centralised
+                startCentralisedMasProject(args.isDebug(), buildMas2jFile(args, playersName));
+            }
         } catch (Exception e) {
             e.printStackTrace();
             log.error("Errore durante avvio della simulazione");
@@ -53,15 +64,15 @@ public class SimulationService {
      * It is also useful to test and develop (prototype) systems.
      * Centralised is the default infrastructure.
      */
-    private void startCentralisedMasProject(boolean debug) throws JasonException {
+    private void startCentralisedMasProject(boolean debug, String mas2jPath) throws JasonException {
         System.out.println("Launching mas2j project");
         // start mas
         debug = false;
         if(debug){
-            // nb: mas in modalità debug funziona "passo passo"
-            RunCentralisedMAS.main(new String[]{"boomparty.mas2j", "-debug"});
+            // nb: jason in modalità debug funziona "passo passo"
+            RunCentralisedMAS.main(new String[]{mas2jPath, "-debug"});
         } else {
-            RunCentralisedMAS.main(new String[]{"boomparty.mas2j"});
+            RunCentralisedMAS.main(new String[]{mas2jPath});
         }
     }
 
@@ -102,8 +113,12 @@ public class SimulationService {
     private TucsonChannel startTucson(boolean debug) {
         // Tucson Node Service
         TucsonTupleCentreId ttci = TucsonUtils.startTucsonNS(Settings.TNS_PORT);
-        this.tname = TucsonUtils.buildNSId(ttci); // default@127.0.1.1:20504
-        log.info("Istanziato Tucson: " + tname);
+        if(ttci != null){
+            this.tname = TucsonUtils.buildNSId(ttci); // default@127.0.1.1:20504
+            log.info("Istanziato Tucson: " + tname);
+        } else {
+            log.error("Errore durante lo start di Tucson sulla porta: " + Settings.TNS_PORT);
+        }
 
         // Tucson channel
         TucsonChannel tChannel = new TucsonChannel("tucsonChannel", ttci);
@@ -206,5 +221,62 @@ public class SimulationService {
 //        return outputBuf.toString().trim();
 //    }
 
+    /**
+     * Crea il file mas2j della simulazione
+     * @param playersName La lista dei giocatori
+     * @return Il percorso al file generato
+     */
+    private String buildMas2jFile(SimulationArgs args, List<String> playersName){
+
+        List<String> lines = new ArrayList<>();
+        lines.add("MAS boomparty {");
+        lines.add("\tinfrastructure: " + (args.isDistributed() ? "Jade": "Centralised"));
+        lines.add("\tenvironment: " + BasicEnvironment.class.getName());
+        lines.add("\tagents:");
+        for (String name: playersName) {
+            lines.add("\t\t"+name+" tucsonAgent agentArchClass "+ BoomPartyAgentArch.class.getName() +" #1;");
+        }
+        lines.add("\taslSourcePath:");
+        lines.add("\t\t\"src/asl\";");
+        lines.add("}");
+
+        try {
+            Path file = Files.createTempFile("tmp-mas2j",".mas2j");
+            //Path file = Paths.get("/home/aleneri/Downloads/test.mas2j");
+            Files.write(file, lines, Charset.forName("UTF-8"));
+            return file.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Genera un nome per ogni player della partita
+     * @param players Numero di giocatori
+     * @return La lista di nomi
+     */
+    private List<String> generatePlayersName(int players){
+        Faker f = new Faker();
+        List<String> names = new ArrayList<>();
+        for (int i = 0; i < players; i++){
+            //names.add(f.gameOfThrones().character());
+            names.add(f.superhero().name().replaceAll("\\s", "").toLowerCase());
+        }
+        return names;
+    }
+
+    /**
+     * Inserisco le config di simulazione su tucson
+     */
+    private void putSettingsOnTupleSpace(TucsonChannel tChannel, List<String> playersName) throws InvalidLogicTupleException {
+        // inserisco i giocatori della partita
+        for (String name: playersName){
+            tChannel.actionAsync(Out.class, new PlayerTuple(name, null).toTuple());
+        }
+        // inserisco il token che tutti gli agenti proveranno a "claimare"
+        // il primo che riesce a prenderlo -> diventa mazziere
+        tChannel.actionAsync(Out.class, "token(mazziere)");
+    }
 }
 

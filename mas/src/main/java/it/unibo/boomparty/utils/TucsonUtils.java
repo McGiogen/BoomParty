@@ -2,7 +2,9 @@ package it.unibo.boomparty.utils;
 
 import alice.logictuple.LogicTuple;
 import alice.logictuple.Value;
+import alice.tucson.api.TucsonAgentId;
 import alice.tucson.api.TucsonTupleCentreId;
+import alice.tucson.api.exceptions.TucsonInvalidAgentIdException;
 import alice.tucson.api.exceptions.TucsonInvalidTupleCentreIdException;
 import alice.tucson.asynchSupport.actions.specification.SetS;
 import alice.tucson.introspection.tools.InspectorGUI;
@@ -12,7 +14,6 @@ import it.unibo.boomparty.service.Settings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -56,9 +57,7 @@ public class TucsonUtils {
 
         log.info("TNS avviato correttamente sulla porta " + port);
 
-        String test = TucsonUtils.getLocalNSId(port);
-
-        TucsonTupleCentreId tid = null;
+        TucsonTupleCentreId tid;
         try {
             tid = new TucsonTupleCentreId("default", "localhost", String.valueOf(port));
         } catch (TucsonInvalidTupleCentreIdException e) {
@@ -125,41 +124,44 @@ public class TucsonUtils {
 //            }
 //        }).start();
         // {-tname tuple centre name} {-netid ip address} {-portno listening port number} {-aid agent identifier} {-?}
-        //SwingUtilities.invokeLater(() -> {
-        //new Thread(() -> {
-                //InspectorGUI.main(new String[]{"-tname", Settings.TNS_NAME, "-netip", Settings.getTNSServer(), "-portno", String.valueOf(Settings.TNS_PORT), "-aid", "myInspector"});
-        //});
+//        SwingUtilities.invokeLater(() -> {
+//        new Runnable(() -> {
+//                InspectorGUI.main(new String[]{"-tname", Settings.TNS_NAME, "-netip", Settings.getTNSServer(), "-portno", String.valueOf(Settings.TNS_PORT), "-aid", "myInspector"});
+//        }));
 
-        Class klass = InspectorGUI.class;
-        String javaHome = System.getProperty("java.home");
-        String javaBin = javaHome + File.separator + "bin" + File.separator + "java";
-        String classpath = System.getProperty("java.class.path");
-        String className = klass.getCanonicalName();
-
-        ProcessBuilder builder = new ProcessBuilder(javaBin, "-cp", classpath, className);
-
-        try {
-            Process process = builder.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        Class klass = InspectorGUI.class;
+//        String javaHome = System.getProperty("java.home");
+//        String javaBin = javaHome + File.separator + "bin" + File.separator + "java";
+//        String classpath = System.getProperty("java.class.path");
+//        String className = klass.getCanonicalName();
+//
+//        ProcessBuilder builder = new ProcessBuilder(javaBin, "-cp", classpath, className);
+//
+//        try {
+//            Process process = builder.start();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         //return;
 
-    }
-
-    private static String getLocalNSId(int port) {
-        String currentHostname = "localhost";
+//        new Thread(() -> {
+//            try {
+//                new InspectorGUI(
+//                    new TucsonAgentId("myInspector"),
+//                    new TucsonTupleCentreId(Settings.TNS_NAME, Settings.getTNSServer(), String.valueOf(Settings.TNS_PORT)));
+//            } catch (TucsonInvalidAgentIdException | TucsonInvalidTupleCentreIdException e) {
+//                e.printStackTrace();
+//            }
+//        }).start();
 
         try {
-            currentHostname = InetAddress.getLocalHost().getHostAddress();
-        } catch (UnknownHostException e) {
+            new InspectorGUI(
+                    new TucsonAgentId("myInspector"),
+                    new TucsonTupleCentreId(Settings.TNS_NAME, Settings.getTNSServer(), String.valueOf(Settings.TNS_PORT)));
+        } catch (TucsonInvalidAgentIdException | TucsonInvalidTupleCentreIdException e) {
             e.printStackTrace();
         }
-        return TucsonUtils.buildNSId(Settings.TNS_NAME, currentHostname, port);
-    }
 
-    public static String getNSId() {
-        return TucsonUtils.buildNSId(Settings.TNS_NAME, Settings.getTNSServer(), Settings.TNS_PORT);
     }
 
     public static String buildNSId(String nsname, String ip, int port) {
