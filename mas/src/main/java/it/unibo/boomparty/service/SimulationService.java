@@ -274,11 +274,11 @@ public class SimulationService {
     private void putSettingsOnTupleSpace(TucsonChannel tChannel, List<String> playersName) throws InvalidLogicTupleException {
         // inserisco i giocatori della partita
         for (String name: playersName){
-            tChannel.actionAsync(Out.class, new PlayerTuple(name, null).toTuple());
+            tChannel.actionSynch(Out.class, new PlayerTuple(name, null).toTuple());
         }
         // inserisco il token che tutti gli agenti proveranno a "claimare"
         // il primo che riesce a prenderlo -> diventa mazziere
-        tChannel.actionAsync(Out.class, "token(mazziere)");
+        tChannel.actionSynch(Out.class, "token(mazziere)");
     }
 }
 

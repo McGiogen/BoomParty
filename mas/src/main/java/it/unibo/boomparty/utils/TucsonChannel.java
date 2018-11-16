@@ -42,7 +42,7 @@ public class TucsonChannel {
         }
     }
 
-    public ITucsonOperation actionSynch(Class<AbstractTucsonAction> actionClass, String tuple) {
+    public ITucsonOperation actionSynch(Class<? extends AbstractTucsonAction> actionClass, String tuple) {
         try {
             LogicTuple lt = LogicTuple.parse(tuple);
             return actionSynch(actionClass, lt);
@@ -53,7 +53,7 @@ public class TucsonChannel {
         return null;
     }
 
-    public ITucsonOperation actionSynch(Class<AbstractTucsonAction> actionClass, LogicTuple lt) {
+    public ITucsonOperation actionSynch(Class<? extends AbstractTucsonAction> actionClass, LogicTuple lt) {
         try {
             AbstractTucsonAction action = instantiateAction(ttci, actionClass, lt);
             ITucsonOperation tucsonOperation;

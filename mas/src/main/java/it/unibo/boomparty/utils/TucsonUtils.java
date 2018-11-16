@@ -48,6 +48,12 @@ public class TucsonUtils {
         try {
             TucsonNodeService ns = new TucsonNodeService(port);
             ns.install();
+
+            // Aspetto che il node service sia effettivamente installato
+            while (!TucsonNodeService.isInstalled(port, 5000)) {
+                Thread.sleep(1000L);
+            }
+
             tnsMap.put(port, ns);
         } catch (Exception e) {
             // E.g. another TuCSoN Node is running on same port.
@@ -179,7 +185,7 @@ public class TucsonUtils {
         try {
             String utility = Utils.fileToString(path);
             LogicTuple specT = new LogicTuple("spec", new Value(utility));
-            tc.actionAsync(SetS.class, specT);
+            tc.actionSynch(SetS.class, specT);
         } catch (IOException e) {
             log.error("Errore durante caricamento reactions: " + e.getMessage());
         }
