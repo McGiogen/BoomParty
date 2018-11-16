@@ -231,7 +231,7 @@ public class SimulationService {
         List<String> lines = new ArrayList<>();
         lines.add("MAS boomparty {");
         lines.add("\tinfrastructure: " + (args.isDistributed() ? "Jade": "Centralised"));
-        lines.add("\tenvironment: " + BasicEnvironment.class.getName());
+        lines.add("\tenvironment: " + BasicEnvironment.class.getName() + "(\"" + String.join(",", playersName) + "\")");
         lines.add("\tagents:");
         for (String name: playersName) {
             lines.add("\t\t"+name+" tucsonAgent agentArchClass "+ BoomPartyAgentArch.class.getName() +";");

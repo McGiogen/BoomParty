@@ -8,6 +8,7 @@ import jason.environment.grid.Location;
 import jason.util.Pair;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class BasicEnvironment extends CartagoEnvironment {
@@ -16,14 +17,15 @@ public class BasicEnvironment extends CartagoEnvironment {
 	private List<HumanModel> players;
 
 	@Override
-	public void init(final String[] args) {
-	    super.init(args);
-		this.players = new ArrayList<HumanModel>() {{
-		    add(new HumanModel("paolo", 0));
-		    add(new HumanModel("fernando", 1));
-		    add(new HumanModel("giorgiovanni", 2));
-		    add(new HumanModel("lucaneri", 3));
-		}};
+	public void init(String[] args) {
+	    String[] playersNames = args[0].split(",");
+	    super.init(Arrays.copyOfRange(args, 1, args.length));
+
+        this.players = new ArrayList<HumanModel>(playersNames.length);
+	    for (int i = 0; i < playersNames.length; i++) {
+	        this.players.add(new HumanModel(playersNames[i], i));
+        }
+
         this.model = new WorldModel(this.players.size());
 
         final WorldView view = new WorldView(this.model);
