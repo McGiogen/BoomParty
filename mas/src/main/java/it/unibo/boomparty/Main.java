@@ -13,7 +13,7 @@ public class Main {
 
         SimulationArgs simArgs = new SimulationArgs();
         simArgs.setDebug(true);
-        simArgs.setPlayers(4);
+        simArgs.setPlayers(9);
 
         // start sim
         SimulationService sim = new SimulationService();

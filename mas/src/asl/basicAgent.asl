@@ -110,13 +110,12 @@ at(P) :- neighbors(List) & list_contains(List, P).
 +!assegnaStanze
     <-
         .print("Inizio assegnazione stanze");
-        /* TODO creazione stanza */
-        /* TODO creazione leader stanza */
-        t4jn.api.out("default", "127.0.0.1", "20504", stanzaAssegn(1, true), Op1);
-        t4jn.api.out("default", "127.0.0.1", "20504", stanzaAssegn(2, true), Op2);
-        /* TODO conto numero player, divido per due tolgo uno e faccio una out per stanza con false */
-        t4jn.api.out("default", "127.0.0.1", "20504", stanzaAssegn(1, false), Op3);
-        t4jn.api.out("default", "127.0.0.1", "20504", stanzaAssegn(2, false), Op4);
+        ?players(Playerlist);
+        .length(Playerlist, NumPlayers);
+        for ( .range(I, 0, NumPlayers-1) ) {
+            .eval(IsLeader, I < 2);
+            t4jn.api.out("default", "127.0.0.1", "20504", stanzaAssegn(I mod 2 + 1, IsLeader), Op3);
+        }
         .print("Fine assegnazione stanze").
 
 +!recuperaRuolo
