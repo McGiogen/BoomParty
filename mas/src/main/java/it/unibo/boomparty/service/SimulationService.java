@@ -4,7 +4,7 @@ import alice.logictuple.exceptions.InvalidLogicTupleException;
 import alice.tucson.api.TucsonTupleCentreId;
 import alice.tucson.asynchSupport.actions.ordinary.Out;
 import com.github.javafaker.Faker;
-import it.unibo.boomparty.agents.architecture.BoomPartyAgentArch;
+import it.unibo.boomparty.agent.architecture.BoomPartyAgentArch;
 import it.unibo.boomparty.domain.tuples.PlayerTuple;
 import it.unibo.boomparty.env.BasicEnvironment;
 import it.unibo.boomparty.service.model.SimulationArgs;
@@ -59,7 +59,7 @@ public class SimulationService {
     }
 
     /**
-     * This infrastructure runs all agents in the same host.
+     * This infrastructure runs all agent in the same host.
      * It provides fast startup and high performance for systems that can be executed in a single computer.
      * It is also useful to test and develop (prototype) systems.
      * Centralised is the default infrastructure.
@@ -80,10 +80,10 @@ public class SimulationService {
      * http://jason.sourceforge.net/faq/#sec:whyjade
      * When should I use the JADE infrastructures?
      * The centralised infrastructure does not support:
-     * execution of the agents at distributed hosts, and interoperability with non-Jason agents.
+     * execution of the agent at distributed hosts, and interoperability with non-Jason agent.
      *
      * If you need any of these features, you should choose the JADE infrastructure (or implement/plug a new infrastructure for/into Jason yourself).
-     * The interoperability with non-Jason agents is achieved by JADE through FIPA-ACL communication.
+     * The interoperability with non-Jason agent is achieved by JADE through FIPA-ACL communication.
      */
     private void startDistributedJadeMasProject(boolean debug) {
         System.out.println("Launching mas2j project");
@@ -234,7 +234,7 @@ public class SimulationService {
         lines.add("\tenvironment: " + BasicEnvironment.class.getName());
         lines.add("\tagents:");
         for (String name: playersName) {
-            lines.add("\t\t"+name+" tucsonAgent agentArchClass "+ BoomPartyAgentArch.class.getName() +" #1;");
+            lines.add("\t\t"+name+" tucsonAgent agentArchClass "+ BoomPartyAgentArch.class.getName() +";");
         }
         lines.add("\taslSourcePath:");
         lines.add("\t\t\"src/asl\";");

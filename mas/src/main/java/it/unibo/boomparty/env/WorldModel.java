@@ -42,7 +42,7 @@ public class WorldModel extends GridWorldModel {
      * Copy of GridWorldModel constructor 
      * @param w 		Width, number of blocks
      * @param h 		Height, number of blocks
-     * @param nbAgs 	Number of agents 
+     * @param nbAgs 	Number of agent
      */
     private void initWorld(int w, int h, int nbAgs) {
     	this.width  = w;
@@ -63,7 +63,7 @@ public class WorldModel extends GridWorldModel {
     }
 
     /**
-     * Returns a random free location using isFree to test the availability of some possible location (it means free of agents and obstacles)
+     * Returns a random free location using isFree to test the availability of some possible location (it means free of agent and obstacles)
      * @param a Search only in this Area
      * @return The free position or null
      */

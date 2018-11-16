@@ -64,7 +64,7 @@ at(P) :- neighbors(List) & list_contains(List, P).
     <-
     	.all_names(List);
     	.print("All players: ", List).
-    	//it.unibo.boomparty.agents.operations.nearPlayers(X, NearP);
+    	//it.unibo.boomparty.agent.operations.nearPlayers(X, NearP);
     	//.print("I giocatori vicini a me sono: ", NearP).
 
 

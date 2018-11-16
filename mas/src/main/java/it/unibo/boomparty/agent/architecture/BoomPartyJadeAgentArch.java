@@ -1,4 +1,4 @@
-package it.unibo.boomparty.agents.architecture;
+package it.unibo.boomparty.agent.architecture;
 
 import jason.infra.jade.JadeAgArch;
 

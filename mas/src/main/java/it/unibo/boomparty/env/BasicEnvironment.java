@@ -29,7 +29,7 @@ public class BasicEnvironment extends CartagoEnvironment {
         final WorldView view = new WorldView(this.model);
         this.model.setView(view);
 
-        // Update all agents with the initial state of the environment
+        // Update all agent with the initial state of the environment
         this.updatePercepts();
 	}
 
@@ -118,7 +118,7 @@ public class BasicEnvironment extends CartagoEnvironment {
         	this.getLogger().info("[" + agName + "] EXCEPTION: " + e.getMessage());
         }
 
-        // Update all agents when the environment change
+        // Update all agent when the environment change
         this.updatePercepts();
         this.takeTime(result.getTimeSpent());
         return result.isSuccess();

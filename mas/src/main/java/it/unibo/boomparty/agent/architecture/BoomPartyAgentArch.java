@@ -1,4 +1,4 @@
-package it.unibo.boomparty.agents.architecture;
+package it.unibo.boomparty.agent.architecture;
 
 import alice.tucson.asynchSupport.actions.AbstractTucsonOrdinaryAction;
 import it.unibo.tucson4jason.architecture.T4JnArch;

@@ -1,4 +1,4 @@
-package it.unibo.boomparty.agents.operations;
+package it.unibo.boomparty.agent.operations;
 
 import jason.asSemantics.DefaultInternalAction;
 import jason.asSemantics.TransitionSystem;
