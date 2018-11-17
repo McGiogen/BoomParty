@@ -117,7 +117,11 @@ at(P) :- neighbors(List) & list_contains(List, P).
         .length(Playerlist, NumPlayers);
         for ( .range(I, 0, NumPlayers-1) ) {
             .eval(IsLeader, I < 2);
-            t4jn.api.out("default", "127.0.0.1", "20504", stanzaAssegn(I mod 2 + 1, IsLeader), Op3);
+            if ( I mod 2 == 0 ) {
+                t4jn.api.out("default", "127.0.0.1", "20504", stanzaAssegn(roomA, IsLeader), Op3);
+            } else {
+                t4jn.api.out("default", "127.0.0.1", "20504", stanzaAssegn(roomB, IsLeader), Op3);
+            }
         }
         .print("Fine assegnazione stanze").
 
