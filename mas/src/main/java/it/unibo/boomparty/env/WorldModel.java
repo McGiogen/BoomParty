@@ -32,10 +32,10 @@ public class WorldModel extends GridWorldModel {
         WorldUtils.digArea(this.data, this.hallway);
     	
     	// Choose a random position for every player
-    	for (int i = 0; i < numPlayers; i++) {
-    		Area room = i % 2 == 0 ? roomA : roomB;
-            this.setAgPos(i, this.getFreePos(room));
-    	}
+    	//for (int i = 0; i < numPlayers; i++) {
+    	//	Area room = i % 2 == 0 ? roomA : roomB;
+        //    this.setAgPos(i, this.getFreePos(room));
+    	//}
     }
 
 	/**
@@ -48,7 +48,7 @@ public class WorldModel extends GridWorldModel {
     	this.width  = w;
     	this.height = h;
 
-        // int data
+        // inizializzazione mappa con tutti ostacoli
     	this.data = new int[width][height];
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
@@ -56,9 +56,10 @@ public class WorldModel extends GridWorldModel {
             }
         }
 
+        // inizializzazione location agenti fuori dalla mappa
         this.agPos = new Location[nbAgs];
         for (int i = 0; i < this.agPos.length; i++) {
-        	this.agPos[i] = new Location(-1, -1);
+        	this.agPos[i] = new Location(-1, -1);;
         }
     }
 
@@ -88,5 +89,4 @@ public class WorldModel extends GridWorldModel {
     public int get(int x, int y) {
         return this.data[x][y];
     }
-
 }
