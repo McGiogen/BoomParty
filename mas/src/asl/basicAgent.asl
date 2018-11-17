@@ -33,7 +33,7 @@ role(null).  // TODO
 // players([ player( name(N), role(R), team(T) area(A), position(X,Y), confidence(C) ), ... ])
 
 // visible_players(List)
-// REMOVE? neighbors(List)
+// neighbors(List)
 
 /* Initial rules */
 list_contains([], _) :- false.
@@ -46,37 +46,40 @@ at(P) :- neighbors(List) & list_contains(List, P).
 
 !boot.
 
-
-/*+!boot
-    <-  !init
-        ?visible_players(Players);
-        .nth(0, Players, NearestPlayer);    // Choosing the nearest (first) player
-        !goto(NearestPlayer).*/
-
 +!boot
     <-  ?name(X);
         .print("PLAYER ", X, " START!");
-        !init
+        //!init
         !preparazioneGioco
         .print("fine boot").
 
+/*
++!boot
+    <-  !init
+        ?visible_players(Players);
+        .nth(0, Players, NearestPlayer);    // Choosing the nearest (first) player
+        !goto(NearestPlayer).
+*/
+
+/*
 +!init
     <-
     	.all_names(List);
     	.print("All players: ", List).
     	//it.unibo.boomparty.agent.operations.nearPlayers(X, NearP);
     	//.print("I giocatori vicini a me sono: ", NearP).
+*/
 
 
-/* Operazioni fase inziale partita */
+/* Operazioni fase iniziale partita */
 
 +!preparazioneGioco
     <-
         t4jn.api.inp("default", "127.0.0.1", "20504", token(X), Op0);
         t4jn.api.getResult(Op0, Result);
-        if(not(Result == null)) {
+        if (Result \== null) {
             t4jn.api.getArg(Result, 0, TokenVal);
-            if(TokenVal == "mazziere") {
+            if (TokenVal == "mazziere") {
                 ?name(Name);
                 .print("Ricevuto ruolo mazziere ", Name);
                 !assegnaRuoli;
@@ -123,7 +126,7 @@ at(P) :- neighbors(List) & list_contains(List, P).
         .print("Inizio recupero ruolo");
         t4jn.api.uin("default", "127.0.0.1", "20504", infoRuoloDisp(artifId(ID)), Op0);
         t4jn.api.getResult(Op0, InfoRuoloDisp);
-        if(not(InfoRuoloDisp == null)) {
+        if (InfoRuoloDisp \== null) {
             t4jn.api.getArg(InfoRuoloDisp, 0, ArtifAtom);
             t4jn.api.getArg(ArtifAtom, 0, ArtifId);
             +ruoloCorrente(ArtifId);
@@ -139,13 +142,13 @@ at(P) :- neighbors(List) & list_contains(List, P).
         .print("Inizio recupero stanza");
         t4jn.api.uin("default", "127.0.0.1", "20504", stanzaAssegn(St, IsL), Op0);
         t4jn.api.getResult(Op0, StanzaAssegnAtom);
-        if(not(StanzaAtom == null)) {
+        if (StanzaAtom \== null) {
             t4jn.api.getArg(StanzaAssegnAtom, 0, StanzaAssegnId);
             +stanzaCorrente(StanzaAssegnId);
             .print("Stanza assegnatomi ", StanzaAssegnId);
 
             t4jn.api.getArg(StanzaAssegnAtom, 1, IsLeader);
-            if(IsLeader == "true") {
+            if (IsLeader == "true") {
                 .print("Mi è stato assegnato il ruolo di leader");
                 +ruoloLeader(true);
                 ?name(MioNome);
