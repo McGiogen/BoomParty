@@ -1,10 +1,16 @@
 package it.unibo.boomparty.service.model;
 
+import it.unibo.boomparty.constants.GameConstans.ROLE_PLAYER;
+import it.unibo.boomparty.constants.GameConstans.TEAM_PLAYER;
+
+import java.util.Map;
+
 public class SimulationArgs {
 
     private boolean debug;
     private boolean isDistributed;
     private int players;
+    Map<TEAM_PLAYER, ROLE_PLAYER[]> carteRuolo;
 
     public boolean isDebug() {
         return debug;
@@ -28,5 +34,13 @@ public class SimulationArgs {
 
     public void setDistributed(boolean distributed) {
         isDistributed = distributed;
+    }
+
+    public Map<TEAM_PLAYER, ROLE_PLAYER[]> getCarteRuolo() {
+        return carteRuolo;
+    }
+
+    public void setCarteRuolo(Map<TEAM_PLAYER, ROLE_PLAYER[]> carte) {
+        this.carteRuolo = carte;
     }
 }
