@@ -7,6 +7,8 @@ import it.unibo.tucson4jason.architecture.T4JnArchImpl;
 import it.unibo.tucson4jason.architecture.TucsonResultsHandler;
 import it.unibo.tucson4jason.operations.TucsonResult;
 import jaca.CAgentArch;
+import jason.architecture.AgArch;
+import jason.asSemantics.ActionExec;
 import jason.asSemantics.Intention;
 import jason.asSemantics.TransitionSystem;
 
@@ -94,4 +96,11 @@ public class BoomPartyAgentArch extends CAgentArch implements T4JnArch {
         this.logger.info(var1);
     }
 
+    public void act(ActionExec action) {
+        AgArch successor = this.getNextAgArch();
+        if (successor != null) {
+            successor.act(action);
+        }
+        super.act(action);
+    }
 }
