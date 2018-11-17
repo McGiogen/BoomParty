@@ -3,14 +3,16 @@ package it.unibo.boomparty.constants;
 public class GameConstans {
 
     public static enum TEAM_PLAYER {
-        ROSSO("Rosso"),
-        BLU("Blu"),
-        GRIGIO("Grigio");
+        ROSSO("Rosso", "rosso"),
+        BLU("Blu", "blu"),
+        GRIGIO("Grigio", "grigio");
 
         private String value;
+        private String codice;
 
-        private TEAM_PLAYER(String v) {
+        private TEAM_PLAYER(String v, String c) {
             value = v;
+            codice = c;
         }
 
         @Override
@@ -20,14 +22,17 @@ public class GameConstans {
         public String getValue(){
             return value;
         }
+        public String getCodice(){
+            return codice;
+        }
 
-        public static TEAM_PLAYER byValue(String value) {
+        public static TEAM_PLAYER byCodice(String codice) {
             for(TEAM_PLAYER enumItem : values()) {
                 if(enumItem.getValue() == null) {
-                    if(value == null) {
+                    if(codice == null) {
                         return enumItem;
                     }
-                }else if(enumItem.getValue().equals(value)) {
+                }else if(enumItem.getValue().equals(codice)) {
                     return enumItem;
                 }
             }
@@ -36,17 +41,19 @@ public class GameConstans {
     }
 
     public static enum ROLE_PLAYER {
-        PRESIDENTE("Presidente"),
-        BOMBAROLO("Bombarolo"),
-        BASE("Base"),
-        MOGLIE_PRESIDENTE("Moglie del presidente"),
-        AMANTE_PRESIDENTE("Amante del presidente"),
-        MAMMA_BOMBAROLO("Mamma del bombarolo");
+        PRESIDENTE("Presidente", "pres"),
+        BOMBAROLO("Bombarolo", "bomb"),
+        BASE("Base", "base"),
+        MOGLIE_PRESIDENTE("Moglie del presidente", "mogpres"),
+        AMANTE_PRESIDENTE("Amante del presidente", "amapres"),
+        MAMMA_BOMBAROLO("Mamma del bombarolo", "mamma");
 
         private String value;
+        private String codice;
 
-        private ROLE_PLAYER(String v) {
+        private ROLE_PLAYER(String v, String c) {
             value = v;
+            codice = c;
         }
 
         @Override
@@ -56,14 +63,17 @@ public class GameConstans {
         public String getValue(){
             return value;
         }
+        public String getCodice(){
+            return codice;
+        }
 
-        public static ROLE_PLAYER byValue(String value) {
+        public static ROLE_PLAYER byCodice(String codice) {
             for(ROLE_PLAYER enumItem : values()) {
                 if(enumItem.getValue() == null) {
-                    if(value == null) {
+                    if(codice == null) {
                         return enumItem;
                     }
-                }else if(enumItem.getValue().equals(value)) {
+                }else if(enumItem.getValue().equals(codice)) {
                     return enumItem;
                 }
             }

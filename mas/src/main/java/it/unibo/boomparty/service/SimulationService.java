@@ -56,6 +56,7 @@ public class SimulationService {
                 // go centralised
                 startCentralisedMasProject(args.isDebug(), buildMas2jFile(args, playersName));
             }
+
         } catch (Exception e) {
             e.printStackTrace();
             log.error("Errore durante avvio della simulazione");
@@ -282,8 +283,11 @@ public class SimulationService {
         }
         /*
         for(Map.Entry<TEAM_PLAYER, ROLE_PLAYER[]> carta : carteRuolo.entrySet()){
-
+            TODO LUCA FIX
         }*/
+        // TODO LUCA creare tupla
+        tChannel.actionSynch(Out.class, "initialRole(redTeam([presidente, base, base]), blueTeam([bombarolo, base, base]), greyTeam([me, mu, mamma]))");
+
         // inserisco il token che tutti gli agenti proveranno a "claimare"
         // il primo che riesce a prenderlo -> diventa mazziere
         tChannel.actionSynch(Out.class, "token(mazziere)");
