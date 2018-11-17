@@ -146,23 +146,25 @@ at(P) :- neighbors(List) & list_contains(List, P).
         .print("Inizio recupero stanza");
         ?name(MioNome);
         t4jn.api.uin("default", "127.0.0.1", "20504", stanzaAssegn(St, IsL), Op0);
-        t4jn.api.getResult(Op0, StanzaAssegnAtom);
+        t4jn.api.getResult(Op0, StanzaAssegnLiteral);
         if (StanzaAtom \== null) {
-            t4jn.api.getArg(StanzaAssegnAtom, 0, StanzaAssegnId);
-            +stanzaCorrente(StanzaAssegnId);
-            .print("Stanza assegnatomi ", StanzaAssegnId);
+            t4jn.api.getArg(StanzaAssegnLiteral, 0, StanzaAssegnString);
+            .term2string(StanzaAssegnAtom, StanzaAssegnString);
+            +stanzaCorrente(StanzaAssegnAtom);
+            .print("Stanza assegnatomi ", StanzaAssegnAtom);
 
-            t4jn.api.getArg(StanzaAssegnAtom, 1, IsLeader);
+            t4jn.api.getArg(StanzaAssegnLiteral, 1, IsLeader);
             if (IsLeader == "true") {
                 .print("Mi è stato assegnato il ruolo di leader");
                 +ruoloLeader(true);
-                t4jn.api.out("default", "127.0.0.1", "20504", stanzaData(id(StanzaAssegnId), leader(MioNome)), OpL);
+                t4jn.api.out("default", "127.0.0.1", "20504", stanzaData(id(StanzaAssegnAtom), leader(MioNome)), OpL);
             } else {
                 +ruoloLeader(false);
             }
 
             t4jn.api.in("default", "127.0.0.1", "20504", player(name(MioNome),room(R)), OpIU);
-            t4jn.api.out("default", "127.0.0.1", "20504", player(name(MioNome),room(StanzaAssegnId)), OpOU);
+            t4jn.api.out("default", "127.0.0.1", "20504", player(name(MioNome),room(StanzaAssegnAtom)), OpOU);
+            start_in_area(StanzaAssegnAtom);
         } else {
             .print("Errore recupero stanza");
         }

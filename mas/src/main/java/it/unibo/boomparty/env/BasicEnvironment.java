@@ -1,9 +1,11 @@
 package it.unibo.boomparty.env;
 
 import jaca.CartagoEnvironment;
+import jason.asSyntax.Atom;
 import jason.asSyntax.Literal;
 import jason.asSyntax.StringTerm;
 import jason.asSyntax.Structure;
+import jason.environment.grid.Area;
 import jason.environment.grid.Location;
 import jason.util.Pair;
 
@@ -21,7 +23,7 @@ public class BasicEnvironment extends CartagoEnvironment {
 	    String[] playersNames = args[0].split(",");
 	    super.init(Arrays.copyOfRange(args, 1, args.length));
 
-        this.players = new ArrayList<HumanModel>(playersNames.length);
+        this.players = new ArrayList<>(playersNames.length);
 	    for (int i = 0; i < playersNames.length; i++) {
 	        this.players.add(new HumanModel(playersNames[i], i));
         }
@@ -95,7 +97,7 @@ public class BasicEnvironment extends CartagoEnvironment {
      */
     @Override
     public boolean executeAction(final String agName, final Structure action) {
-        // this.getLogger().info("[" + agName + "] doing: " + operations);
+        // this.getLogger().info("[" + agName + "] doing: " + action.getFunctor());
         EnvironmentActions.Result result = new EnvironmentActions.Result();
 
         try {
@@ -109,8 +111,20 @@ public class BasicEnvironment extends CartagoEnvironment {
 
                     if (source != null && target != null) {
                         final Location goal = this.model.getAgPos(target.getIndex());
-                        result = EnvironmentActions.moveTowards(this, source, goal);
+                        if (goal != null) {
+                            result = EnvironmentActions.moveTowards(this, source, goal);
+                        }
                     }
+                    break;
+                }
+                case "start_in_area": {
+                    String areaName = ((Atom) action.getTerm(0)).getFunctor();
+                    HumanModel player = this.getPlayer(agName);
+
+                    Area room = WorldUtils.getArea(this.model, areaName);
+                    this.model.setAgPos(player.getIndex(), this.model.getFreePos(room));
+
+                    result.setSuccess(true);
                     break;
                 }
                 default:

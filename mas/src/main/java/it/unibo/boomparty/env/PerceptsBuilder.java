@@ -47,7 +47,7 @@ public class PerceptsBuilder {
      */
     public static Literal area(String atom) {
         LiteralImpl area = new LiteralImpl("area");
-        area.addTerm(new Atom(atom));
+        area.addTerm(new Atom(atom == null ? "null" : atom));
         return area;
     }
 
@@ -58,8 +58,8 @@ public class PerceptsBuilder {
     public static Literal position(Location location) {
         LiteralImpl position = new LiteralImpl("position");
         position.addTerms(
-            new NumberTermImpl(location.x),
-            new NumberTermImpl(location.y)
+            new NumberTermImpl(location == null ? -1 : location.x),
+            new NumberTermImpl(location == null ? -1 : location.y)
         );
         return position;
     }
