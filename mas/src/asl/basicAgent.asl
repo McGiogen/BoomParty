@@ -1,3 +1,5 @@
+{ include("tucsonBaseWrapper.asl") }
+
 /*
  * Beliefs riguardo sè stesso:
  * - Nome
@@ -49,13 +51,12 @@ at(P) :- neighbors(List) & list_contains(List, P).
 +!boot
     <-  ?name(X);
         .print("PLAYER ", X, " START!");
-        //!init
-        !preparazioneGioco
+        !preparazioneGioco;
         .print("fine boot").
 
 /*
 +!boot
-    <-  !init
+    <-  !init;
         ?visible_players(Players);
         .nth(0, Players, NearestPlayer);    // Choosing the nearest (first) player
         !goto(NearestPlayer).
@@ -75,7 +76,7 @@ at(P) :- neighbors(List) & list_contains(List, P).
 
 +!preparazioneGioco
     <-
-        t4jn.api.inp("default", "127.0.0.1", "20504", token(X), Op0);
+        !tucsonOpInp(token(X), Op0);
         t4jn.api.getResult(Op0, Result);
         if (Result \== null) {
             t4jn.api.getArg(Result, 0, TokenVal);
@@ -95,8 +96,7 @@ at(P) :- neighbors(List) & list_contains(List, P).
 +!assegnaRuoli
     <-
         .print("Inizio assegnazione ruoli");
-
-        t4jn.api.in("default", "127.0.0.1", "20504", initialRole(redTeam(RTL), blueTeam(BTL), greyTeam(GTL)), OpRole);
+        !tucsonOpIn(initialRole(redTeam(RTL), blueTeam(BTL), greyTeam(GTL)), OpRole);
         t4jn.api.getResult(OpRole, InitialRole);
         if (InitialRole \== null) {
             /* TODO LUCA rifare con un ciclo */
@@ -123,7 +123,7 @@ at(P) :- neighbors(List) & list_contains(List, P).
                     .concat("Card22", I, CardName);
                     .nth(I, BlueTeamArray, Ruolo);
                     makeArtifact(CardName, "it.unibo.boomparty.domain.artifacts.Card", ["blu", Ruolo], CardId);
-                    t4jn.api.out("default", "127.0.0.1", "20504", infoRuoloDisp(artifId(CardId)), OpB);
+                    !tucsonOpOut(infoRuoloDisp(artifId(CardId)), OpB);
                 }
             }
 
