@@ -4,6 +4,8 @@ import alice.logictuple.exceptions.InvalidLogicTupleException;
 import alice.tucson.api.TucsonTupleCentreId;
 import alice.tucson.asynchSupport.actions.ordinary.Out;
 import com.github.javafaker.Faker;
+import it.unibo.boomparty.constants.GameConstans.ROLE_PLAYER;
+import it.unibo.boomparty.constants.GameConstans.TEAM_PLAYER;
 import it.unibo.boomparty.domain.tuples.PlayerTuple;
 import it.unibo.boomparty.env.BasicEnvironment;
 import it.unibo.boomparty.service.model.SimulationArgs;
@@ -24,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class SimulationService {
 
@@ -37,12 +40,13 @@ public class SimulationService {
         try {
             // generazione giocatori
             List<String> playersName = generatePlayersName(args.getPlayers());
+            Map<TEAM_PLAYER, ROLE_PLAYER[]> carteRuolo = args.getCarteRuolo();
 
             // tucson
             TucsonChannel tucsonChannel = startTucson(args.isDebug());
 
             // settings
-            putSettingsOnTupleSpace(tucsonChannel, playersName);
+            putSettingsOnTupleSpace(tucsonChannel, playersName, carteRuolo);
 
             // mas project
             if(args.isDistributed()){
@@ -271,11 +275,15 @@ public class SimulationService {
     /**
      * Inserisco le config di simulazione su tucson
      */
-    private void putSettingsOnTupleSpace(TucsonChannel tChannel, List<String> playersName) throws InvalidLogicTupleException {
+    private void putSettingsOnTupleSpace(TucsonChannel tChannel, List<String> playersName, Map<TEAM_PLAYER, ROLE_PLAYER[]> carteRuolo) throws InvalidLogicTupleException {
         // inserisco i giocatori della partita
         for (String name: playersName){
             tChannel.actionSynch(Out.class, new PlayerTuple(name, null).toTuple());
         }
+        /*
+        for(Map.Entry<TEAM_PLAYER, ROLE_PLAYER[]> carta : carteRuolo.entrySet()){
+
+        }*/
         // inserisco il token che tutti gli agenti proveranno a "claimare"
         // il primo che riesce a prenderlo -> diventa mazziere
         tChannel.actionSynch(Out.class, "token(mazziere)");
