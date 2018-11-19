@@ -183,6 +183,7 @@ at(P) :- neighbors(List) & list_contains(List, P).
                 .print("Mi è stato assegnato il ruolo di leader");
                 +ruoloLeader(true);
                 t4jn.api.out("default", "127.0.0.1", "20504", stanzaData(id(StanzaAssegnAtom), leader(MioNome)), OpL);
+                !recuperaRiferimentoTimer(StanzaAssegnId);
             } else {
                 +ruoloLeader(false);
             }
@@ -194,6 +195,21 @@ at(P) :- neighbors(List) & list_contains(List, P).
             .print("Errore recupero stanza");
         }
         .print("Fine recupero stanza").
+
++!recuperaRiferimentoTimer(StanzaId)
+    <-
+        .print("Recupero il timer per la stanza ", StanzaId);
+        !tucsonOpRd(timer(room(St),timerId(T)), OpR);
+        t4jn.api.getResult(OpR, TimerAtom);
+        if (TimerAtom \== null) {
+            t4jn.api.getArg(TimerAtom, 1, TimerIdAtom);
+            t4jn.api.getArg(TimerIdAtom, 0, TimerId);
+            .print("Riferimento timer recuperato: ", TimerId);
+        } else {
+            .print("Errore durante recupero riferimento timer per la stanza ", StanzaId);
+        }
+        .print("Terminato plan recupero riferimento timer per stanza ", StanzaId).
+
 
 /* Operazioni round di gioco */
 +!giocaRound
