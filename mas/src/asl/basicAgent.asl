@@ -28,6 +28,7 @@
 name(N) :- .my_name(N).
 team(null).  // TODO
 role(null).  // TODO
+knowledge([]).
 
 /* Environment percepts */
 // area(roomA|roomB|hallway)
@@ -89,6 +90,10 @@ at(P) :- neighbors(List) & list_contains(List, P).
             }
             !recuperaRuolo;
             !recuperaStanza;
+
+            // TODO attendi il timer prima di iniziare a giocare
+            .wait(5000)
+            !giocaRound;
         } else {
             .print("Errore recupero token mazziere");
         }
@@ -166,27 +171,71 @@ at(P) :- neighbors(List) & list_contains(List, P).
         .print("Inizio recupero stanza");
         ?name(MioNome);
         t4jn.api.uin("default", "127.0.0.1", "20504", stanzaAssegn(St, IsL), Op0);
-        t4jn.api.getResult(Op0, StanzaAssegnAtom);
+        t4jn.api.getResult(Op0, StanzaAssegnLiteral);
         if (StanzaAtom \== null) {
-            t4jn.api.getArg(StanzaAssegnAtom, 0, StanzaAssegnId);
-            +stanzaCorrente(StanzaAssegnId);
-            .print("Stanza assegnatomi ", StanzaAssegnId);
+            t4jn.api.getArg(StanzaAssegnLiteral, 0, StanzaAssegnString);
+            .term2string(StanzaAssegnAtom, StanzaAssegnString);
+            +stanzaCorrente(StanzaAssegnAtom);
+            .print("Stanza assegnatomi ", StanzaAssegnAtom);
 
-            t4jn.api.getArg(StanzaAssegnAtom, 1, IsLeader);
+            t4jn.api.getArg(StanzaAssegnLiteral, 1, IsLeader);
             if (IsLeader == "true") {
                 .print("Mi è stato assegnato il ruolo di leader");
                 +ruoloLeader(true);
-                t4jn.api.out("default", "127.0.0.1", "20504", stanzaData(id(StanzaAssegnId), leader(MioNome)), OpL);
+                t4jn.api.out("default", "127.0.0.1", "20504", stanzaData(id(StanzaAssegnAtom), leader(MioNome)), OpL);
             } else {
                 +ruoloLeader(false);
             }
 
             t4jn.api.in("default", "127.0.0.1", "20504", player(name(MioNome),room(R)), OpIU);
-            t4jn.api.out("default", "127.0.0.1", "20504", player(name(MioNome),room(StanzaAssegnId)), OpOU);
+            t4jn.api.out("default", "127.0.0.1", "20504", player(name(MioNome),room(StanzaAssegnAtom)), OpOU);
+            start_in_area(StanzaAssegnAtom);
         } else {
             .print("Errore recupero stanza");
         }
         .print("Fine recupero stanza").
+
+/* Operazioni round di gioco */
++!giocaRound
+    <-
+        .print("Inizio a giocare il round");
+        ?knowledge(StartKnowledge);
+        ?visible_players(Playerlist);
+
+        .length(StartKnowledge, NumKnowledge);
+        .length(Playerlist, NumPlayers);
+        .print("Conosco ", NumKnowledge, " su ", NumPlayers, " giocatori");
+
+        if (NumKnowledge < NumPlayers) {
+            // Cerco una persona con cui parlare
+            +tmp(null);
+            +index1(0);
+            while (index1(I) & tmp(Target) & Target == null) {
+                .nth(I, Playerlist, TempName);
+                //?Temp( name(TempName), role(R), team(T) area(A), position(X,Y), confidence(C) );
+                if (not(.member(know(TempName),StartKnowledge))) {
+                    -+tmp(TempName);
+                }
+                -+index1(I+1);
+            }
+            ?tmp(Target);
+            .print("TROVATO ", Target);
+
+            !goto(Target);
+
+            // TODO scambia informazioni con il giocatore raggiunto
+            .wait(3000)
+
+            .union(StartKnowledge, [know(Target)], NewKnowledge);
+            -+knowledge(NewKnowledge);
+
+            !giocaRound
+        } else {
+          // TODO anyone
+          .print("Conosco tutti... e ora cosa faccio?");
+        }
+        .
+
 
 /* Handle movement */
 
