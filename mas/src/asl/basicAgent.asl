@@ -83,6 +83,7 @@ at(P) :- neighbors(List) & list_contains(List, P).
             if (TokenVal == "mazziere") {
                 ?name(Name);
                 .print("Ricevuto ruolo mazziere ", Name);
+                !creaTimer;
                 !assegnaRuoli;
                 !assegnaStanze;
             }
@@ -92,6 +93,15 @@ at(P) :- neighbors(List) & list_contains(List, P).
             .print("Errore recupero token mazziere");
         }
         .print("Fase iniziale di preparazione ultimata").
+
++!creaTimer
+    <-
+        .print("Inizio creazione timer per le due stanze");
+        makeArtifact("timerRoomA", "it.unibo.boomparty.domain.artifacts.Timer", [], TimerRoomA);
+        !tucsonOpOut(timer(room(roomA),timerId(TimerRoomA)), OpTimerA);
+        makeArtifact("timerRoomB", "it.unibo.boomparty.domain.artifacts.Timer", [], TimerRoomB);
+        !tucsonOpOut(timer(room(roomB),timerId(TimerRoomB)), OpTimerB);
+        .print("Fine creazione timer").
 
 +!assegnaRuoli
     <-
