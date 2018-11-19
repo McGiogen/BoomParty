@@ -99,44 +99,20 @@ at(P) :- neighbors(List) & list_contains(List, P).
         !tucsonOpIn(initialRole(redTeam(RTL), blueTeam(BTL), greyTeam(GTL)), OpRole);
         t4jn.api.getResult(OpRole, InitialRole);
         if (InitialRole \== null) {
-            /* TODO LUCA rifare con un ciclo */
 
-            t4jn.api.getArg(InitialRole, 0, RedTeamAtom);
-            t4jn.api.getArg(RedTeamAtom, 0, RedTeamList);
-            if( .string(RedTeamList) ) {
-                .term2string(RedTeamArray, RedTeamList);
-                .length(RedTeamArray, RedTeamLen);
-                for( .range(I, 0, RedTeamLen-1) ){
-                    .concat("Card11", I , CardName);
-                    .nth(I, RedTeamArray, Ruolo);
-                    makeArtifact(CardName, "it.unibo.boomparty.domain.artifacts.Card", ["rosso", Ruolo], CardId);
-                    t4jn.api.out("default", "127.0.0.1", "20504", infoRuoloDisp(artifId(CardId)), OpR);
-                }
-            }
-
-            t4jn.api.getArg(InitialRole, 1, BlueTeamAtom);
-            t4jn.api.getArg(BlueTeamAtom, 0, BlueTeamList);
-            if( .string(BlueTeamList) ) {
-                .term2string(BlueTeamArray, BlueTeamList);
-                .length(BlueTeamArray, BlueTeamLen);
-                for( .range(I, 0, BlueTeamLen-1) ){
-                    .concat("Card22", I, CardName);
-                    .nth(I, BlueTeamArray, Ruolo);
-                    makeArtifact(CardName, "it.unibo.boomparty.domain.artifacts.Card", ["blu", Ruolo], CardId);
-                    !tucsonOpOut(infoRuoloDisp(artifId(CardId)), OpB);
-                }
-            }
-
-            t4jn.api.getArg(InitialRole, 2, GreyTeamAtom);
-            t4jn.api.getArg(GreyTeamAtom, 0, GreyTeamList);
-            if( .string(GreyTeamList) ) {
-                .term2string(GreyTeamArray, GreyTeamList);
-                .length(GreyTeamArray, GreyTeamLen);
-                for( .range(I, 0, GreyTeamLen-1) ) {
-                    .concat("Card33", I, CardName);
-                    .nth(I, GreyTeamArray, Ruolo);
-                    makeArtifact(CardName, "it.unibo.boomparty.domain.artifacts.Card", ["grigio", Ruolo], CardId);
-                    t4jn.api.out("default", "127.0.0.1", "20504", infoRuoloDisp(artifId(CardId)), OpG);
+            ElencoTeam = ["rosso", "blu", "grey"];
+            for( .member(Team, ElencoTeam) ) {
+                .nth(Pos, ElencoTeam, Team);
+                t4jn.api.getArg(InitialRole, Pos, TeamAtom);
+                t4jn.api.getArg(TeamAtom, 0, RoleStr);
+                if( .string(RoleStr) ) {
+                    .term2string(RoleArray, RoleStr);
+                    for( .member(Role, RoleArray) ){
+                        .random(Suffix, 0);
+                        .concat("Card", Suffix, CardName);
+                        makeArtifact(CardName, "it.unibo.boomparty.domain.artifacts.Card", [Team, Role], CardId);
+                        !tucsonOpOut(infoRuoloDisp(artifId(CardId)), OpR);
+                    }
                 }
             }
         } else {
