@@ -204,17 +204,39 @@ at(P) :- neighbors(List) & list_contains(List, P).
         if (TimerLiteral \== null) {
             t4jn.api.getArg(TimerLiteral, 1, TimerIdLiteral);
             t4jn.api.getArg(TimerIdLiteral, 0, TimerId);
+            +riferimentoTimer(TimerId);
             .print("Riferimento timer recuperato: ", TimerId);
+            // TODO: fare focus dell'artefatto
+            // !focussaTimer(TimerId);
         } else {
             .print("Errore durante recupero riferimento timer per la stanza ", StanzaId);
         }
         .print("Terminato plan recupero riferimento timer per stanza ", StanzaId).
 
++!focussaTimer(RifTimer)
+    <-
+        .print("Eseguo focus su timer: ", RifTimer);
+        focus(RifTimer).
+
+/* Triggerato dal signal dell'artifact Timer */
++timeUp
+    <-
+        ?name(Me);
+        .print(Me, " ha percepito lo scadere del timer!").
 
 /* Operazioni round di gioco */
 +!giocaRound
     <-
         .print("Inizio a giocare il round");
+
+        // TODO-DRIU: se è leader, deve far partire il timer
+        // ?ruoloLeader(isMeLeader);
+
+        // if (isMeLeader \== false) {
+        //    ?name(Me);
+        //    .print(Me, " sono il leader, devo avviare il timer e avvertire gli altri");
+        // }
+
         ?knowledge(StartKnowledge);
         ?visible_players(Playerlist);
 
