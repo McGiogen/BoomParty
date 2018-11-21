@@ -58,7 +58,7 @@ public class GameConstans {
 
         @Override
         public String toString(){
-            return value;
+            return codice;
         }
         public String getValue(){
             return value;
