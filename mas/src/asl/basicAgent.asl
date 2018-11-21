@@ -172,7 +172,7 @@ at(P) :- neighbors(List) & list_contains(List, P).
         ?name(MioNome);
         t4jn.api.uin("default", "127.0.0.1", "20504", stanzaAssegn(St, IsL), Op0);
         t4jn.api.getResult(Op0, StanzaAssegnLiteral);
-        if (StanzaAtom \== null) {
+        if (StanzaAssegnLiteral \== null) {
             t4jn.api.getArg(StanzaAssegnLiteral, 0, StanzaAssegnString);
             .term2string(StanzaAssegnAtom, StanzaAssegnString);
             +stanzaCorrente(StanzaAssegnAtom);
@@ -200,10 +200,10 @@ at(P) :- neighbors(List) & list_contains(List, P).
     <-
         .print("Recupero il timer per la stanza ", StanzaId);
         !tucsonOpRd(timer(room(St),timerId(T)), OpR);
-        t4jn.api.getResult(OpR, TimerAtom);
-        if (TimerAtom \== null) {
-            t4jn.api.getArg(TimerAtom, 1, TimerIdAtom);
-            t4jn.api.getArg(TimerIdAtom, 0, TimerId);
+        t4jn.api.getResult(OpR, TimerLiteral);
+        if (TimerLiteral \== null) {
+            t4jn.api.getArg(TimerLiteral, 1, TimerIdLiteral);
+            t4jn.api.getArg(TimerIdLiteral, 0, TimerId);
             .print("Riferimento timer recuperato: ", TimerId);
         } else {
             .print("Errore durante recupero riferimento timer per la stanza ", StanzaId);
