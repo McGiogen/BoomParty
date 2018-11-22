@@ -13,7 +13,10 @@ public class EnvironmentActions {
             return result;
         }
 
-        if (ag.getPath() == null || !ag.getPath().getGoal().getLocation().equals(goal)) {
+        boolean noPath = ag.getPath() == null || !ag.getPath().getGoal().getLocation().equals(goal);
+        boolean obstacleOnPath = ag.getPath() != null && !env.getModel().isFree(ag.getPath().getFirst().getLocation());
+
+        if (noPath || obstacleOnPath) {
             env.getLogger().info("Calculating path of [" + ag.getName() + "] to " + goal.x + "," + goal.y);
 
             // get agent location
@@ -22,6 +25,13 @@ public class EnvironmentActions {
             // compute where to move
             PathFinder.Path path = new PathFinder().findPath(env.getModel(), loc, goal);
             ag.setPath(path);
+
+            if (path == null) {
+                // ERRORE non riesce a costruire il percorso...?!?
+                result.setSuccess(false);
+                result.setTimeSpent(1000);
+                return result;
+            }
 
             // remove start and destination nodes from path
             path.removeFirst();

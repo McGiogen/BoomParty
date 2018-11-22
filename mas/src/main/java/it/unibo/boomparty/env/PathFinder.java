@@ -48,10 +48,11 @@ public class PathFinder {
         for (int leftTopY = y - 1; leftTopY < y + 2; leftTopY++) {
             for (int leftTopX = x - 1; leftTopX < x + 2; leftTopX++) {
                 try {
+                    boolean isGoal = goal.getLocation().x == leftTopX && goal.getLocation().y == leftTopY;
                     if (leftTopY == y && leftTopX == x) {
                         //pass itself
                     }
-                    else if (map.get(leftTopX, leftTopY) != WorldModel.OBSTACLE) {
+                    else if (isGoal || map.isFree(leftTopX, leftTopY)) {
                         Node node = new Node(new Location(leftTopX, leftTopY), parent, goal);
                         int index = this.openListIndexOf(node);
                         if (this.closedListContains(node)) {
