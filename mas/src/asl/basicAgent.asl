@@ -102,11 +102,15 @@ at(P) :- neighbors(List) & list_contains(List, P).
 +!creaTimer
     <-
         .print("Inizio creazione timer per le due stanze");
-        makeArtifact("timerRoomA", "it.unibo.boomparty.domain.artifacts.Timer", [], TimerRoomA);
-        !tucsonOpOut(timer(room(roomA),timerId(TimerRoomA)), OpTimerA);
-        makeArtifact("timerRoomB", "it.unibo.boomparty.domain.artifacts.Timer", [], TimerRoomB);
-        !tucsonOpOut(timer(room(roomB),timerId(TimerRoomB)), OpTimerB);
+        !creaArtefattoTimer(roomA, "timerRoomA");
+        !creaArtefattoTimer(roomB, "timerRoomB");
         .print("Fine creazione timer").
+
++!creaArtefattoTimer(StanzaId, TimerName)
+    <-
+        makeArtifact(TimerName, "it.unibo.boomparty.domain.artifacts.Timer", [], TimerRoomX);
+        .print(TimerName, " creato");
+        !tucsonOpOut(timer(room(StanzaId),timerName(TimerName)), OpTimerX).
 
 +!assegnaRuoli
     <-
@@ -183,7 +187,7 @@ at(P) :- neighbors(List) & list_contains(List, P).
                 .print("Mi è stato assegnato il ruolo di leader");
                 +ruoloLeader(true);
                 t4jn.api.out("default", "127.0.0.1", "20504", stanzaData(id(StanzaAssegnAtom), leader(MioNome)), OpL);
-                !recuperaRiferimentoTimer(StanzaAssegnId);
+                !recuperaRiferimentoTimer(StanzaAssegnAtom);
             } else {
                 +ruoloLeader(false);
             }
@@ -199,24 +203,41 @@ at(P) :- neighbors(List) & list_contains(List, P).
 +!recuperaRiferimentoTimer(StanzaId)
     <-
         .print("Recupero il timer per la stanza ", StanzaId);
-        !tucsonOpRd(timer(room(St),timerId(T)), OpR);
+        !tucsonOpRd(timer(room(StanzaId),timerName(T)), OpR);
         t4jn.api.getResult(OpR, TimerLiteral);
         if (TimerLiteral \== null) {
-            t4jn.api.getArg(TimerLiteral, 1, TimerIdLiteral);
-            t4jn.api.getArg(TimerIdLiteral, 0, TimerId);
-            +riferimentoTimer(TimerId);
-            .print("Riferimento timer recuperato: ", TimerId);
+            t4jn.api.getArg(TimerLiteral, 1, TimerNameLiteral);
+            t4jn.api.getArg(TimerNameLiteral, 0, TimerName);
+            +riferimentoTimer(TimerName);
+            .print("Riferimento timer per la stanza ", StanzaId," recuperato: ", TimerName);
             // TODO: fare focus dell'artefatto
-            // !focussaTimer(TimerId);
+            !focussaTimerByNomeLogico(TimerName);
         } else {
             .print("Errore durante recupero riferimento timer per la stanza ", StanzaId);
         }
         .print("Terminato plan recupero riferimento timer per stanza ", StanzaId).
 
-+!focussaTimer(RifTimer)
+// Focus tramite ArtifactId dell'artefatto timer
+// (22/11/18: attualmente non riusciamo a recuperare l'id dell'artefatto in modo consono da Tucson)
++!focussaTimer(TimerId)
     <-
-        .print("Eseguo focus su timer: ", RifTimer);
-        focus(RifTimer).
+        .print("Eseguo focus su timer: ", TimerId);
+        focus(TimerId).
+
+// Focus tramite ArtifactName dell'artefatto timer
++!focussaTimerByNomeLogico(ArtifactName)
+    <-
+        .print("Recupero artefatto di nome: ", ArtifactName);
+        lookupArtifact(ArtifactName, ArtifactId);
+        focus(ArtifactId);
+        .print("Artefatto ", ArtifactName, " trovato e focussato").
+
+-!focussaTimerByNomeLogico(ArtifactName)
+    <-
+        .print(ArtifactName, " non trovato");
+        .wait(1000);
+        .print("Riprovo a fare la lookup su artefatto ", ArtifactName);
+        !focussaTimerByNomeLogico(ArtifactName).
 
 /* Triggerato dal signal dell'artifact Timer */
 +timeUp
