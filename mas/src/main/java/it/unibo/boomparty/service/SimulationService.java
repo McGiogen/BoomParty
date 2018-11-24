@@ -283,8 +283,6 @@ public class SimulationService {
             tChannel.actionSynch(Out.class, new PlayerTuple(name, null).toTuple());
         }
         InitialRoleTuple initialRole = new InitialRoleTuple(carteRuolo.get(TEAM_PLAYER.ROSSO), carteRuolo.get(TEAM_PLAYER.BLU), carteRuolo.get(TEAM_PLAYER.GRIGIO));
-        initialRole.fillFromTuple(initialRole.toTuple());
-        // TODO LUCA creare tupla
         tChannel.actionSynch(Out.class, initialRole.toTuple());
 
         // inserisco il token che tutti gli agenti proveranno a "claimare"

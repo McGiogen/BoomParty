@@ -3,7 +3,9 @@ package it.unibo.boomparty.domain.tuples;
 import alice.logictuple.LogicTuple;
 import alice.logictuple.exceptions.InvalidLogicTupleException;
 import it.unibo.boomparty.constants.GameConstans.ROLE_PLAYER;
+import it.unibo.boomparty.utils.TupleUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class InitialRoleTuple extends BaseTuple {
@@ -36,25 +38,30 @@ public class InitialRoleTuple extends BaseTuple {
     }
 
     public static String asTupleString(String redTeam, String blueTeam, String greyTeam) {
-        return ("initialRole(redTeam(" + redTeam + "), blueTeam(" + blueTeam + "), greyTeam(" + greyTeam + "))").replaceAll("\\s+", "");
+        return ("initialRole(redTeam(" + redTeam + "), blueTeam(" + blueTeam + "), greyTeam(" + greyTeam + "))").replaceAll("\\s", "");
     }
 
     @Override
     public void fillFromTuple(LogicTuple tuple) {
-        // TODO LUCA
-        /*
-        this.redTeam = new ArrayList<ROLE_PLAYER>();
-        TupleArgument redArrT = tuple.getArg("redTeam");
-        TupleArgument ar = redArrT.getArg(0);
-        ar.toArray();
-        Struct.
-        /*
-        for(Term term : redArrT) {
-            redTeam.add(ROLE_PLAYER.byCodice(term.toString()));
-        }/*
-        this.redTeam = TupleUtils.stringValue(tuple.getArg("name").getArg(0));
-        this.blueTeam = TupleUtils.stringValue(tuple.getArg("room").getArg(0));
-        this.greyTeam = ;*/
+
+        this.redTeam = getTeamFromTuple("redTeam", tuple);
+        this.blueTeam = getTeamFromTuple("blueTeam", tuple);
+        this.greyTeam = getTeamFromTuple("greyTeam", tuple);
+    }
+
+    private List<ROLE_PLAYER> getTeamFromTuple(String teamName, LogicTuple tuple) {
+        List<ROLE_PLAYER> team = new ArrayList<ROLE_PLAYER>();
+        String redTeam = TupleUtils.stringValue(tuple.getArg(teamName).getArg(0));
+        if(redTeam != null){
+            String cleanString = redTeam.replace("[", "").replace("]", "").replaceAll("\\s", "");
+            for(String role : cleanString.split(",")) {
+                ROLE_PLAYER rolePlayer = ROLE_PLAYER.byCodice(role);
+                if(rolePlayer != null){
+                    team.add(rolePlayer);
+                }
+            }
+        }
+        return team;
     }
 
     @Override
