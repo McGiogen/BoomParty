@@ -28,11 +28,11 @@ public class GameConstans {
 
         public static TEAM_PLAYER byCodice(String codice) {
             for(TEAM_PLAYER enumItem : values()) {
-                if(enumItem.getValue() == null) {
+                if(enumItem.getCodice() == null) {
                     if(codice == null) {
                         return enumItem;
                     }
-                }else if(enumItem.getValue().equals(codice)) {
+                }else if(enumItem.getCodice().equals(codice)) {
                     return enumItem;
                 }
             }
