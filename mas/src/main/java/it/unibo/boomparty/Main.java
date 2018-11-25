@@ -7,7 +7,9 @@ import it.unibo.boomparty.service.model.SimulationArgs;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Main {
@@ -20,12 +22,23 @@ public class Main {
         simArgs.setDebug(true);
         simArgs.setPlayers(9);
 
-        Map<TEAM_PLAYER, ROLE_PLAYER[]> carte = new HashMap<TEAM_PLAYER, ROLE_PLAYER[]>();
-        ROLE_PLAYER[] rolRed = {ROLE_PLAYER.BOMBAROLO, ROLE_PLAYER.BASE,  ROLE_PLAYER.BASE};
+        Map<TEAM_PLAYER, List<ROLE_PLAYER>> carte = new HashMap<TEAM_PLAYER, List<ROLE_PLAYER>>();
+        List<ROLE_PLAYER> rolRed = new ArrayList<ROLE_PLAYER>();
+        List<ROLE_PLAYER> rolBlu = new ArrayList<ROLE_PLAYER>();
+        List<ROLE_PLAYER> rolGrig = new ArrayList<ROLE_PLAYER>();
+
+        rolRed.add(ROLE_PLAYER.BOMBAROLO);
+        rolRed.add(ROLE_PLAYER.BASE);
+        rolRed.add(ROLE_PLAYER.BASE);
+        rolBlu.add(ROLE_PLAYER.PRESIDENTE);
+        rolBlu.add(ROLE_PLAYER.BASE);
+        rolBlu.add(ROLE_PLAYER.BASE);
+        rolGrig.add(ROLE_PLAYER.AMANTE_PRESIDENTE);
+        rolGrig.add(ROLE_PLAYER.MOGLIE_PRESIDENTE);
+        rolGrig.add(ROLE_PLAYER.MAMMA_BOMBAROLO);
+
         carte.put(TEAM_PLAYER.ROSSO, rolRed);
-        ROLE_PLAYER[] rolBlu = {ROLE_PLAYER.PRESIDENTE, ROLE_PLAYER.BASE,  ROLE_PLAYER.BASE};
         carte.put(TEAM_PLAYER.BLU, rolBlu);
-        ROLE_PLAYER[] rolGrig = {ROLE_PLAYER.AMANTE_PRESIDENTE, ROLE_PLAYER.MOGLIE_PRESIDENTE,  ROLE_PLAYER.MAMMA_BOMBAROLO};
         carte.put(TEAM_PLAYER.GRIGIO, rolGrig);
         simArgs.setCarteRuolo(carte);
 

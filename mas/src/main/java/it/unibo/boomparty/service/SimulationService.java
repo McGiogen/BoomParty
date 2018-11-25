@@ -6,6 +6,7 @@ import alice.tucson.asynchSupport.actions.ordinary.Out;
 import com.github.javafaker.Faker;
 import it.unibo.boomparty.constants.GameConstans.ROLE_PLAYER;
 import it.unibo.boomparty.constants.GameConstans.TEAM_PLAYER;
+import it.unibo.boomparty.domain.tuples.InitialRoleTuple;
 import it.unibo.boomparty.domain.tuples.PlayerTuple;
 import it.unibo.boomparty.env.BasicEnvironment;
 import it.unibo.boomparty.service.model.SimulationArgs;
@@ -40,7 +41,7 @@ public class SimulationService {
         try {
             // generazione giocatori
             List<String> playersName = generatePlayersName(args.getPlayers());
-            Map<TEAM_PLAYER, ROLE_PLAYER[]> carteRuolo = args.getCarteRuolo();
+            Map<TEAM_PLAYER, List<ROLE_PLAYER>> carteRuolo = args.getCarteRuolo();
 
             // tucson
             TucsonChannel tucsonChannel = startTucson(args.isDebug());
@@ -276,17 +277,13 @@ public class SimulationService {
     /**
      * Inserisco le config di simulazione su tucson
      */
-    private void putSettingsOnTupleSpace(TucsonChannel tChannel, List<String> playersName, Map<TEAM_PLAYER, ROLE_PLAYER[]> carteRuolo) throws InvalidLogicTupleException {
+    private void putSettingsOnTupleSpace(TucsonChannel tChannel, List<String> playersName, Map<TEAM_PLAYER, List<ROLE_PLAYER>> carteRuolo) throws InvalidLogicTupleException {
         // inserisco i giocatori della partita
         for (String name: playersName){
             tChannel.actionSynch(Out.class, new PlayerTuple(name, null).toTuple());
         }
-        /*
-        for(Map.Entry<TEAM_PLAYER, ROLE_PLAYER[]> carta : carteRuolo.entrySet()){
-            TODO LUCA FIX
-        }*/
-        // TODO LUCA creare tupla
-        tChannel.actionSynch(Out.class, "initialRole(redTeam([presidente, base, base]), blueTeam([bombarolo, base, base]), greyTeam([me, mu, mamma]))");
+        InitialRoleTuple initialRole = new InitialRoleTuple(carteRuolo.get(TEAM_PLAYER.ROSSO), carteRuolo.get(TEAM_PLAYER.BLU), carteRuolo.get(TEAM_PLAYER.GRIGIO));
+        tChannel.actionSynch(Out.class, initialRole.toTuple());
 
         // inserisco il token che tutti gli agenti proveranno a "claimare"
         // il primo che riesce a prenderlo -> diventa mazziere
