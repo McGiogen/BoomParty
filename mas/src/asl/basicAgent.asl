@@ -118,6 +118,8 @@ at(P) :- neighbors(List) & list_contains(List, P).
         !tucsonOpIn(initialRole(redTeam(RTL), blueTeam(BTL), greyTeam(GTL)), OpRole);
         t4jn.api.getResult(OpRole, InitialRole);
         if (InitialRole \== null) {
+            // Inizializzo il suffisso per la creazione delle carte
+            +suffissoCarta(0);
 
             ElencoTeam = ["rosso", "blu", "grey"];
             for( .member(Team, ElencoTeam) ) {
@@ -127,10 +129,11 @@ at(P) :- neighbors(List) & list_contains(List, P).
                 if( .string(RoleStr) ) {
                     .term2string(RoleArray, RoleStr);
                     for( .member(Role, RoleArray) ){
-                        .random(Suffix, 0);
+                        ?suffissoCarta(Suffix);
                         .concat("Card", Suffix, CardName);
                         makeArtifact(CardName, "it.unibo.boomparty.domain.artifacts.Card", [Team, Role], CardId);
-                        !tucsonOpOut(infoRuoloDisp(artifId(CardId)), OpR);
+                        -+suffissoCarta(Suffix+1);
+                        !tucsonOpOut(infoRuoloDisp(artifName(CardName)), OpR);
                     }
                 }
             }
@@ -157,18 +160,35 @@ at(P) :- neighbors(List) & list_contains(List, P).
 +!recuperaRuolo
     <-
         .print("Inizio recupero ruolo");
-        t4jn.api.uin("default", "127.0.0.1", "20504", infoRuoloDisp(artifId(ID)), Op0);
+        t4jn.api.uin("default", "127.0.0.1", "20504", infoRuoloDisp(artifName(NAME)), Op0);
         t4jn.api.getResult(Op0, InfoRuoloDisp);
         if (InfoRuoloDisp \== null) {
             t4jn.api.getArg(InfoRuoloDisp, 0, ArtifAtom);
-            t4jn.api.getArg(ArtifAtom, 0, ArtifId);
-            +ruoloCorrente(ArtifId);
-            .print("Ruolo assegnatomi ", ArtifId);
+            t4jn.api.getArg(ArtifAtom, 0, ArtifactName);
+            +ruoloCorrente(ArtifactName);
+            .print("Ruolo assegnatomi ", ArtifactName);
+            !focussaCartaByNomeLogico;
         } else {
             .print("Errore recupero ruolo");
         }
         .print("Fine recupero ruolo").
 
++!focussaCartaByNomeLogico
+    <-
+        ?ruoloCorrente(ArtifactName);
+        .print("Recupero artefatto di nome: ", ArtifactName);
+        lookupArtifact(ArtifactName, ArtifactId);
+        focus(ArtifactId);
+        .print("Artefatto ", ArtifactName, " trovato e focussato");
+        .print("Fine plan focussaCartaByNameLogico").
+
+-!focussaTimerByNomeLogico
+    <-
+        ?ruoloCorrente(ArtifactName);
+        .print(ArtifactName, " non trovato");
+        .wait(1000);
+        .print("Riprovo a fare la lookup su artefatto ", ArtifactName);
+        !focussaCartaByNomeLogico.
 
 +!recuperaStanza
     <-
