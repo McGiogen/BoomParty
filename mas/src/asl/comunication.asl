@@ -1,3 +1,5 @@
+{ include("tucsonBaseWrapper.asl") }
+
 +!inviaRichiestaInfo(Target, Mode, FlagOnlyTeam)
     <- !inviaRichiestaInfo(Target, Target, Mode, FlagOnlyTeam).
 
@@ -15,19 +17,23 @@
     <-
         Belief = richiestaInfo(Target, Mode, FlagOnlyTeam);
         +waitingRispostaInfo(Receiver, Belief);
+        .print("inviaRichiestaInfo ", Receiver, Target);
         .send(Receiver, tell, Belief).
 
 /**
     Sender mi ha chiesto delle informazioni su un giocatore (Target).
 */
 +richiestaInfo(Target, Mode, FlagOnlyTeam)[source(Sender)]
-    : Mode == "parlato" | (Mode == "carta" & Target == Sender)
+    : /* FIXME Mode == "parlato" | (Mode == "carta" & Target == <MIO_NOME>)*/
+        Mode == "parlato" | Mode == "carta"
     <-
-        // TODO scegliere quando rifiutare una richiesta
+        // TODO scegliere quando rifiutare una richiesta .send(Sender, tell, rispostaInfoNegata
+        .print("richiestaInfo ", Target, Sender);
         if (Mode == "parlato") {
             !inviaRispostaInfo(Sender, Target, "parlato", FlagOnlyTeam);
         } elif (Mode == "carta") {
-            // TODO implementare scambio "carta"
+            .send(Sender, tell, rispostaInfoAccetta);
+            !inviaRispostaInfo(Sender, Sender, "carta", FlagOnlyTeam);
         }
         -richiestaInfo(Target, Mode, FlagOnlyTeam)[source(Sender)].
 
@@ -35,8 +41,18 @@
     Sender ha rifiutato una mia richiesta di informazioni.
 */
 +rispostaInfoNegata[source(Sender)]
+    : waitingRispostaInfo(S, richiestaInfo(Target, Mode, FlagOnlyTeam))
     <-
         -waitingRispostaInfo(Sender, Any).
+
+/**
+    Sender ha accettato uno scambio carta. Ero in attesa di una sua risposta.
+*/
++rispostaInfoAccetta[source(Sender)]
+    : waitingRispostaInfo(Sender, richiestaInfo(Target, "carta", FlagOnlyTeam))
+    <-
+        -waitingRispostaInfo(Sender, Any);
+        !inviaRispostaInfo(Sender, Sender, "carta", FlagOnlyTeam);.
 
 /**
     Sender ha accettato uno scambio e mi ha risposto ad una richiesta di informazioni
@@ -73,24 +89,39 @@
 */
 +!inviaRispostaInfo(Receiver, Target, Mode, FlagOnlyTeam)
     <-
-        if (Target == Receiver) {
+        if (Mode == "parlato") {
+            if(Target == Receiver) {
+                ?ruoloCorrente(CardArtifName);
+                // TODO ANDREA Controlla che funzioni
+                // focus(CardArtifName);
+                // getTeam(CardTeam);
+
+                // REMOVE ANDREA Rimuovi dopo il TODO qui sopra
+                ?team(CardTeam);
+                ?ruolo(CardRole);
+            } else {
+                // TODO Recuperare le info di Target da knowledge()
+            }
+
+            if (FlagOnlyTeam == true) {
+                Belief = rispostaInfo(CardTeam, null);
+            } else {
+                // TODO ANDREA
+                // getRole(CardRole);
+                Belief = rispostaInfo(CardTeam, CardRole);
+            }
+            .send(Receiver, tell, Belief)
+
+            !inviaRispostaInfo(Sender, Target, "parlato", FlagOnlyTeam);
+        } elif (Mode == "carta") {
             ?ruoloCorrente(CardArtifName);
-            // TODO ANDREA Controlla che funzioni
-            // focus(CardArtifName);
-            // getTeam(CardTeam);
-
-            // REMOVE ANDREA Rimuovi dopo il TODO qui sopra
-            ?team(CardTeam);
-            ?ruolo(CardRole);
-        } else {
-            // TODO Recuperare le info di Target da knowledge()
+            !tucsonOpOut(avvioScambioCarta(player(Target),artifName(CardArtifName)), OpT);
+            !tucsonOpIn(rispostaScambioCarta(plaeyer(Target),artifName(CAN)), OpRispSC);
+            t4jn.api.getResult(OpRispSC, Risposta);
+            if (Risposta \== null) {
+                t4jn.api.getArg(Risposta, 1, CardAtom);
+                t4jn.api.getArg(CardAtom, 0, ReceiverCardArtifName);
+                !updateKnowledge(Receiver, Target, "carta", ReceiverCardArtifName);
+            }
         }
-
-        if (FlagOnlyTeam == true) {
-            Belief = rispostaInfo(CardTeam, null);
-        } else {
-            // TODO ANDREA
-            // getRole(CardRole);
-            Belief = rispostaInfo(CardTeam, CardRole);
-        }
-        .send(Receiver, tell, Belief).
+    .print("inviaRispostaInfo ", Mode, " fine").

@@ -132,6 +132,7 @@ public class SimulationService {
 
         // Respect reaction
         TucsonUtils.loadReactionFromFile(tChannel, Settings.REACTION_FILE);
+        TucsonUtils.loadReactionFromFile(tChannel, Settings.REAC_COMUNICATION_FILE);
         log.info("Respect reactions caricate correttamente");
 
         // Tucson inspector
@@ -239,9 +240,13 @@ public class SimulationService {
         lines.add("\tinfrastructure: " + (args.isDistributed() ? "Jade": "Centralised"));
         lines.add("\tenvironment: " + BasicEnvironment.class.getName() + "(\"" + String.join(",", playersName) + "\")");
         lines.add("\tagents:");
+
         for (String name: playersName) {
             lines.add("\t\t"+name+" tucsonAgent agentArchClass "+ BoomPartyAgentArch.class.getName() +";");
         }
+        //TODO remove
+        //lines.add("\t\treceiver testComunicationReceiver agentArchClass "+ BoomPartyAgentArch.class.getName() +";");
+        //lines.add("\t\tsender testComunicationSender agentArchClass "+ BoomPartyAgentArch.class.getName() +";");
         lines.add("\taslSourcePath:");
         lines.add("\t\t\"src/asl\";");
         lines.add("}");

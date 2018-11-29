@@ -9,6 +9,7 @@ public class Settings {
 
     //---- REACTIONS FILE ----
     public static final String REACTION_FILE = "reactions/reactions.rsp";
+    public static final String REAC_COMUNICATION_FILE = "reactions/comunication.rsp";
 
     //---- JADE ----
     /**

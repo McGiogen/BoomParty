@@ -1,0 +1,20 @@
+reaction(
+    out( avvioScambioCarta(player(Target),artifName(SenderCardAN)) ),
+    (intra,completion,success),
+    (
+        event_source(SenderHelper),
+        text_concat("helper4", Target, TargetHelper),
+        (nop(pendingComunication(sender(TargetHelper), receiver(SenderHelper), agentNameTarget(_), senderArtif(_) )) ->
+            (
+                out(pendingComunication(sender(SenderHelper), receiver(TargetHelper), agentNameTarget(Target), senderArtif(SenderCardAN) ))
+            )
+            ;
+            (
+                in(pendingComunication(sender(TargetHelper), receiver(SenderHelper), agentNameTarget(Sender), senderArtif(TargetCardAN))),
+                out(rispostaScambioCarta(plaeyer(Target),artifName(SenderCardAN))),
+                out(rispostaScambioCarta(plaeyer(Sender),artifName(TargetCardAN)))
+            )
+        ),
+        in(avvioScambioCarta(player(Target),artifName(SenderCardAN)))
+    )
+).
