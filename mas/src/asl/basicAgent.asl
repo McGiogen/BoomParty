@@ -167,28 +167,36 @@ at(P) :- neighbors(List) & list_contains(List, P).
             t4jn.api.getArg(ArtifAtom, 0, ArtifactName);
             +ruoloCorrente(ArtifactName);
             .print("Ruolo assegnatomi ", ArtifactName);
-            !focussaCartaByNomeLogico;
+            !focussaCartaByNomeLogico(ArtifactName, ID);
+            .print("ID recuperato da focussaCartaByNomeLogico: ", ID);
         } else {
             .print("Errore recupero ruolo");
         }
         .print("Fine recupero ruolo").
 
-+!focussaCartaByNomeLogico
++!focussaCartaByNomeLogico(ArtifactName, ArtifactId)
     <-
-        ?ruoloCorrente(ArtifactName);
         .print("Recupero artefatto di nome: ", ArtifactName);
         lookupArtifact(ArtifactName, ArtifactId);
         focus(ArtifactId);
         .print("Artefatto ", ArtifactName, " trovato e focussato");
         .print("Fine plan focussaCartaByNameLogico").
 
--!focussaTimerByNomeLogico
+-!focussaCartaByNomeLogico(ArtifactName, ArtifactId)
     <-
-        ?ruoloCorrente(ArtifactName);
         .print(ArtifactName, " non trovato");
         .wait(1000);
         .print("Riprovo a fare la lookup su artefatto ", ArtifactName);
-        !focussaCartaByNomeLogico.
+        !focussaCartaByNomeLogico(ArtifactName, ArtifactId).
+
++!defocussaCartaById(ArtifactName, ArtifactId)
+    <-
+        .print("Mi accingo a togliere il focus da artefatto ", ArtifactName," di ID: ", ArtifactId);
+        unfocus(ArtifactId).
+
+-!defocussaCartaById(ArtifactId)
+    <-
+        .print("Errore durante unfocus su artefatto di ID: ", ArtifactId).
 
 +!recuperaStanza
     <-
@@ -253,7 +261,6 @@ at(P) :- neighbors(List) & list_contains(List, P).
         lookupArtifact(ArtifactName, ArtifactId);
         focus(ArtifactId);
         .print("Artefatto ", ArtifactName, " trovato e focussato");
-        ?ruoloLeader(IsLeader);
         .print("Fine plan focussaTimerByNameLogico").
 
 -!focussaTimerByNomeLogico
