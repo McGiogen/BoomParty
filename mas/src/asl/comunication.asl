@@ -1,4 +1,5 @@
 { include("tucsonBaseWrapper.asl") }
+{ include("artifactHelper.asl") }
 
 +!inviaRichiestaInfo(Target, Mode, FlagOnlyTeam)
     <- !inviaRichiestaInfo(Target, Target, Mode, FlagOnlyTeam).
@@ -114,14 +115,26 @@
 
             !inviaRispostaInfo(Sender, Target, "parlato", FlagOnlyTeam);
         } elif (Mode == "carta") {
-            ?ruoloCorrente(CardArtifName);
+            // ?ruoloCorrente(CardArtifName);
+
+            // recupero il riferimento alla mia carta per passarlo su Tucson
+            ?riferimentoCarta(CardArtifName);
+
             !tucsonOpOut(avvioScambioCarta(player(Target),artifName(CardArtifName)), OpT);
-            !tucsonOpIn(rispostaScambioCarta(plaeyer(Target),artifName(CAN)), OpRispSC);
+            !tucsonOpIn(rispostaScambioCarta(player(Target),artifName(CAN)), OpRispSC);
             t4jn.api.getResult(OpRispSC, Risposta);
             if (Risposta \== null) {
                 t4jn.api.getArg(Risposta, 1, CardAtom);
                 t4jn.api.getArg(CardAtom, 0, ReceiverCardArtifName);
                 !updateKnowledge(Receiver, Target, "carta", ReceiverCardArtifName);
+
+                // Ricevuto il nome dell'artefatto, ne recupero l'ID
+                lookupArtifact(ReceiverCardArtifName, ReceiverCardArtifID);
+
+                getTeam(ReceiverTeam) [artifact_id(ReceiverCardArtifID)];
+                getRole(ReceiverRole) [artifact_id(ReceiverCardArtifID)];
+
+                .print(ReceiverCardArtifName, " le sue info sono -> TEAM: ", ReceiverTeam, "; RUOLO: ", ReceiverRole);
             }
         }
     .print("inviaRispostaInfo ", Mode, " fine").
