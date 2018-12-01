@@ -11,8 +11,8 @@ reaction(
             ;
             (
                 in(pendingComunication(sender(TargetHelper), receiver(SenderHelper), agentNameTarget(Sender), senderArtif(TargetCardAN))),
-                out(rispostaScambioCarta(plaeyer(Sender),artifName(SenderCardAN))),
-                out(rispostaScambioCarta(plaeyer(Target),artifName(TargetCardAN)))
+                out(rispostaScambioCarta(player(Sender),artifName(SenderCardAN))),
+                out(rispostaScambioCarta(player(Target),artifName(TargetCardAN)))
             )
         ),
         in(avvioScambioCarta(player(Target),artifName(SenderCardAN)))
