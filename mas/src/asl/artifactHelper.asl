@@ -8,4 +8,4 @@
 +!defocusById(ArtifactName, ArtifactId)
     <-
         .print("Mi accingo a togliere il focus da artefatto ", ArtifactName," di ID: ", ArtifactId);
-        unfocus(ArtifactId).
+        stopFocus(ArtifactId).
