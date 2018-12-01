@@ -1,5 +1,4 @@
 { include("tucsonBaseWrapper.asl") }
-{ include("artifactHelper.asl") }
 
 +!inviaRichiestaInfo(Target, Mode, FlagOnlyTeam)
     <- !inviaRichiestaInfo(Target, Target, Mode, FlagOnlyTeam).
