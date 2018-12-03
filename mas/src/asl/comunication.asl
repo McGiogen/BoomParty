@@ -123,6 +123,20 @@
             !tucsonOpIn(rispostaScambioCarta(player(Target),artifName(CAN)), OpRispSC);
             t4jn.api.getResult(OpRispSC, Risposta);
             if (Risposta \== null) {
+                ?mioNomeString(MyName);
+                ?riferimentoCartaId(MyArtifID);
+
+                .term2String(Receiver, ReceiverStr);
+
+                // Concedo il diritto a Receiver di leggere tutta la carta
+                grantRights(MyName, ReceiverStr, "B", EsitoGrant) [artifact_id(MyArtifID)];
+
+                if (EsitoGrant == true) {
+                    .print("Concessi dirtti a ", Receiver);
+                } else {
+                    .print("Impossibile concedere diritti a ", Receiver);
+                }
+
                 t4jn.api.getArg(Risposta, 1, CardAtom);
                 t4jn.api.getArg(CardAtom, 0, ReceiverCardArtifName);
                 !updateKnowledge(Receiver, Target, "carta", ReceiverCardArtifName);
@@ -130,10 +144,28 @@
                 // Ricevuto il nome dell'artefatto, ne recupero l'ID
                 lookupArtifact(ReceiverCardArtifName, ReceiverCardArtifID);
 
-                getTeam(ReceiverTeam) [artifact_id(ReceiverCardArtifID)];
-                getRole(ReceiverRole) [artifact_id(ReceiverCardArtifID)];
+                getTeam(MyName, ReceiverTeam, EsitoTeam) [artifact_id(ReceiverCardArtifID)];
 
-                .print(ReceiverCardArtifName, " le sue info sono -> TEAM: ", ReceiverTeam, "; RUOLO: ", ReceiverRole);
+                if (EsitoTeam == true) {
+                    .print("TEAM: ", ReceiverTeam);
+                }
+
+                getRole(MyName, ReceiverRole, EsitoRole) [artifact_id(ReceiverCardArtifID)];
+
+                if (EsitoRole == true) {
+                    .print("RUOLO: ", ReceiverRole);
+                }
+
+                // .print(ReceiverCardArtifName, " le sue info sono -> TEAM: ", ReceiverTeam, "; RUOLO: ", ReceiverRole);
+
+                // Concedo il diritto a Receiver di leggere tutta la carta
+                removeRights(MyName, ReceiverStr, "B", EsitoRemove) [artifact_id(MyArtifID)];
+
+                if (EsitoRemove == true) {
+                    .print("Rimossi dirtti a ", Receiver);
+                } else {
+                    .print("Impossibile rimuovere dirtti a ", Receiver);
+                }
             }
         }
     .print("inviaRispostaInfo ", Mode, " fine").

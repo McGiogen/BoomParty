@@ -241,12 +241,12 @@ public class SimulationService {
         lines.add("\tenvironment: " + BasicEnvironment.class.getName() + "(\"" + String.join(",", playersName) + "\")");
         lines.add("\tagents:");
 
-        for (String name: playersName) {
-            lines.add("\t\t"+name+" tucsonAgent agentArchClass "+ BoomPartyAgentArch.class.getName() +";");
-        }
+//        for (String name: playersName) {
+//            lines.add("\t\t"+name+" tucsonAgent agentArchClass "+ BoomPartyAgentArch.class.getName() +";");
+//        }
         //TODO remove
-        //lines.add("\t\treceiver testComunicationReceiver agentArchClass "+ BoomPartyAgentArch.class.getName() +";");
-        //lines.add("\t\tsender testComunicationSender agentArchClass "+ BoomPartyAgentArch.class.getName() +";");
+        lines.add("\t\treceiver testComunicationReceiver agentArchClass "+ BoomPartyAgentArch.class.getName() +";");
+        lines.add("\t\tsender testComunicationSender agentArchClass "+ BoomPartyAgentArch.class.getName() +";");
         lines.add("\taslSourcePath:");
         lines.add("\t\t\"src/asl\";");
         lines.add("}");

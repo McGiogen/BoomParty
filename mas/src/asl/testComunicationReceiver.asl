@@ -8,10 +8,16 @@ riferimentoCarta("CardReceiver").
 !boot.
 
 +!boot
-    <-  .print("inizio r");
+    <-  .my_name(MyName);
+        .term2string(MyName, MyNameStr);
+        +mioNomeString(MyNameStr);
+        .print("inizio ", MyNameStr);
         ?riferimentoCarta(CardName);
         makeArtifact(CardName, "it.unibo.boomparty.domain.artifacts.Card", ["rosso", "bomb"], CardId);
-        focus(CardId);
+
+        // Mi imposto come proprietario della carta
+        setOwner(MyNameStr, "");
+        // focus(CardId);
         +riferimentoCartaId(CardId);
         .print("Carta ", CardName, " creata e focussata").
 
