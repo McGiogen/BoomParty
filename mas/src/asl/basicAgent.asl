@@ -1,4 +1,5 @@
 { include("tucsonBaseWrapper.asl") }
+{ include("basicRules.asl") }
 
 /*
  * Beliefs riguardo sè stesso:
@@ -37,13 +38,6 @@ knowledge([]).
 
 // visible_players(List)
 // neighbors(List)
-
-/* Initial rules */
-list_contains([], _) :- false.
-list_contains([X|_], X) :- true.
-list_contains([Elem|Tail], X) :- list_contains(Tail, X).
-at(P) :- neighbors(List) & list_contains(List, P).
-
 
 /* Initial goals */
 
