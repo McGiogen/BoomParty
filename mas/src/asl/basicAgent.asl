@@ -1,5 +1,6 @@
 { include("tucsonBaseWrapper.asl") }
 { include("basicRules.asl") }
+{ include("comunication.asl") }
 
 /*
  * Beliefs riguardo sè stesso:
@@ -320,7 +321,6 @@ knowledge([]).
           .print("Conosco tutti... e ora cosa faccio?");
         }
         .
-
 
 /* Handle movement */
 

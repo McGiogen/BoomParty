@@ -137,3 +137,55 @@
             }
         }
     .print("inviaRispostaInfo ", Mode, " fine").
+
+
+// Il giocatore inizia una votazione per diventare leader
+!startVotazioneLeader
+    <-
+        ?visible_players(Playerlist);
+        Belief = startVotazioneLeader;
+        for( .member(Receiver, Playerlist) ) {
+            .send(Receiver, tell, Belief);
+        }
+        .wait(15000)
+        !endVotazioneLeader.
+
+// Il giocatore vota o meno per candidato leader
++startVotazioneLeader[source(Sender)]
+    <-
+        // TODO implementare votaPerNuovoLeader in basicAgent
+        ?votaPerNuovoLeader(Sender);
+
+        // Invio del voto solo al leader corrente e al candidato
+        ?stanzaCorrente(StanzaAssegnAtom);
+        !tucsonOpRd(stanzaData(id(StanzaAssegnAtom), leader(Leader)), Op0);
+        .send(Leader, tell, votoLeader);
+        .send(Sender, tell, votoLeader);
+        -startVotazioneLeader[source(Sender)];
+        .
+
+// Un voto è stato registrato contro il giocatore o a suo favore (rispettivamente se è leader o no)
+// +votoLeader[source(Voter)]
+
+// Il giocatore termina la votazione per diventare leader
+!endVotazioneLeader
+    <-
+        ?visible_players(Playerlist);
+
+        .length(Playerlist, NumPlayers);
+        .count(votoLeader[source(X)], NumVoti);
+        if (NumVoti > NumPlayers/2) {
+            // TODO cambio di leader della stanza
+        }
+        .abolish(votoLeader);
+
+        Belief = endVotazioneLeader;
+        for( .member(Receiver, Playerlist) ) {
+            .send(Receiver, tell, Belief);
+        }.
+
++endVotazioneLeader[source(Sender)]
+    <-
+        .abolish(votoLeader);
+        -endVotazioneLeader[source(Sender)];
+        .
