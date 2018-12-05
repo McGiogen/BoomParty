@@ -162,36 +162,10 @@ knowledge([]).
             t4jn.api.getArg(ArtifAtom, 0, ArtifactName);
             +ruoloCorrente(ArtifactName);
             .print("Ruolo assegnatomi ", ArtifactName);
-            !focussaCartaByNomeLogico(ArtifactName, ID);
-            .print("ID recuperato da focussaCartaByNomeLogico: ", ID);
         } else {
             .print("Errore recupero ruolo");
         }
         .print("Fine recupero ruolo").
-
-+!focussaCartaByNomeLogico(ArtifactName, ArtifactId)
-    <-
-        .print("Recupero artefatto di nome: ", ArtifactName);
-        lookupArtifact(ArtifactName, ArtifactId);
-        focus(ArtifactId);
-        .print("Artefatto ", ArtifactName, " trovato e focussato");
-        .print("Fine plan focussaCartaByNameLogico").
-
--!focussaCartaByNomeLogico(ArtifactName, ArtifactId)
-    <-
-        .print(ArtifactName, " non trovato");
-        .wait(1000);
-        .print("Riprovo a fare la lookup su artefatto ", ArtifactName);
-        !focussaCartaByNomeLogico(ArtifactName, ArtifactId).
-
-+!defocussaCartaById(ArtifactName, ArtifactId)
-    <-
-        .print("Mi accingo a togliere il focus da artefatto ", ArtifactName," di ID: ", ArtifactId);
-        unfocus(ArtifactId).
-
--!defocussaCartaById(ArtifactId)
-    <-
-        .print("Errore durante unfocus su artefatto di ID: ", ArtifactId).
 
 +!recuperaStanza
     <-
