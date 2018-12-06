@@ -162,36 +162,10 @@ knowledge([]).
             t4jn.api.getArg(ArtifAtom, 0, ArtifactName);
             +ruoloCorrente(ArtifactName);
             .print("Ruolo assegnatomi ", ArtifactName);
-            !focussaCartaByNomeLogico(ArtifactName, ID);
-            .print("ID recuperato da focussaCartaByNomeLogico: ", ID);
         } else {
             .print("Errore recupero ruolo");
         }
         .print("Fine recupero ruolo").
-
-+!focussaCartaByNomeLogico(ArtifactName, ArtifactId)
-    <-
-        .print("Recupero artefatto di nome: ", ArtifactName);
-        lookupArtifact(ArtifactName, ArtifactId);
-        focus(ArtifactId);
-        .print("Artefatto ", ArtifactName, " trovato e focussato");
-        .print("Fine plan focussaCartaByNameLogico").
-
--!focussaCartaByNomeLogico(ArtifactName, ArtifactId)
-    <-
-        .print(ArtifactName, " non trovato");
-        .wait(1000);
-        .print("Riprovo a fare la lookup su artefatto ", ArtifactName);
-        !focussaCartaByNomeLogico(ArtifactName, ArtifactId).
-
-+!defocussaCartaById(ArtifactName, ArtifactId)
-    <-
-        .print("Mi accingo a togliere il focus da artefatto ", ArtifactName," di ID: ", ArtifactId);
-        unfocus(ArtifactId).
-
--!defocussaCartaById(ArtifactId)
-    <-
-        .print("Errore durante unfocus su artefatto di ID: ", ArtifactId).
 
 +!recuperaStanza
     <-
@@ -234,37 +208,11 @@ knowledge([]).
             t4jn.api.getArg(TimerNameLiteral, 0, TimerName);
             +riferimentoTimer(TimerName);
             .print("Riferimento timer per la stanza ", StanzaCorrente," recuperato: ", TimerName);
-            !focussaTimerByNomeLogico;
+            !focusTimer;
         } else {
             .print("Errore durante recupero riferimento timer per la stanza ", StanzaCorrente);
         }
         .print("Terminato plan recupero riferimento timer per stanza ", StanzaCorrente).
-
-// Focus tramite ArtifactId dell'artefatto timer
-// (22/11/18: attualmente non riusciamo a recuperare l'id dell'artefatto in modo consono da Tucson)
-+!focussaTimer
-    <-
-        ?riferimentoTimer(ArtifactId);
-        .print("Eseguo focus su timer: ", ArtifactId);
-        focus(ArtifactId).
-
-// Focus tramite ArtifactName dell'artefatto timer
-+!focussaTimerByNomeLogico
-    <-
-        ?riferimentoTimer(ArtifactName);
-        .print("Recupero artefatto di nome: ", ArtifactName);
-        lookupArtifact(ArtifactName, ArtifactId);
-        focus(ArtifactId);
-        .print("Artefatto ", ArtifactName, " trovato e focussato");
-        .print("Fine plan focussaTimerByNameLogico").
-
--!focussaTimerByNomeLogico
-    <-
-        ?riferimentoTimer(ArtifactName);
-        .print(ArtifactName, " non trovato");
-        .wait(1000);
-        .print("Riprovo a fare la lookup su artefatto ", ArtifactName);
-        !focussaTimerByNomeLogico.
 
 /* Triggerato dal signal dell'artifact Timer */
 +timeUp
