@@ -1,4 +1,5 @@
 { include("tucsonBaseWrapper.asl") }
+{ include("knowledge.asl") }
 
 +!inviaRichiestaInfo(Target, Mode, FlagOnlyTeam)
     <- !inviaRichiestaInfo(Target, Target, Mode, FlagOnlyTeam).
@@ -52,6 +53,7 @@
     : waitingRispostaInfo(Sender, richiestaInfo(Target, "carta", FlagOnlyTeam))
     <-
         -waitingRispostaInfo(Sender, Any);
+        -rispostaInfoAccetta[source(Sender)];
         !inviaRispostaInfo(Sender, Sender, "carta", FlagOnlyTeam);.
 
 /**
@@ -138,7 +140,7 @@
         }
     .print("inviaRispostaInfo ", Mode, " fine").
 
-
+/*
 // Il giocatore inizia una votazione per diventare leader
 !startVotazioneLeader
     <-
@@ -188,4 +190,4 @@
     <-
         .abolish(votoLeader);
         -endVotazioneLeader[source(Sender)];
-        .
+        .*/
