@@ -23,18 +23,40 @@
 
 /**
     Sender mi ha chiesto delle informazioni su un giocatore (Target).
+    Nel caso sia in possesso alle informazioni richieste su target e nel caso mi interessino le informazioni di sender rispondo affermativamente
 */
 +richiestaInfo(Target, Mode, FlagOnlyTeam)[source(Sender)]
-    : /* FIXME Mode == "parlato" | (Mode == "carta" & Target == <MIO_NOME>)*/
-        Mode == "parlato" | Mode == "carta"
     <-
-        // TODO scegliere quando rifiutare una richiesta .send(Sender, tell, rispostaInfoNegata
+        // TODO TESTARE BENE TUTTI I POSSIBILI CASI (in particolare caso in cui FlagOnlyTeam=true e nella knoledge ci sia ValRuoloSen e non ci sia ConfTeamSen )
         .print("richiestaInfo ", Target, Sender);
-        if (Mode == "parlato") {
-            !inviaRispostaInfo(Sender, Target, "parlato", FlagOnlyTeam);
-        } elif (Mode == "carta") {
-            .send(Sender, tell, rispostaInfoAccetta);
-            !inviaRispostaInfo(Sender, Sender, "carta", FlagOnlyTeam);
+        ?name(MyName);
+        !getTargetKnowledge(Target, TargetKnowledge);
+        if(MyName == Target | TargetKnowledge \== null) {
+            know(name(Tar), ruolo(val(ValRuoloTar), conf(ConfRuoloTar)), team(val(ValTeamTar), conf(ConfTeamTar))) = TargetKnowledge;
+            if(FlagOnlyTeam == false | ValTeam \== null | MyName == Target) {
+                !getTargetKnowledge(Sender, SenderKnowledge);
+                if(SenderKnowledge \== null) {
+                    know(name(Sen), ruolo(val(ValRuoloSen), conf(ConfRuoloSen)), team(val(ValTeamSen), conf(ConfTeamSen))) = SenderKnowledge;
+                    if (Mode == "parlato") {
+
+                        if( ConfRuoloSen<50 | (FlagOnlyTeam==true & (ValTeamSen==null | ( ConfTeamSen \== null & ConfTeamSen<50)))) {
+                            !inviaRispostaInfo(Sender, Target, Mode, FlagOnlyTeam);
+                        } else {
+                            .send(Sender, tell, rispostaInfoNegata);
+                        }
+                    } else {
+                        .send(Sender, tell, rispostaInfoNegata);
+                    }
+                } elif (Mode == "parlato" | MyName == Target) {
+                    !inviaRispostaInfo(Sender, Target, Mode, FlagOnlyTeam);
+                } else {
+                    .send(Sender, tell, rispostaInfoNegata);
+                }
+            } else {
+                .send(Sender, tell, rispostaInfoNegata);
+            }
+        } else {
+            .send(Sender, tell, rispostaInfoNegata);
         }
         -richiestaInfo(Target, Mode, FlagOnlyTeam)[source(Sender)].
 
@@ -102,7 +124,8 @@
                 ?team(CardTeam);
                 ?ruolo(CardRole);
             } else {
-                // TODO Recuperare le info di Target da knowledge()
+                // TODO (Recuperare le info di Target da knowledge) TESTARE
+                !getTargetKnowledge(Target, know(name(Tar), ruolo(val(CardRole), conf(ConfRuolo)), team(val(CardTeam), conf(ConfTeam))));
             }
 
             if (FlagOnlyTeam == true) {
@@ -112,22 +135,25 @@
                 // getRole(CardRole);
                 Belief = rispostaInfo(CardTeam, CardRole);
             }
-            .send(Receiver, tell, Belief)
+            .send(Receiver, tell, Belief);
 
-            !inviaRispostaInfo(Sender, Target, "parlato", FlagOnlyTeam);
+            //!inviaRispostaInfo(Sender, Target, "parlato", FlagOnlyTeam);
         } elif (Mode == "carta") {
             // ?ruoloCorrente(CardArtifName);
+
+            //comunico tramite send di aver accettato la richiesta
+            .send(Receiver, tell, rispostaInfoAccetta);
 
             // recupero il riferimento alla mia carta per passarlo su Tucson
             ?riferimentoCarta(CardArtifName);
 
-            !tucsonOpOut(avvioScambioCarta(player(Target),artifName(CardArtifName)), OpT);
-            !tucsonOpIn(rispostaScambioCarta(player(Target),artifName(CAN)), OpRispSC);
+            !tucsonOpOut(avvioScambioCarta(player(Receiver),artifName(CardArtifName)), OpT);
+            !tucsonOpIn(rispostaScambioCarta(player(Receiver),artifName(CAN)), OpRispSC);
             t4jn.api.getResult(OpRispSC, Risposta);
             if (Risposta \== null) {
                 t4jn.api.getArg(Risposta, 1, CardAtom);
                 t4jn.api.getArg(CardAtom, 0, ReceiverCardArtifName);
-                !updateKnowledge(Receiver, Target, "carta", ReceiverCardArtifName);
+                !updateKnowledge(Receiver, Receiver, "carta", ReceiverCardArtifName);
 
                 // Ricevuto il nome dell'artefatto, ne recupero l'ID
                 lookupArtifact(ReceiverCardArtifName, ReceiverCardArtifID);
