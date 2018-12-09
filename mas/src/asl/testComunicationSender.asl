@@ -1,9 +1,7 @@
 { include("comunication.asl") }
 
-// team(teamSender).
-// ruolo(ruoloSender).
-ruoloCorrente(ruoloSender).
 riferimentoCarta("CardSender").
+name(N) :- .my_name(N).
 
 !boot.
 
@@ -12,9 +10,9 @@ riferimentoCarta("CardSender").
         ?riferimentoCarta(CardName);
         makeArtifact(CardName, "it.unibo.boomparty.domain.artifacts.Card", ["blu", "pres"], CardId);
         focus(CardId);
-        +riferimentoCartaId(CardId);
+        +ruoloCorrente(CardName);
         .print("Carta ", CardName, " creata e focussata");
-        !inviaRichiestaInfo(receiver, "carta", false).
+        !inviaRichiestaInfo(receiver, "carta", true).
 /*
 +!updateKnowledge(Sender, Target, Mode, CardTeam, CardRole) <- .print("AVVIO UPDATEKNOWLEDGE PLAN, Team: ", CardTeam, ", Role: ", CardRole).
 

@@ -4,7 +4,7 @@ knowledge([]).
 
 +!updateKnowledge(Source, Target, ComunicationMode, CardTeam, CardRole)
     <-
-        .print("Inizio updateKnowledge");
+        .print("Inizio updateKnowledge, Target: ", Target, " CardTeam: ", CardTeam, " CardRole: ", CardRole);
         !getConfidance(ComunicationMode, Confidence);
         !salvaInfo(Target, CardTeam, CardRole, Confidence).
 
