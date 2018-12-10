@@ -184,7 +184,7 @@ knowledge([]).
                 .print("Mi è stato assegnato il ruolo di leader");
                 +ruoloLeader(true);
                 t4jn.api.out("default", "127.0.0.1", "20504", stanzaData(id(StanzaAssegnAtom), leader(MioNome)), OpL);
-                !recuperaRiferimentoTimer;
+                //!recuperaRiferimentoTimer;
             } else {
                 +ruoloLeader(false);
             }
