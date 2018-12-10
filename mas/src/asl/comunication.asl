@@ -32,8 +32,11 @@
         ?name(MyName);
         !getTargetKnowledge(Target, TargetKnowledge);
         if(MyName == Target | TargetKnowledge \== null) {
-            know(name(Tar), ruolo(val(ValRuoloTar), conf(ConfRuoloTar)), team(val(ValTeamTar), conf(ConfTeamTar))) = TargetKnowledge;
-            if(FlagOnlyTeam == false | ValTeam \== null | MyName == Target) {
+            if(TargetKnowledge \== null) {
+                know(name(Tar), ruolo(val(ValRuoloTar), conf(ConfRuoloTar)), team(val(ValTeamTar), conf(ConfTeamTar))) = TargetKnowledge;
+            }
+
+            if(FlagOnlyTeam == false | ValTeamTar \== null | MyName == Target) {
                 !getTargetKnowledge(Sender, SenderKnowledge);
                 if(SenderKnowledge \== null) {
                     know(name(Sen), ruolo(val(ValRuoloSen), conf(ConfRuoloSen)), team(val(ValTeamSen), conf(ConfTeamSen))) = SenderKnowledge;
@@ -69,12 +72,14 @@
         -richiestaInfo(Target, Mode, FlagOnlyTeam)[source(Sender)].
 
 /**
-    Sender ha rifiutato una mia richiesta di informazioni. todo testare
+    Sender ha rifiutato una mia richiesta di informazioni.
+    TODO valutare se persistere la risposta per evitare di effettuare nuovamente la stessa richiesta in loop
 */
 +rispostaInfoNegata[source(Sender)]
     : waitingRispostaInfo(Sender, richiestaInfo(Target, Mode, FlagOnlyTeam))
     <-
-        -waitingRispostaInfo(Sender, richiestaInfo(Target, Mode, FlagOnlyTeam)).
+        -waitingRispostaInfo(Sender, richiestaInfo(Target, Mode, FlagOnlyTeam));
+        -rispostaInfoNegata[source(Sender)].
 
 /**
     Sender ha accettato uno scambio carta. Ero in attesa di una sua risposta.

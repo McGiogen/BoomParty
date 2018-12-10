@@ -43,7 +43,11 @@ knowledge([]).
 
         } else {
             .print(Target, " non conosciuto");
-            NewTargetData = know(name(Target), ruolo(val(RuoloTarget), conf(Confidence)), team(val(TeamTarget), conf(Confidence)));
+            if(RuoloTarget \== null){
+                NewTargetData = know(name(Target), ruolo(val(RuoloTarget), conf(Confidence)), team(val(TeamTarget), conf(Confidence)));
+            } else {
+                NewTargetData = know(name(Target), ruolo(val(null), conf(null)), team(val(TeamTarget), conf(Confidence)));
+            }
             .union(KnowledgeList, [NewTargetData], NewKnowledge);
             -+knowledge(NewKnowledge);
         }
