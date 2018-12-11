@@ -33,3 +33,8 @@ tnsPort("20504").
     <-
         !resolveAddr(Name, Server, Port);
         t4jn.api.rd(Name, Server, Port, Tupla, Operazione).
+
++!tucsonOpRdAll(Tupla, Operazione)
+    <-
+        !resolveAddr(Name, Server, Port);
+        t4jn.api.rdAll(Name, Server, Port, Tupla, Operazione).
