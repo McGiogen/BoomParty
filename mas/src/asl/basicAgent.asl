@@ -28,20 +28,24 @@
 
 /* Initial beliefs */
 name(N) :- .my_name(N).
-team(null).  // TODO
-role(null).  // TODO
-knowledge([]).
+knowledge([]).  // Contenuto: know(name(Name), ruolo(val(Role), conf(ConfRole)), team(val(Team), conf(ConfTeam))))
 
 /* Environment percepts */
 // area(roomA|roomB|hallway)
 // position(X,Y)
-// players([ player( name(N), role(R), team(T) area(A), position(X,Y), confidence(C) ), ... ])
+// players([ player( name(N), area(A), position(X,Y) ), ... ])
 
 // visible_players(List)
 // neighbors(List)
 
 /* Rules */
-votaPerNuovoLeader(Sender) :- true.
+votaPerNuovoLeader(Sender) :-
+    knowledge(KnowledgeList)
+    & .member(know(name(Sender), ruolo(val(_), conf(_)), team(val(ValTeam), conf(_))), KnowledgeList)
+    & ruoloCorrente(CardArtifName)
+    & lookupArtifact(CardArtifName, CardArtifID)
+    & getTeam(MyTeam)[artifact_id(CardArtifID)]
+    & MyRole = MyTeam.
 
 /* Initial goals */
 
@@ -251,17 +255,18 @@ votaPerNuovoLeader(Sender) :- true.
         if (NumKnowledge < NumPlayers) {
             // Cerco una persona con cui parlare
             +tmp(null);
-            +index1(0);
-            while (index1(I) & tmp(Target) & Target == null) {
+            +index(0);
+            while (index(I) & tmp(Target) & Target == null) {
                 .nth(I, Playerlist, TempName);
                 //?Temp( name(TempName), role(R), team(T) area(A), position(X,Y), confidence(C) );
-                if (not(.member(know(TempName),StartKnowledge))) {
+                if (not(.member(know(name(TempName), ruolo(val(_), conf(_)), team(val(_), conf(_))), StartKnowledge))) {
                     -+tmp(TempName);
                 }
-                -+index1(I+1);
+                -+index(I+1);
             }
             ?tmp(Target);
             -tmp(Target);
+            -index(_);
             .print("TROVATO ", Target);
 
             !goto(Target);
@@ -269,13 +274,39 @@ votaPerNuovoLeader(Sender) :- true.
             // TODO scambia informazioni con il giocatore raggiunto
             .wait(3000)
 
-            .union(StartKnowledge, [know(Target)], NewKnowledge);
+            .union(StartKnowledge, [know(name(Target), ruolo(val(null), conf(null)), team(val(red), conf(100)))], NewKnowledge);
             -+knowledge(NewKnowledge);
 
             !giocaRound
         } else {
-          // TODO anyone
-          .print("Conosco tutti... e ora cosa faccio?");
+            // TODO anyone
+            .print("Conosco tutti... e ora cosa faccio?");
+
+            // Test regola voto leader
+            /*
+            ?visible_players(Playerlist);
+            .nth(0, Playerlist, Name);
+            .print("Controllo se voto per ", Name);
+            ?votaPerNuovoLeader(Name);
+            .print("SI, VOTEREI ", Name);
+            */
+
+            // Test implementazione regola voto leader
+            /*
+            ?visible_players(Playerlist);
+            .nth(0, Playerlist, Name);
+            .print("Controllo se voto per ", Name);
+            ?knowledge(KnowledgeList)
+            .member(know(name(Sender), ruolo(val(_), conf(_)), team(val(ValTeam), conf(_))), KnowledgeList)
+            ?ruoloCorrente(CardArtifName)
+            lookupArtifact(CardArtifName, CardArtifID)
+            getTeam(MyTeam)[artifact_id(CardArtifID)]
+            if (MyRole = MyTeam) {
+                .print("SI, VOTEREI ", Name);
+            } else {
+                .print("NO, NON VOTEREI PER ", Name);
+            }
+            */
         }
         .
 
