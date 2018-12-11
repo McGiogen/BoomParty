@@ -37,12 +37,13 @@ public class Timer extends Artifact {
 
     @INTERNAL_OPERATION
     void doCountdown() {
+        signal("roundStarted");
 //        System.out.println("Starting timer for " + this.countdown + " milliseconds.");
 //        System.out.println(new Timestamp(new Date().getTime()));
         await_time(this.countdown);
         System.out.println("Times up!");
 //        System.out.println(new Timestamp(new Date().getTime()));
-        signal("timeUp");
+        signal("roundEnded");
         this.started = false;
     }
 }

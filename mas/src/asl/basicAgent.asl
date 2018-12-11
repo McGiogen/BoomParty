@@ -215,7 +215,12 @@ knowledge([]).
         .print("Terminato plan recupero riferimento timer per stanza ", StanzaCorrente).
 
 /* Triggerato dal signal dell'artifact Timer */
-+timeUp
++roundStarted
+    <-
+        ?name(Me);
+        .print(Me, " ha percepito l'inizio del timer!").
+
++roundEnded
     <-
         ?name(Me);
         .print(Me, " ha percepito lo scadere del timer!").
