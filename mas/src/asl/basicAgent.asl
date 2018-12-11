@@ -184,10 +184,12 @@ knowledge([]).
                 .print("Mi è stato assegnato il ruolo di leader");
                 +ruoloLeader(true);
                 t4jn.api.out("default", "127.0.0.1", "20504", stanzaData(id(StanzaAssegnAtom), leader(MioNome)), OpL);
-                //!recuperaRiferimentoTimer;
             } else {
                 +ruoloLeader(false);
             }
+
+            // Recupero i nomi dei Timer per potervi fare il focus successivamente
+            //!recuperaNomiTimer;
 
             t4jn.api.in("default", "127.0.0.1", "20504", player(name(MioNome),room(R)), OpIU);
             t4jn.api.out("default", "127.0.0.1", "20504", player(name(MioNome),room(StanzaAssegnAtom)), OpOU);
@@ -197,6 +199,31 @@ knowledge([]).
         }
         .print("Fine recupero stanza").
 
++!recuperaNomiTimer
+    <-
+        .print("Recupero nomi timer");
+        !tucsonOpRdAll(timer(room(Stanza),timerName(TimerName)), OpR);
+        t4jn.api.getResult(OpR, TimersList);
+
+        if (TimersList \== null) {
+            .print("Recuperati nomi timer ", TimersList);
+
+            for( .member(TimeLiteral, TimersList) ) {
+                t4jn.api.getArg(TimerLiteral, 0, StanzaLiteral);
+                t4jn.api.getArg(StanzaLiteral, 0, Stanza);
+
+                t4jn.api.getArg(TimerLiteral, 1, TimerNameLiteral);
+                t4jn.api.getArg(TimerNameLiteral, 0, TimerName);
+
+                .print("Trovato Timer ", TimerName, " per stanza ", Stanza);
+            }
+        } else {
+            .print("Nessun nome recuperato");
+        }
+
+        .print("Terminato plan recupero nomi timer").
+
+/* MOMENTANEAMENTE SOSPESO */
 +!recuperaRiferimentoTimer
     <-
         ?stanzaCorrente(StanzaCorrente);
