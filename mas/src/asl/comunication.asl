@@ -172,9 +172,9 @@
         }
     .print("inviaRispostaInfo ", Mode, " fine").
 
-/*
+
 // Il giocatore inizia una votazione per diventare leader
-!startVotazioneLeader
++!startVotazioneLeader
     <-
         ?visible_players(Playerlist);
         Belief = startVotazioneLeader;
@@ -202,14 +202,17 @@
 // +votoLeader[source(Voter)]
 
 // Il giocatore termina la votazione per diventare leader
-!endVotazioneLeader
++!endVotazioneLeader
     <-
         ?visible_players(Playerlist);
 
         .length(Playerlist, NumPlayers);
         .count(votoLeader[source(X)], NumVoti);
         if (NumVoti > NumPlayers/2) {
+            .print("Votazione per cambio leader completata con successo");
             // TODO cambio di leader della stanza
+        } else {
+            .print("Votazione per cambio leader completata con fallimento");
         }
         .abolish(votoLeader);
 
@@ -222,4 +225,4 @@
     <-
         .abolish(votoLeader);
         -endVotazioneLeader[source(Sender)];
-        .*/
+        .
