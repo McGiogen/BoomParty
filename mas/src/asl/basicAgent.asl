@@ -40,6 +40,9 @@ knowledge([]).
 // visible_players(List)
 // neighbors(List)
 
+/* Rules */
+votaPerNuovoLeader(Sender) :- true.
+
 /* Initial goals */
 
 !boot.
@@ -285,6 +288,7 @@ knowledge([]).
                 -+index1(I+1);
             }
             ?tmp(Target);
+            -tmp(Target);
             .print("TROVATO ", Target);
 
             !goto(Target);
