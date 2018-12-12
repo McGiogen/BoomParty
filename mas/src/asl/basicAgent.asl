@@ -28,7 +28,9 @@
 
 /* Initial beliefs */
 name(N) :- .my_name(N).
-knowledge([]).  // Contenuto: know(name(Name), ruolo(val(Role), conf(ConfRole)), team(val(Team), conf(ConfTeam))))
+knowledge([]).              // Contenuto: know(name(Name), ruolo(val(Role), conf(ConfRole)), team(val(Team), conf(ConfTeam))))
+riferimentoTimer.           // Artifact name del timer della stanza in cui mi trovo
+riferimentoTimerAlt.        // Artifact name del timer dell'altra stanza
 
 /* Environment percepts */
 // area(roomA|roomB|hallway)
@@ -213,16 +215,35 @@ votaPerNuovoLeader(Sender) :-
         t4jn.api.getResult(OpR, TimersList);
 
         if (TimersList \== null) {
-            .print("Recuperati nomi timer ", TimersList);
+            // recupero il riferimento alla stanza in cui mi trovo per fare valutazioni
+            // all'interno del ciclo for, in modo da sapere quale timer è quello su cui
+            // dovrò fare focus e quale timer salvare come "l'altro"
+            ?stanzaCorrente(StanzaCorrente);
 
-            for( .member(TimeLiteral, TimersList) ) {
+            .term2string(StanzaCorrente, StanzaCorrenteStr);
+
+            for( .member(TimeLiteralStr, TimersList) ) {
+                // Recuperando tramite .member si vede che perde
+                // il fatto di essere un literal
+                .term2string(TimerLiteral, TimeLiteralStr);
+
                 t4jn.api.getArg(TimerLiteral, 0, StanzaLiteral);
                 t4jn.api.getArg(StanzaLiteral, 0, Stanza);
+
+                //.term2string(Stanza, StanzaStr);
 
                 t4jn.api.getArg(TimerLiteral, 1, TimerNameLiteral);
                 t4jn.api.getArg(TimerNameLiteral, 0, TimerName);
 
-                .print("Trovato Timer ", TimerName, " per stanza ", Stanza);
+                .print("Trovato Timer ", TimerName, " per stanza ", Stanza, " e mia stanza è ", StanzaCorrente);
+
+                if (Stanza = StanzaCorrenteStr) {
+                    .print(TimerName, " è il timer della mia stanza");
+                    +riferimentoTimer(TimerName);
+                } else {
+                    .print(TimerName, " è il timer dell'altra stanza");
+                    +riferimentoTimerAlt(TimerName);
+                }
             }
         } else {
             .print("Nessun nome recuperato");
