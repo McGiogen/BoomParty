@@ -14,7 +14,7 @@ public class Card extends Artifact {
 
     void init(String team, String role) {
         this.team = TEAM_PLAYER.byCodice(team);
-        this. role = ROLE_PLAYER.byCodice(role);
+        this.role = ROLE_PLAYER.byCodice(role);
     }
 
     @OPERATION
