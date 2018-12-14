@@ -47,7 +47,7 @@ votaPerNuovoLeader(Sender) :-
     & ruoloCorrente(CardArtifName)
     & lookupArtifact(CardArtifName, CardArtifID)
     & getTeam(MyTeam)[artifact_id(CardArtifID)]
-    & MyRole = MyTeam.
+    & ValTeam = MyTeam.
 
 /* Initial goals */
 
@@ -344,12 +344,13 @@ votaPerNuovoLeader(Sender) :-
             ?visible_players(Playerlist);
             .nth(0, Playerlist, Name);
             .print("Controllo se voto per ", Name);
-            ?knowledge(KnowledgeList)
-            .member(know(name(Sender), ruolo(val(_), conf(_)), team(val(ValTeam), conf(_))), KnowledgeList)
-            ?ruoloCorrente(CardArtifName)
-            lookupArtifact(CardArtifName, CardArtifID)
-            getTeam(MyTeam)[artifact_id(CardArtifID)]
-            if (MyRole = MyTeam) {
+            ?knowledge(KnowledgeList);
+            .member(know(name(Sender), ruolo(val(_), conf(_)), team(val(ValTeam), conf(_))), KnowledgeList);
+            ?ruoloCorrente(CardArtifName);
+            lookupArtifact(CardArtifName, CardArtifID);
+            .print("La mia carta: ", CardArtifID, "/", CardArtifName, ", il suo team: ", ValTeam);
+            getTeam(MyTeam)[artifact_id(CardArtifID)];
+            if (ValTeam = MyTeam) {
                 .print("SI, VOTEREI ", Name);
             } else {
                 .print("NO, NON VOTEREI PER ", Name);
