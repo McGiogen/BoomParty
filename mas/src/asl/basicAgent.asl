@@ -32,6 +32,8 @@ name(N) :- .my_name(N).
 knowledge([]).              // Contenuto: know(name(Name), ruolo(val(Role), conf(ConfRole)), team(val(Team), conf(ConfTeam))))
 riferimentoTimer.           // Artifact name del timer della stanza in cui mi trovo
 riferimentoTimerAlt.        // Artifact name del timer dell'altra stanza
+ruoloLeader.                // Booleano che indica se sono il leader della stanza corrente o meno
+turnoIniziato(false).       // Booleano che indica se il turno è già inizato
 
 /* Environment percepts */
 // area(roomA|roomB|hallway)
@@ -193,7 +195,10 @@ votaPerNuovoLeader(Sender) :-
             }
 
             // Recupero i nomi dei Timer per potervi fare il focus successivamente
-            //!recuperaNomiTimer;
+            !recuperaNomiTimer;
+
+            // Effettuo focus sul timer
+            !focusTimer;
 
             t4jn.api.in("default", "127.0.0.1", "20504", player(name(MioNome),room(R)), OpIU);
             t4jn.api.out("default", "127.0.0.1", "20504", player(name(MioNome),room(StanzaAssegnAtom)), OpOU);
@@ -212,20 +217,37 @@ votaPerNuovoLeader(Sender) :-
 +roundEnded
     <-
         ?name(Me);
-        .print(Me, " ha percepito lo scadere del timer!").
+        .print(Me, " ha percepito lo scadere del timer!");
+        +turnoIniziato(false).
 
 /* Operazioni round di gioco */
 +!giocaRound
     <-
         .print("Inizio a giocare il round");
 
-        // TODO-DRIU: se è leader, deve far partire il timer
-        // ?ruoloLeader(isMeLeader);
+        ?turnoIniziato(Iniziato);
 
-        // if (isMeLeader \== false) {
-        //    ?name(Me);
-        //    .print(Me, " sono il leader, devo avviare il timer e avvertire gli altri");
-        // }
+        if (Iniziato == false) {
+            // Turno non iniziato, devo controllare per attivare il timer
+            // Controllo se sono leader, nel qual caso faccio partire il timer
+            ?ruoloLeader(IsMeLeader);
+
+            if (IsMeLeader \== false) {
+                ?name(Me);
+                .print(Me, " sono il leader, devo avviare il timer e avvertire gli altri");
+
+                // Recupero l'id dell'artefatto Timer per essere sicuro di effettuare
+                // le operazioni sull'artefatto a cui faccio riferimento
+                ?riferimentoTimerID(TimerID);
+
+                // Imposto il minutaggio e faccio partire il timer
+                setMinutes(1) [artifact_id(TimerID)];
+                startTimer [artifact_id(TimerID)];
+            }
+
+            // Imposto turno iniziato
+            +turnoIniziato(true);
+        }
 
         ?knowledge(StartKnowledge);
         ?visible_players(Playerlist);
