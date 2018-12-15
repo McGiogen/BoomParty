@@ -1,6 +1,6 @@
 { include("tucsonBaseWrapper.asl") }
 { include("basicRules.asl") }
-{ include("comunication.asl") }
+{ include("communication.asl") }
 { include("timerHelper.asl") }
 
 /*

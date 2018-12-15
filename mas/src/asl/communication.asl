@@ -1,5 +1,6 @@
 { include("tucsonBaseWrapper.asl") }
 { include("knowledge.asl") }
+{ include("conversationTracker.asl") }
 
 +!inviaRichiestaInfo(Target, Mode, FlagOnlyTeam)
     <- !inviaRichiestaInfo(Target, Target, Mode, FlagOnlyTeam).
@@ -27,7 +28,6 @@
 */
 +richiestaInfo(Target, Mode, FlagOnlyTeam)[source(Sender)]
     <-
-        // TODO TESTARE BENE TUTTI I POSSIBILI CASI (in particolare caso in cui FlagOnlyTeam=true e nella knoledge ci sia ValRuoloSen e non ci sia ConfTeamSen )
         .print("richiestaInfo ", Target, Sender);
         ?name(MyName);
         !getTargetKnowledge(Target, TargetKnowledge);
@@ -47,6 +47,7 @@
                                 //comunico tramite send di aver accettato la richiesta
                                 .send(Sender, tell, rispostaInfoAccetta);
                             }
+                            !updateConversations(Sender, Sender, Mode, FlagOnlyTeam, "accettata");
                             !inviaRispostaInfo(Sender, Target, Mode, FlagOnlyTeam);
                         } else {
                             .send(Sender, tell, rispostaInfoNegata);
@@ -59,6 +60,7 @@
                         //comunico tramite send di aver accettato la richiesta
                         .send(Sender, tell, rispostaInfoAccetta);
                     }
+                    !updateConversations(Sender, Sender, Mode, FlagOnlyTeam, "accettata");
                     !inviaRispostaInfo(Sender, Target, Mode, FlagOnlyTeam);
                 } else {
                     .send(Sender, tell, rispostaInfoNegata);
@@ -73,12 +75,12 @@
 
 /**
     Sender ha rifiutato una mia richiesta di informazioni.
-    TODO valutare se persistere la risposta per evitare di effettuare nuovamente la stessa richiesta in loop
 */
 +rispostaInfoNegata[source(Sender)]
     : waitingRispostaInfo(Sender, richiestaInfo(Target, Mode, FlagOnlyTeam))
     <-
         -waitingRispostaInfo(Sender, richiestaInfo(Target, Mode, FlagOnlyTeam));
+        !updateConversations(Target, Sender, Mode, FlagOnlyTeam, "negata");
         -rispostaInfoNegata[source(Sender)].
 
 /**
@@ -89,6 +91,7 @@
     <-
         -waitingRispostaInfo(Sender, richiestaInfo(Target, "carta", FlagOnlyTeam));
         -rispostaInfoAccetta[source(Sender)];
+        !updateConversations(Sender, Target, "carta", FlagOnlyTeam, "accettata");
         !inviaRispostaInfo(Sender, Target, "carta", FlagOnlyTeam);.
 
 /**
@@ -100,6 +103,7 @@
     <-
         .print("rispostaInfo con richiesta risposta, inizio");
         ?name(MyName);
+        !updateConversations(Sender, Target, "parlato", FlagOnlyTeam, "accettata");
         !inviaRispostaInfo(Sender, MyName, "parlato", FlagOnlyTeam);
         -waitingRispostaInfo(Sender, richiestaInfo(Target, "parlato", FlagOnlyTeam));
 

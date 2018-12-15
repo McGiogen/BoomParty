@@ -1,32 +1,34 @@
 { include("artifactHelper.asl") }
 
+//contenuto di knowledge: know(name(Target), ruolo(val(ValRuolo), conf(ConfRuolo)), team(val(ValTeam), conf(ConfTeam)
 knowledge([]).
 
-+!updateKnowledge(Source, Target, ComunicationMode, CardTeam, CardRole)
++!updateKnowledge(Source, Target, CommunicationMode, CardTeam, CardRole)
     <-
         .print("Inizio updateKnowledge, Target: ", Target, " CardTeam: ", CardTeam, " CardRole: ", CardRole);
-        !getConfidance(ComunicationMode, Confidence);
+        !getConfidance(CommunicationMode, Confidence);
         !salvaInfo(Target, CardTeam, CardRole, Confidence).
 
-+!updateKnowledge(Source, Target, ComunicationMode, ReceiverCardArtifName)
++!updateKnowledge(Source, Target, CommunicationMode, ReceiverCardArtifName)
     <-
         .print("Inizio updateKnowledge");
-        !getConfidance(ComunicationMode, Confidence);
+        !getConfidance(CommunicationMode, Confidence);
         lookupArtifact(ReceiverCardArtifName, ReceiverCardArtifID);
         getTeam(TeamTarget) [artifact_id(ReceiverCardArtifID)];
         getRole(RuoloTarget) [artifact_id(ReceiverCardArtifID)];
         !salvaInfo(Target, TeamTarget, RuoloTarget, Confidence).
 
-+!getConfidance(ComunicationMode, Confidence)
++!getConfidance(CommunicationMode, Confidence)
     <-
-        if(ComunicationMode == "carta"){
+        if(CommunicationMode == "carta"){
             Confidence = 100;
-        } elif (ComunicationMode == "parlato") {
+        } elif (CommunicationMode == "parlato") {
             Confidence = 50;
         } else {
             Confidence = 0;
         }.
 
+/* plan ad uso interno per salvare le info in knowledge, per interagire dall'esterno fare riferimento ad updateKnowledge */
 +!salvaInfo(Target, TeamTarget, RuoloTarget, Confidence)
     <-
         ?knowledge(KnowledgeList);
@@ -51,10 +53,8 @@ knowledge([]).
             .union(KnowledgeList, [NewTargetData], NewKnowledge);
             -+knowledge(NewKnowledge);
         }
-
         .print("Fine salvaInfo").
 
-// TODO Recuperare le info di Target da knowledge() DA TESTARE
 +!getTargetKnowledge(Target, TargetData)
     <-
         ?knowledge(KnowledgeList);

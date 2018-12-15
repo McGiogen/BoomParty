@@ -4,13 +4,13 @@ reaction(
     (
         event_source(SenderHelper),
         text_concat("helper4", Target, TargetHelper),
-        (nop(pendingComunication(sender(TargetHelper), receiver(SenderHelper), agentNameTarget(_), senderArtif(_) )) ->
+        (nop(pendingCommunication(sender(TargetHelper), receiver(SenderHelper), agentNameTarget(_), senderArtif(_) )) ->
             (
-                out(pendingComunication(sender(SenderHelper), receiver(TargetHelper), agentNameTarget(Target), senderArtif(SenderCardAN) ))
+                out(pendingCommunication(sender(SenderHelper), receiver(TargetHelper), agentNameTarget(Target), senderArtif(SenderCardAN) ))
             )
             ;
             (
-                in(pendingComunication(sender(TargetHelper), receiver(SenderHelper), agentNameTarget(Sender), senderArtif(TargetCardAN))),
+                in(pendingCommunication(sender(TargetHelper), receiver(SenderHelper), agentNameTarget(Sender), senderArtif(TargetCardAN))),
                 out(rispostaScambioCarta(player(Sender),artifName(SenderCardAN))),
                 out(rispostaScambioCarta(player(Target),artifName(TargetCardAN)))
             )

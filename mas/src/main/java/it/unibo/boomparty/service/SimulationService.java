@@ -132,7 +132,7 @@ public class SimulationService {
 
         // Respect reaction
         TucsonUtils.loadReactionFromFile(tChannel, Settings.REACTION_FILE);
-        TucsonUtils.loadReactionFromFile(tChannel, Settings.REAC_COMUNICATION_FILE);
+        TucsonUtils.loadReactionFromFile(tChannel, Settings.REAC_COMMUNICATION_FILE);
         log.info("Respect reactions caricate correttamente");
 
         // Tucson inspector
