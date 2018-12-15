@@ -82,22 +82,3 @@
         }
 
         .print("Terminato plan recupero nomi timer").
-
-// TODO da rimuovere?
-/* NON USATO AL MOMENTO */
-+!recuperaRiferimentoTimer
-    <-
-        ?stanzaCorrente(StanzaCorrente);
-        .print("Recupero il timer per la stanza ", StanzaCorrente);
-        !tucsonOpRd(timer(room(StanzaCorrente),timerName(T)), OpR);
-        t4jn.api.getResult(OpR, TimerLiteral);
-        if (TimerLiteral \== null) {
-            t4jn.api.getArg(TimerLiteral, 1, TimerNameLiteral);
-            t4jn.api.getArg(TimerNameLiteral, 0, TimerName);
-            +riferimentoTimer(TimerName);
-            .print("Riferimento timer per la stanza ", StanzaCorrente," recuperato: ", TimerName);
-            !focusTimer;
-        } else {
-            .print("Errore durante recupero riferimento timer per la stanza ", StanzaCorrente);
-        }
-        .print("Terminato plan recupero riferimento timer per stanza ", StanzaCorrente).
