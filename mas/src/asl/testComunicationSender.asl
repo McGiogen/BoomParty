@@ -1,4 +1,4 @@
-{ include("comunication.asl") }
+{ include("communication.asl") }
 
 riferimentoCarta("CardSender").
 name(N) :- .my_name(N).
