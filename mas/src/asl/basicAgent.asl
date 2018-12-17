@@ -338,6 +338,7 @@ numberOfPlayerInMyRoom(N) :-
 +end_round_ack(Player, Room)[source(A)]
     : ruoloLeader(true) & inMyRoom(Room) & numberOfPlayerInMyRoom(N) & .count(end_round_ack(_, Room), N)
     <-
+        // todo: qui andrebbe gestito se io stesso leader non sto facendo ben altro.. nel senso che devo avere turnoIniziato(false)
         .print("Tutti i player hanno terminato il turno! ", Room);
         .abolish(end_round_ack(_, _)); // per non portarmi dietro gli ack di ogni round
         !scambiaPlayer.
