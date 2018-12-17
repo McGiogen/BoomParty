@@ -52,6 +52,15 @@ votaPerNuovoLeader(Sender) :-
     & getTeam(MyTeam)[artifact_id(CardArtifID)]
     & ValTeam = MyTeam.
 
+/* Valuta se Room è la mia stanza */
+inMyRoom(Room) :-
+    stanzaCorrente(R)
+    & Room = R.
+
+numberOfPlayerInMyRoom(N) :-
+    visible_players(Playerlist) &
+    .length(Playerlist, N).
+
 /* Initial goals */
 
 !boot.
@@ -208,18 +217,6 @@ votaPerNuovoLeader(Sender) :-
         }
         .print("Fine recupero stanza").
 
-/* Triggerato dal signal dell'artifact Timer */
-+roundStarted
-    <-
-        ?name(Me);
-        .print(Me, " ha percepito l'inizio del timer!").
-
-+roundEnded
-    <-
-        ?name(Me);
-        .print(Me, " ha percepito lo scadere del timer!");
-        +turnoIniziato(false).
-
 /* Operazioni round di gioco */
 +!giocaRound
     <-
@@ -315,6 +312,42 @@ votaPerNuovoLeader(Sender) :-
         }
         .
 
+/* Triggerato dal signal dell'artifact Timer */
+
++roundStarted
+    <-
+        ?name(Me);
+        .print(Me, " ha percepito l'inizio del timer!").
+
++roundEnded
+    : ruoloLeader(true)
+    <-
+        .print("Percepito lo scadere del timer!");
+        +turnoIniziato(false).
+
++roundEnded
+    : ruoloLeader(false)
+    <-
+        .print("Percepito lo scadere del timer!");
+        +turnoIniziato(false);
+        ?name(Me);
+        ?stanzaCorrente(R);
+        .broadcast(tell, end_round_ack(Me, R)).
+
+// messaggio emesso dagli agenti che hanno terminato il turno
++end_round_ack(Player, Room)[source(A)]
+    : ruoloLeader(true) & inMyRoom(Room) & numberOfPlayerInMyRoom(N) & .count(end_round_ack(_, Room), N)
+    <-
+        .print("Tutti i player hanno terminato il turno! ", Room);
+        .abolish(end_round_ack(_, _)); // per non portarmi dietro gli ack di ogni round
+        !scambiaPlayer.
+
+/* Mid turn phase */
+
++!scambiaPlayer
+    <-
+        .print("Scambio i player").
+
 /* Handle movement */
 
 +!goto(Player) // if arrived at destination Player
@@ -325,3 +358,4 @@ votaPerNuovoLeader(Sender) :-
 	: not at(Player)
 	<- move_towards(Player);
 	!goto(Player). // continue attempting to reach destination
+
