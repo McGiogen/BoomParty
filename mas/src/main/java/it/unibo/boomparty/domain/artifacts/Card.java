@@ -23,7 +23,7 @@ public class Card extends Artifact {
     }
 
     @OPERATION
-    void getTeam(OpFeedbackParam<String> role) {
-        role.set(this.team.getCodice());
+    void getTeam(OpFeedbackParam<String> team) {
+        team.set(this.team.getCodice());
     }
 }
