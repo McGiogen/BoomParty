@@ -83,3 +83,23 @@
         }
 
         .print("Terminato plan recupero nomi timer").
+
+/* Logica per invertire i riferimenti del timer */
++!invertiTimer
+    <-
+        .print("Inizio plan per scambio riferimento timer");
+
+        // Tolgo il focus dal timer attuale
+        !defocusTimer;
+
+        ?riferimentoTimer(OldTimer);
+        ?riferimentoTimerAlt(NewTimer);
+
+        // Inverto il riferimento al timer
+        +riferimentoTimer(NewTimer);
+        +riferimentoTimerAlt(OldTimer);
+
+        // Effettuo il focus sul nuovo timer
+        !focuTimer;
+
+        .print("Fine plan per scambio riferimento timer").
