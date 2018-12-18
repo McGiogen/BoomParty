@@ -21,8 +21,9 @@
 
 +!defocusTimer
     <-
+        ?riferimentoTimer(TimerName);
         ?riferimentoTimerID(TimerID);
-        !defocusById(TimerID).
+        !defocusById(TimerName, TimerID).
 
 -!defocusTimer
     <-
