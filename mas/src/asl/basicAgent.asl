@@ -131,7 +131,7 @@ numberOfPlayerInMyRoom(N) :-
             // Inizializzo il suffisso per la creazione delle carte
             +suffissoCarta(0);
 
-            ElencoTeam = ["rosso", "blu", "grey"];
+            ElencoTeam = ["rosso", "blu", "grigio"];
             for( .member(Team, ElencoTeam) ) {
                 .nth(Pos, ElencoTeam, Team);
                 t4jn.api.getArg(InitialRole, Pos, TeamAtom);
