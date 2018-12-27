@@ -191,15 +191,18 @@
 // Il giocatore vota o meno per candidato leader
 +startVotazioneLeader[source(Sender)]
     <-
-        // TODO implementare votaPerNuovoLeader in basicAgent
-        ?votaPerNuovoLeader(Sender);
-
-        // Invio del voto solo al leader corrente e al candidato
-        ?stanzaCorrente(StanzaAssegnAtom);
-        !tucsonOpRd(stanzaData(id(StanzaAssegnAtom), leader(Leader)), Op0);
-        .send(Leader, tell, votoLeader);
-        .send(Sender, tell, votoLeader);
         -startVotazioneLeader[source(Sender)];
+
+        // TODO implementare votaPerNuovoLeader in basicAgent
+        !votaPerNuovoLeader(Sender, Result);
+
+        if (Result) {
+            // Invio del voto solo al leader corrente e al candidato
+            ?stanzaCorrente(StanzaAssegnAtom);
+            !tucsonOpRd(stanzaData(id(StanzaAssegnAtom), leader(Leader)), Op0);
+            .send(Leader, tell, votoLeader);
+            .send(Sender, tell, votoLeader);
+        }
         .
 
 // Un voto è stato registrato contro il giocatore o a suo favore (rispettivamente se è leader o no)

@@ -43,14 +43,6 @@ turnoIniziato(false).       // Booleano che indica se il turno è già inizato
 // visible_players(List)
 // neighbors(List)
 
-/* Rules */
-votaPerNuovoLeader(Sender) :-
-    knowledge(KnowledgeList)
-    & .member(know(name(Sender), ruolo(val(_), conf(_)), team(val(ValTeam), conf(_))), KnowledgeList)
-    & ruoloCorrente(CardArtifName)
-    & lookupArtifact(CardArtifName, CardArtifID)
-    & getTeam(MyTeam)[artifact_id(CardArtifID)]
-    & ValTeam = MyTeam.
 
 /* Valuta se Room è la mia stanza */
 inMyRoom(Room) :-
@@ -275,40 +267,13 @@ numberOfPlayerInMyRoom(N) :-
             // TODO scambia informazioni con il giocatore raggiunto
             .wait(3000)
 
-            .union(StartKnowledge, [know(name(Target), ruolo(val(null), conf(null)), team(val(red), conf(100)))], NewKnowledge);
+            .union(StartKnowledge, [know(name(Target), ruolo(val(null), conf(null)), team(val("rosso"), conf(100)))], NewKnowledge);
             -+knowledge(NewKnowledge);
 
             !giocaRound
         } else {
             // TODO anyone
             .print("Conosco tutti... e ora cosa faccio?");
-
-            // Test regola voto leader
-            /*
-            ?visible_players(Playerlist);
-            .nth(0, Playerlist, Name);
-            .print("Controllo se voto per ", Name);
-            ?votaPerNuovoLeader(Name);
-            .print("SI, VOTEREI ", Name);
-            */
-
-            // Test implementazione regola voto leader
-            /*
-            ?visible_players(Playerlist);
-            .nth(0, Playerlist, Name);
-            .print("Controllo se voto per ", Name);
-            ?knowledge(KnowledgeList);
-            .member(know(name(Sender), ruolo(val(_), conf(_)), team(val(ValTeam), conf(_))), KnowledgeList);
-            ?ruoloCorrente(CardArtifName);
-            lookupArtifact(CardArtifName, CardArtifID);
-            .print("La mia carta: ", CardArtifID, "/", CardArtifName, ", il suo team: ", ValTeam);
-            getTeam(MyTeam)[artifact_id(CardArtifID)];
-            if (ValTeam = MyTeam) {
-                .print("SI, VOTEREI ", Name);
-            } else {
-                .print("NO, NON VOTEREI PER ", Name);
-            }
-            */
         }
         .
 
@@ -360,3 +325,18 @@ numberOfPlayerInMyRoom(N) :-
 	<- move_towards(Player);
 	!goto(Player). // continue attempting to reach destination
 
+/* Handle voto leader */
++!votaPerNuovoLeader(Sender, Result)
+    <-
+        ?knowledge(KnowledgeList);
+        .member(know(name(Sender), ruolo(val(_), conf(_)), team(val(ValTeam), conf(_))), KnowledgeList);
+        ?ruoloCorrente(CardArtifName);
+        lookupArtifact(CardArtifName, CardArtifID);
+        getTeam(MyTeam)[artifact_id(CardArtifID)];
+        .print("La mia carta: ", CardArtifID, "/", CardArtifName, "/", MyTeam, ", il suo team: ", ValTeam);
+        if (ValTeam = MyTeam) {
+            Result = true;
+        } else {
+            Result = false;
+        }
+        .
