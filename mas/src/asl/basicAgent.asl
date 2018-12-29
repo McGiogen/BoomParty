@@ -34,6 +34,8 @@ riferimentoTimer.           // Artifact name del timer della stanza in cui mi tr
 riferimentoTimerAlt.        // Artifact name del timer dell'altra stanza
 ruoloLeader.                // Booleano che indica se sono il leader della stanza corrente o meno
 turnoIniziato(false).       // Booleano che indica se il turno è già inizato
+mazziere(false).            // Booleano che indica se il giocatore è il mazziere. Il mazziere farà le valutazioni di fine partita
+ruoloCorrente.              // Artifact name della card in mio possesso
 
 /* Environment percepts */
 // area(roomA|roomB|hallway)
@@ -90,6 +92,9 @@ numberOfPlayerInMyRoom(N) :-
         if (Result \== null) {
             t4jn.api.getArg(Result, 0, TokenVal);
             if (TokenVal == "mazziere") {
+                // Aggiorno il belief, così alla fine della partita saprò che sono io a dover tirare le somme
+                +mazziere(true);
+
                 ?name(Name);
                 .print("Ricevuto ruolo mazziere ", Name);
                 !creaTimer;
@@ -288,7 +293,8 @@ numberOfPlayerInMyRoom(N) :-
     : ruoloLeader(true)
     <-
         .print("Percepito lo scadere del timer!");
-        +turnoIniziato(false).
+        +turnoIniziato(false);
+        !rivelaRuolo.
 
 +roundEnded
     : ruoloLeader(false)
@@ -297,7 +303,8 @@ numberOfPlayerInMyRoom(N) :-
         +turnoIniziato(false);
         ?name(Me);
         ?stanzaCorrente(R);
-        .broadcast(tell, end_round_ack(Me, R)).
+        .broadcast(tell, end_round_ack(Me, R));
+        !rivelaRuolo.
 
 // messaggio emesso dagli agenti che hanno terminato il turno
 +end_round_ack(Player, Room)[source(A)]
@@ -339,4 +346,35 @@ numberOfPlayerInMyRoom(N) :-
         } else {
             Result = false;
         }
+        .
+
+/* Operazioni finali */
++!rivelaRuolo
+    <-
+        ?ruoloCorrente(ArtifName);
+        lookupArtifact(ArtifName, ArtifID);
+
+        getRole(Role) [artifact_id(ArtifID)];
+        getTeam(Team) [artifact_id(ArtifID)];
+
+        ?stanzaCorrente(Stanza);
+
+        ?name(MioNome);
+
+        //.print("Sono nella stanza ", Stanza, ", sono della squadra ", Team, " e il mio ruolo è ", Role);
+        .print("Scrivo le mie info sul Tuple Centre");
+
+        !tucsonOpOut(statusEnd(player(MioNome),room(Stanza),team(Team),role(Role)), OpR);
+
+        // Sono il mazziere, aspetto che tutti scrivino sul TC e poi faccio le valutazioni
+        if (mazziere(true)) {
+            .wait(3000);
+            !valutaEndGame;
+        }
+        .
+
++!valutaEndGame // metto la guard per sicurezza, solo il mazziere è incaricato di questo compito
+    : mazziere(true)
+    <-
+        .print("Devo fare cose di end game");
         .
