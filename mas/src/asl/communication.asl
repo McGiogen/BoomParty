@@ -177,50 +177,73 @@
     .print("inviaRispostaInfo ", Mode, " fine").
 
 
-// Il giocatore inizia una votazione per diventare leader
+// Il giocatore inizia una votazione candidandosi come leader
 +!startVotazioneLeader
     <-
+        // Informa tutti i giocatori della stanza dell'inizio della votazione
         ?visible_players(Playerlist);
         Belief = startVotazioneLeader;
         for( .member(Receiver, Playerlist) ) {
             .send(Receiver, tell, Belief);
         }
-        .wait(15000)
+
+        // Si auto-vota
+        ?name(MioNome);
+        !sendVotoPerCandidatoAlLeader(MioNome);
+        +votoLeader;
+
+        // Lascia del tempo agli altri giocatori per votare poi fa lo scrutinio
+        .wait(15000);
         !endVotazioneLeader.
 
-// Il giocatore vota o meno per candidato leader
+// Il giocatore viene avvertito di una nuova votazione per cambio leader,
+// sceglie se votare o meno per il candidato
 +startVotazioneLeader[source(Sender)]
     <-
-        -startVotazioneLeader[source(Sender)];
-
-        // TODO implementare votaPerNuovoLeader in basicAgent
-        !votaPerNuovoLeader(Sender, Result);
+        .term2string(Sender,SenderString)
+        !votaPerNuovoLeader(SenderString, Result);  // Plan da implementare fuori da questo file
 
         if (Result) {
-            // Invio del voto solo al leader corrente e al candidato
-            ?stanzaCorrente(StanzaAssegnAtom);
-            !tucsonOpRd(stanzaData(id(StanzaAssegnAtom), leader(Leader)), Op0);
-            .send(Leader, tell, votoLeader);
-            .send(Sender, tell, votoLeader);
+            // Se a favore, invia il voto al leader corrente e al candidato
+            !sendVotoPerCandidatoAlLeader(Sender);
+            .send(Sender, tell, votoLeader)
         }
         .
 
-// Un voto è stato registrato contro il giocatore o a suo favore (rispettivamente se è leader o no)
+// Da usare durante le votazioni per inviare il proprio voto al leader della propria stanza
+// Ricordarsi di inviare il voto anche al candidato
++!sendVotoPerCandidatoAlLeader(Candidato)
+    <-
+        ?stanzaCorrente(StanzaAssegnAtom);
+
+        !tucsonOpRd(stanzaData(id(StanzaAssegnAtom), leader(Leader)), Op0);
+        t4jn.api.getResult(Op0, StanzaDataStr);
+        .term2string(StanzaData, StanzaDataStr);
+        stanzaData(id(StanzaAssegnAtom), leader(Leader)) = StanzaData;
+
+        .send(Leader, tell, votoLeader).
+
+// Un voto è stato registrato contro il leader e a favore del candidato
 // +votoLeader[source(Voter)]
 
-// Il giocatore termina la votazione per diventare leader
+// Il candidato termina la votazione
 +!endVotazioneLeader
     <-
+        // Conta dei giocatori e dei voti
         ?visible_players(Playerlist);
+        .length(Playerlist, ContaAltriGiocatori);
+        NumPlayers = ContaAltriGiocatori + 1;
 
-        .length(Playerlist, NumPlayers);
-        .count(votoLeader[source(X)], NumVoti);
+        .count(votoLeader[source(_)], NumVoti);
+
         if (NumVoti > NumPlayers/2) {
-            .print("Votazione per cambio leader completata con successo");
+            .print("Votazione per cambio leader completata con successo, ", NumVoti, " voti su ", NumPlayers);
             // TODO cambio di leader della stanza
         } else {
-            .print("Votazione per cambio leader completata con fallimento");
+            .print("Votazione per cambio leader completata con fallimento, ", NumVoti, " voti su ", NumPlayers);
         }
+
+        // Pulizia
         .abolish(votoLeader);
 
         Belief = endVotazioneLeader;
@@ -231,5 +254,6 @@
 +endVotazioneLeader[source(Sender)]
     <-
         .abolish(votoLeader);
+        -startVotazioneLeader[source(Sender)];
         -endVotazioneLeader[source(Sender)];
         .

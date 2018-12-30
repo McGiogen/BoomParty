@@ -270,15 +270,26 @@ numberOfPlayerInMyRoom(N) :-
             !goto(Target);
 
             // TODO scambia informazioni con il giocatore raggiunto
-            .wait(3000)
+            .wait(3000);
 
             .union(StartKnowledge, [know(name(Target), ruolo(val(null), conf(null)), team(val("rosso"), conf(100)))], NewKnowledge);
             -+knowledge(NewKnowledge);
 
-            !giocaRound
+            !giocaRound;
         } else {
+            // TODO valutare se è il caso di candidarsi come leader... contare il numero di giocatori
+            // presenti in stanza che potrebbero votarmi e candidarmi solo se > NumPlayers/2
+            .count(startVotazioneLeader[source(_)], N);
+            ?ruoloLeader(ImLeader);
+            if (N == 0 & not ImLeader) {
+                .print("Mi candido come leader");
+                !startVotazioneLeader;
+            } else {
+                .print("Mi candiderei ma c'è una votazione in corso oppure sono già leader");
+            }
+
             // TODO anyone
-            .print("Conosco tutti... e ora cosa faccio?");
+            .print("Finito tutto... e poi cosa faccio?");
         }
         .
 
@@ -336,14 +347,18 @@ numberOfPlayerInMyRoom(N) :-
 +!votaPerNuovoLeader(Sender, Result)
     <-
         ?knowledge(KnowledgeList);
-        .member(know(name(Sender), ruolo(val(_), conf(_)), team(val(ValTeam), conf(_))), KnowledgeList);
-        ?ruoloCorrente(CardArtifName);
-        lookupArtifact(CardArtifName, CardArtifID);
-        getTeam(MyTeam)[artifact_id(CardArtifID)];
-        .print("La mia carta: ", CardArtifID, "/", CardArtifName, "/", MyTeam, ", il suo team: ", ValTeam);
-        if (ValTeam = MyTeam) {
-            Result = true;
+        if (.member(know(name(Sender), ruolo(val(_), conf(_)), team(val(ValTeam), conf(_))), KnowledgeList)) {
+            ?ruoloCorrente(CardArtifName);
+            lookupArtifact(CardArtifName, CardArtifID);
+            getTeam(MyTeam)[artifact_id(CardArtifID)];
+            .print("Secondo me il leader candidato ", Sender, " è del team: ", ValTeam, ". La mia carta: ", CardArtifID, "/", CardArtifName, "/", MyTeam);
+            if (ValTeam = MyTeam) {
+                Result = true;
+            } else {
+                Result = false;
+            }
         } else {
+            .print("Non conosco il leader candidato ", Sender, ". Non voto.");
             Result = false;
         }
         .
