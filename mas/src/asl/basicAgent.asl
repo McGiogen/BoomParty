@@ -421,7 +421,7 @@ numberOfPlayerInMyRoom(N) :-
                 } elif (Role == "mogpres") {
                     -+stanzaMogliePres(Stanza);
                 } elif (Role == "amapres") {
-                    -+stanzaAmantePres(Staza);
+                    -+stanzaAmantePres(Stanza);
                 }
             }
 
