@@ -7,7 +7,7 @@
 
         !focusByNomeLogico(TimerName, TimerID);
 
-        +riferimentoTimerID(TimerID);
+        -+riferimentoTimerID(TimerID);
 
         .print("Fine plan focussaTimerByNameLogico").
 
@@ -72,10 +72,10 @@
 
                 if (Stanza = StanzaCorrenteStr) {
                     .print(TimerName, " è il timer della mia stanza");
-                    +riferimentoTimer(TimerName);
+                    -+riferimentoTimer(TimerName);
                 } else {
                     .print(TimerName, " è il timer dell'altra stanza");
-                    +riferimentoTimerAlt(TimerName);
+                    -+riferimentoTimerAlt(TimerName);
                 }
             }
         } else {
@@ -96,8 +96,8 @@
         ?riferimentoTimerAlt(NewTimer);
 
         // Inverto il riferimento al timer
-        +riferimentoTimer(NewTimer);
-        +riferimentoTimerAlt(OldTimer);
+        -+riferimentoTimer(NewTimer);
+        -+riferimentoTimerAlt(OldTimer);
 
         // Effettuo il focus sul nuovo timer
         !focuTimer;

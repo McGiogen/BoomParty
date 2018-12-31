@@ -30,12 +30,12 @@
 /* Initial beliefs */
 name(N) :- .my_name(N).
 knowledge([]).              // Contenuto: know(name(Name), ruolo(val(Role), conf(ConfRole)), team(val(Team), conf(ConfTeam))))
-riferimentoTimer.           // Artifact name del timer della stanza in cui mi trovo
-riferimentoTimerAlt.        // Artifact name del timer dell'altra stanza
-ruoloLeader.                // Booleano che indica se sono il leader della stanza corrente o meno
+riferimentoTimer(null).     // Artifact name del timer della stanza in cui mi trovo
+riferimentoTimerAlt(null).  // Artifact name del timer dell'altra stanza
+ruoloLeader(null).          // Booleano che indica se sono il leader della stanza corrente o meno
 turnoIniziato(false).       // Booleano che indica se il turno è già inizato
 mazziere(false).            // Booleano che indica se il giocatore è il mazziere. Il mazziere farà le valutazioni di fine partita
-ruoloCorrente.              // Artifact name della card in mio possesso
+ruoloCorrente(null).        // Artifact name della card in mio possesso
 
 /* Environment percepts */
 // area(roomA|roomB|hallway)
@@ -93,7 +93,7 @@ numberOfPlayerInMyRoom(N) :-
             t4jn.api.getArg(Result, 0, TokenVal);
             if (TokenVal == "mazziere") {
                 // Aggiorno il belief, così alla fine della partita saprò che sono io a dover tirare le somme
-                +mazziere(true);
+                -+mazziere(true);
 
                 ?name(Name);
                 .print("Ricevuto ruolo mazziere ", Name);
@@ -172,7 +172,7 @@ numberOfPlayerInMyRoom(N) :-
         if (InfoRuoloDisp \== null) {
             t4jn.api.getArg(InfoRuoloDisp, 0, ArtifAtom);
             t4jn.api.getArg(ArtifAtom, 0, ArtifactName);
-            +ruoloCorrente(ArtifactName);
+            -+ruoloCorrente(ArtifactName);
             .print("Ruolo assegnatomi ", ArtifactName);
         } else {
             .print("Errore recupero ruolo");
@@ -194,10 +194,10 @@ numberOfPlayerInMyRoom(N) :-
             t4jn.api.getArg(StanzaAssegnLiteral, 1, IsLeader);
             if (IsLeader == "true") {
                 .print("Mi è stato assegnato il ruolo di leader");
-                +ruoloLeader(true);
+                -+ruoloLeader(true);
                 t4jn.api.out("default", "127.0.0.1", "20504", stanzaData(id(StanzaAssegnAtom), leader(MioNome)), OpL);
             } else {
-                +ruoloLeader(false);
+                -+ruoloLeader(false);
             }
 
             // Recupero i nomi dei Timer per potervi fare il focus successivamente
@@ -240,7 +240,7 @@ numberOfPlayerInMyRoom(N) :-
             }
 
             // Imposto turno iniziato
-            +turnoIniziato(true);
+            -+turnoIniziato(true);
         }
 
         ?knowledge(StartKnowledge);
@@ -305,14 +305,14 @@ numberOfPlayerInMyRoom(N) :-
     : ruoloLeader(true)
     <-
         .print("Percepito lo scadere del timer!");
-        +turnoIniziato(false);
+        -+turnoIniziato(false);
         !rivelaRuolo.
 
 +roundEnded
     : ruoloLeader(false)
     <-
         .print("Percepito lo scadere del timer!");
-        +turnoIniziato(false);
+        -+turnoIniziato(false);
         ?name(Me);
         ?stanzaCorrente(R);
         .broadcast(tell, end_round_ack(Me, R));
