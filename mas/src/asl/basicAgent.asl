@@ -36,6 +36,10 @@ ruoloLeader(null).          // Booleano che indica se sono il leader della stanz
 turnoIniziato(false).       // Booleano che indica se il turno è già inizato
 mazziere(false).            // Booleano che indica se il giocatore è il mazziere. Il mazziere farà le valutazioni di fine partita
 ruoloCorrente(null).        // Artifact name della card in mio possesso
+stanzaBombarolo(null).      // Stanza in cui si trova il bombarolo a fine partita
+stanzaPresidente(null).     // Stanza in cui si trova il presidente a fine partita
+stanzaMogliePres(null).     // Stanza in cui si trova la moglie del presidente a fine partita
+stanzaAmantePres(null).     // Stanza in cui si trova l'amante del presidente a fine partita
 
 /* Environment percepts */
 // area(roomA|roomB|hallway)
@@ -378,7 +382,7 @@ numberOfPlayerInMyRoom(N) :-
         ?name(MioNome);
 
         //.print("Sono nella stanza ", Stanza, ", sono della squadra ", Team, " e il mio ruolo è ", Role);
-        .print("Scrivo le mie info sul Tuple Centre");
+        .print("Scrivo le mie info di fine partita sul Tuple Centre");
 
         !tucsonOpOut(statusEnd(player(MioNome),room(Stanza),team(Team),role(Role)), OpR);
 
@@ -392,5 +396,60 @@ numberOfPlayerInMyRoom(N) :-
 +!valutaEndGame // metto la guard per sicurezza, solo il mazziere è incaricato di questo compito
     : mazziere(true)
     <-
-        .print("Devo fare cose di end game");
+        .print("Leggo dal Tuple Centre le tuple di fine partita per fare le valutazioni");
+
+        !tucsonOpRdAll(statusEnd(player(_),room(X),team(_),role(Y)), OpResult);
+
+        t4jn.api.getResult(OpResult, StatusEndList);
+
+        if (InfoList \== null) {
+            for (.member(PlayerStatusEndLiteralStr, StatusEndList)) {
+                // Recuperando tramite .member si vede che perde
+                // il fatto di essere un literal
+                .term2string(PlayerStatusEndLiteral, PlayerStatusEndLiteralStr);
+
+                t4jn.api.getArg(PlayerStatusEndLiteral, 1, StanzaLiteral);
+                t4jn.api.getArg(StanzaLiteral, 0, Stanza);
+
+                t4jn.api.getArg(PlayerStatusEndLiteral, 3, RoleLiteral);
+                t4jn.api.getArg(RoleLiteral, 0, Role);
+
+                if (Role == "bomb") {
+                    -+stanzaBombarolo(Stanza);
+                } elif (Role == "pres") {
+                    -+stanzaPresidente(Stanza);
+                } elif (Role == "mogpres") {
+                    -+stanzaMogliePres(Stanza);
+                } elif (Role == "amapres") {
+                    -+stanzaAmantePres(Staza);
+                }
+            }
+
+            ?stanzaPresidente(StanzaPresidente);
+
+            // Controllo se bombarolo e presidente sono nella stessa stanza
+            if (stanzaBombarolo(StanzaPresidente)) {
+                .print("Bombarolo in stanza del presidente, vince la squadra ROSSA!");
+            } else {
+                .print("Presidente in stanza senza il bombarolo, vince la squadra BLU!");
+            }
+
+            // Controllo se moglie del presidente o l'amante sono nella stanza con il presidente
+            // senza l'altra contro parte, per decretare chi ha vinto fra le due
+            if (stanzaMogliePres(stanzaPresidente)) {
+                if (stanzaAmantePres(stanzaPresidente)) {
+                    .print("Moglie e amante del presidente in stessa stanza");
+                } else {
+                    .print("Moglie del presidente in stanza col presidente senza la perfida amante, la Moglie vince!");
+                }
+            } elif (stanzaAmantePres(stanzaPresidente)) {
+                .print("Amante del presidente in stanza col presidente senza quella racchia della moglie, l'Amante vince!");
+            } else {
+                .print("Moglie e Amante del presidente non sono con il presidente, peccato...");
+            }
+
+        } else {
+            .print("Errore nel recupero delle info di fine partita");
+        }
+
         .
