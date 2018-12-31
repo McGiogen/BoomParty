@@ -436,13 +436,13 @@ numberOfPlayerInMyRoom(N) :-
 
             // Controllo se moglie del presidente o l'amante sono nella stanza con il presidente
             // senza l'altra contro parte, per decretare chi ha vinto fra le due
-            if (stanzaMogliePres(stanzaPresidente)) {
-                if (stanzaAmantePres(stanzaPresidente)) {
-                    .print("Moglie e amante del presidente in stessa stanza");
+            if (stanzaMogliePres(StanzaPresidente)) {
+                if (stanzaAmantePres(StanzaPresidente)) {
+                    .print("Moglie e amante del presidente in stessa stanza, non vince nessuna delle due!");
                 } else {
                     .print("Moglie del presidente in stanza col presidente senza la perfida amante, la Moglie vince!");
                 }
-            } elif (stanzaAmantePres(stanzaPresidente)) {
+            } elif (stanzaAmantePres(StanzaPresidente)) {
                 .print("Amante del presidente in stanza col presidente senza quella racchia della moglie, l'Amante vince!");
             } else {
                 .print("Moglie e Amante del presidente non sono con il presidente, peccato...");
