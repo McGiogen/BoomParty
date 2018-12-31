@@ -226,33 +226,58 @@
 // Un voto è stato registrato contro il leader e a favore del candidato
 // +votoLeader[source(Voter)]
 
-// Il candidato termina la votazione
+// Il candidato termina la votazione, il leader gli consegna lo "scettro" in caso di maggioranza a favore
 +!endVotazioneLeader
     <-
         // Conta dei giocatori e dei voti
         ?visible_players(Playerlist);
-        .length(Playerlist, ContaAltriGiocatori);
-        NumPlayers = ContaAltriGiocatori + 1;
+        .length(Playerlist, NumAltriGiocatori);
+        NumPlayers = NumAltriGiocatori + 1;
 
         .count(votoLeader[source(_)], NumVoti);
 
-        if (NumVoti > NumPlayers/2) {
-            .print("Votazione per cambio leader completata con successo, ", NumVoti, " voti su ", NumPlayers);
-            // TODO cambio di leader della stanza
+        ?ruoloLeader(IsLeader);
+        if (IsLeader) {
+            // Cambio di leader della stanza se la votazione ha avuto successo
+            if (NumVoti > NumPlayers/2) {
+                // Recupero info
+                ?stanzaCorrente(StanzaAssegnAtom);
+                ?name(MioNome);
+
+                // Mi rimuovo dalla posizione leader
+                -+ruoloLeader(false);
+                !tucsonOpIn(stanzaData(id(StanzaAssegnAtom), leader(MioNome)), Op0);
+
+                // Rendo nuovo leader il candidato
+                ?startVotazioneLeader[source(Candidato)];
+                .print("Ho perso la mia posizione da leader! Il nuovo leader è ", Candidato, ".");
+                !tucsonOpOut(stanzaData(id(StanzaAssegnAtom), leader(Candidato)), Op1);
+            }
         } else {
-            .print("Votazione per cambio leader completata con fallimento, ", NumVoti, " voti su ", NumPlayers);
-        }
+            // Comunicazione fine votazione
+            if (NumVoti > NumPlayers/2) {
+                .print("Votazione per cambio leader completata con successo, ", NumVoti, " voti su ", NumPlayers);
+                -+ruoloLeader(true);
+            } else {
+                .print("Votazione per cambio leader completata con fallimento, ", NumVoti, " voti su ", NumPlayers);
+            }
 
-        // Pulizia
-        .abolish(votoLeader);
+            // Pulizia
+            .abolish(votoLeader);
 
-        Belief = endVotazioneLeader;
-        for( .member(Receiver, Playerlist) ) {
-            .send(Receiver, tell, Belief);
+            Belief = endVotazioneLeader;
+            for( .member(Receiver, Playerlist) ) {
+                .send(Receiver, tell, Belief);
+            }
         }.
 
 +endVotazioneLeader[source(Sender)]
     <-
+        ?ruoloLeader(IsLeader);
+        if (IsLeader) {
+            !endVotazioneLeader;
+        }
+
         .abolish(votoLeader);
         -startVotazioneLeader[source(Sender)];
         -endVotazioneLeader[source(Sender)];

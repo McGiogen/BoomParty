@@ -279,6 +279,7 @@ numberOfPlayerInMyRoom(N) :-
         } else {
             // TODO valutare se è il caso di candidarsi come leader... contare il numero di giocatori
             // presenti in stanza che potrebbero votarmi e candidarmi solo se > NumPlayers/2
+            .wait(3000);
             .count(startVotazioneLeader[source(_)], N);
             ?ruoloLeader(ImLeader);
             if (N == 0 & not ImLeader) {
