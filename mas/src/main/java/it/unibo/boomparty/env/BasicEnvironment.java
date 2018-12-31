@@ -56,12 +56,6 @@ public class BasicEnvironment extends CartagoEnvironment {
         this.clearPercepts(pName);
         ArrayList<Literal> percepts = new ArrayList<>();
 
-        // Team
-        percepts.add(PerceptsBuilder.team("null"));
-
-        // Role
-        percepts.add(PerceptsBuilder.role("null"));
-
         // Area
         percepts.add(PerceptsBuilder.area(WorldUtils.getAreaName(model, pPosition)));
 

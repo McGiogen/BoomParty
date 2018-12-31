@@ -143,11 +143,8 @@ public class PerceptsBuilder {
         String area = WorldUtils.getAreaName(world, location);
         player.addTerms(
             name(model.getName()),
-            team("null"),    // TODO
-            role("null"),    // TODO
             area(area),
-            position(location),
-            confidence(0)    // TODO
+            position(location)
         );
 
         return player;
