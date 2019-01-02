@@ -67,6 +67,13 @@ numberOfPlayerInMyRoom(N) :-
     <-  ?name(X);
         .print("PLAYER ", X, " START!");
         !preparazioneGioco;
+
+        if (ruoloLeader(true)) {
+            // Attendi che tutti i giocatori siano pronti prima di iniziare a giocare
+            .wait(2000)
+            !avviaRound;
+        }
+
         .print("fine boot").
 
 /*
@@ -107,10 +114,6 @@ numberOfPlayerInMyRoom(N) :-
             }
             !recuperaRuolo;
             !recuperaStanza;
-
-            // TODO attendi il timer prima di iniziare a giocare
-            .wait(5000)
-            !giocaRound;
         } else {
             .print("Errore recupero token mazziere");
         }
@@ -219,30 +222,30 @@ numberOfPlayerInMyRoom(N) :-
         .print("Fine recupero stanza").
 
 /* Operazioni round di gioco */
++!avviaRound
+    : turnoIniziato(false) & ruoloLeader(true)
+    <-
+        // Il turno deve iniziare, attivo il timer
+        ?name(Me);
+        .print(Me, " sono il leader, devo avviare il timer e avvertire gli altri");
+
+        // Recupero l'id dell'artefatto Timer per essere sicuro di effettuare
+        // le operazioni sull'artefatto a cui faccio riferimento
+        ?riferimentoTimerID(TimerID);
+
+        // Imposto il minutaggio e faccio partire il timer
+        setMinutes(1) [artifact_id(TimerID)];
+        startTimer [artifact_id(TimerID)];
+        .
+
 +!giocaRound
+    : turnoIniziato(false)
+    <- true.
+
++!giocaRound
+    : turnoIniziato(true)
     <-
         .print("Inizio a giocare il round");
-
-        if (turnoIniziato(false)) {
-            // Turno non iniziato, devo controllare per attivare il timer
-            // Controllo se sono leader, nel qual caso faccio partire il timer
-
-            if (ruoloLeader(true)) {
-                ?name(Me);
-                .print(Me, " sono il leader, devo avviare il timer e avvertire gli altri");
-
-                // Recupero l'id dell'artefatto Timer per essere sicuro di effettuare
-                // le operazioni sull'artefatto a cui faccio riferimento
-                ?riferimentoTimerID(TimerID);
-
-                // Imposto il minutaggio e faccio partire il timer
-                setMinutes(1) [artifact_id(TimerID)];
-                startTimer [artifact_id(TimerID)];
-            }
-
-            // Imposto turno iniziato
-            -+turnoIniziato(true);
-        }
 
         ?knowledge(StartKnowledge);
         ?visible_players(Playerlist);
@@ -251,32 +254,15 @@ numberOfPlayerInMyRoom(N) :-
         .length(Playerlist, NumPlayers);
         .print("Conosco ", NumKnowledge, " su ", NumPlayers, " giocatori");
 
-        if (NumKnowledge < NumPlayers) {
-            // Cerco una persona con cui parlare
-            +tmp(null);
-            +index(0);
-            while (index(I) & tmp(Target) & Target == null) {
-                .nth(I, Playerlist, TempName);
-                //?Temp( name(TempName), role(R), team(T) area(A), position(X,Y), confidence(C) );
-                if (not(.member(know(name(TempName), ruolo(val(_), conf(_)), team(val(_), conf(_))), StartKnowledge))) {
-                    -+tmp(TempName);
-                }
-                -+index(I+1);
+        if (desireToKnow(Someone)) {
+            if (at(Someone)) {
+                !tryToSpeakWith(Someone);
+                -desireToKnow(Someone);
+            } else {
+                !goto(Someone);
             }
-            ?tmp(Target);
-            -tmp(Target);
-            -index(_);
-            .print("TROVATO ", Target);
-
-            !goto(Target);
-
-            // TODO scambia informazioni con il giocatore raggiunto
-            .wait(3000);
-
-            .union(StartKnowledge, [know(name(Target), ruolo(val(null), conf(null)), team(val("rosso"), conf(100)))], NewKnowledge);
-            -+knowledge(NewKnowledge);
-
-            !giocaRound;
+        } elif (NumKnowledge < NumPlayers) {
+            !tryToDesireToKnow;
         } else {
             // TODO valutare se è il caso di candidarsi come leader... contare il numero di giocatori
             // presenti in stanza che potrebbero votarmi e candidarmi solo se > NumPlayers/2
@@ -293,14 +279,53 @@ numberOfPlayerInMyRoom(N) :-
             // TODO anyone
             .print("Finito tutto... e poi cosa faccio?");
         }
+        !giocaRound;
+        .
+
++!tryToDesireToKnow
+    <-
+        // Cerco una persona con cui parlare
+        ?knowledge(MyKnowledge);
+        ?visible_players(Playerlist);
+        +desireToKnow(null);
+
+        // Per prima cosa cerco un giocatore di cui non conosco nulla
+        +index(0);
+        while (index(I) & desireToKnow(Target) & Target == null) {
+            .nth(I, Playerlist, TempName);
+            if (not(.member(know(name(TempName), ruolo(val(_), conf(_)), team(val(_), conf(_))), MyKnowledge))) {
+                // Ho trovato un giocatore di cui non so nulla
+                -+desireToKnow(TempName);
+            }
+            -+index(I+1);
+        }
+        -index(_);
+
+        ?desireToKnow(Target);
+        if (Target == null) {
+            -desireToKnow(Target);
+        }
+        .print("TROVATO ", Target);
+        .
+
++!tryToSpeakWith(Player)
+    <-
+        // TODO scambia informazioni con il giocatore raggiunto
+        .wait(3000);
+
+        ?knowledge(StartKnowledge);
+        .union(StartKnowledge, [know(name(Player), ruolo(val(null), conf(null)), team(val("rosso"), conf(100)))], NewKnowledge);
+        -+knowledge(NewKnowledge);
         .
 
 /* Triggerato dal signal dell'artifact Timer */
 
 +roundStarted
     <-
+        -+turnoIniziato(true);
         ?name(Me);
-        .print(Me, " ha percepito l'inizio del timer!").
+        .print(Me, " ha percepito l'inizio del timer!");
+        !giocaRound.
 
 +roundEnded
     : ruoloLeader(true)
@@ -342,8 +367,7 @@ numberOfPlayerInMyRoom(N) :-
 
 +!goto(Player) // if NOT arrived at destination Player
 	: not at(Player)
-	<- move_towards(Player);
-	!goto(Player). // continue attempting to reach destination
+	<- move_towards(Player).
 
 /* Handle voto leader */
 +!votaPerNuovoLeader(Sender, Result)
