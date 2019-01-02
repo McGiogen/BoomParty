@@ -223,14 +223,11 @@ numberOfPlayerInMyRoom(N) :-
     <-
         .print("Inizio a giocare il round");
 
-        ?turnoIniziato(Iniziato);
-
-        if (Iniziato == false) {
+        if (turnoIniziato(false)) {
             // Turno non iniziato, devo controllare per attivare il timer
             // Controllo se sono leader, nel qual caso faccio partire il timer
-            ?ruoloLeader(IsMeLeader);
 
-            if (IsMeLeader \== false) {
+            if (ruoloLeader(true)) {
                 ?name(Me);
                 .print(Me, " sono il leader, devo avviare il timer e avvertire gli altri");
 
