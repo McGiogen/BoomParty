@@ -236,8 +236,7 @@
 
         .count(votoLeader[source(_)], NumVoti);
 
-        ?ruoloLeader(IsLeader);
-        if (IsLeader) {
+        if (ruoloLeader(true)) {
             // Cambio di leader della stanza se la votazione ha avuto successo
             if (NumVoti > NumPlayers/2) {
                 // Recupero info
@@ -273,8 +272,7 @@
 
 +endVotazioneLeader[source(Sender)]
     <-
-        ?ruoloLeader(IsLeader);
-        if (IsLeader) {
+        if (ruoloLeader(true)) {
             !endVotazioneLeader;
         }
 
