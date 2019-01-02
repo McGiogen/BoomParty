@@ -402,52 +402,59 @@ numberOfPlayerInMyRoom(N) :-
 
         t4jn.api.getResult(OpResult, StatusEndList);
 
-        if (InfoList \== null) {
-            for (.member(PlayerStatusEndLiteralStr, StatusEndList)) {
-                // Recuperando tramite .member si vede che perde
-                // il fatto di essere un literal
-                .term2string(PlayerStatusEndLiteral, PlayerStatusEndLiteralStr);
+        if (StatusEndList \== null) {
+            .length(StatusEndList, NumTuples);
+            ?players(PlayersList);
+            .length(PlayersList, NumPlayers);
 
-                t4jn.api.getArg(PlayerStatusEndLiteral, 1, StanzaLiteral);
-                t4jn.api.getArg(StanzaLiteral, 0, Stanza);
+            if (NumTuples == NumPlayers) {
+                for (.member(PlayerStatusEndLiteralStr, StatusEndList)) {
+                    // Recuperando tramite .member si vede che perde
+                    // il fatto di essere un literal
+                    .term2string(PlayerStatusEndLiteral, PlayerStatusEndLiteralStr);
 
-                t4jn.api.getArg(PlayerStatusEndLiteral, 3, RoleLiteral);
-                t4jn.api.getArg(RoleLiteral, 0, Role);
+                    t4jn.api.getArg(PlayerStatusEndLiteral, 1, StanzaLiteral);
+                    t4jn.api.getArg(StanzaLiteral, 0, Stanza);
 
-                if (Role == "bomb") {
-                    -+stanzaBombarolo(Stanza);
-                } elif (Role == "pres") {
-                    -+stanzaPresidente(Stanza);
-                } elif (Role == "mogpres") {
-                    -+stanzaMogliePres(Stanza);
-                } elif (Role == "amapres") {
-                    -+stanzaAmantePres(Stanza);
+                    t4jn.api.getArg(PlayerStatusEndLiteral, 3, RoleLiteral);
+                    t4jn.api.getArg(RoleLiteral, 0, Role);
+
+                    if (Role == "bomb") {
+                        -+stanzaBombarolo(Stanza);
+                    } elif (Role == "pres") {
+                        -+stanzaPresidente(Stanza);
+                    } elif (Role == "mogpres") {
+                        -+stanzaMogliePres(Stanza);
+                    } elif (Role == "amapres") {
+                        -+stanzaAmantePres(Stanza);
+                    }
                 }
-            }
 
-            ?stanzaPresidente(StanzaPresidente);
+                ?stanzaPresidente(StanzaPresidente);
 
-            // Controllo se bombarolo e presidente sono nella stessa stanza
-            if (stanzaBombarolo(StanzaPresidente)) {
-                .print("Bombarolo in stanza del presidente, vince la squadra ROSSA!");
-            } else {
-                .print("Presidente in stanza senza il bombarolo, vince la squadra BLU!");
-            }
-
-            // Controllo se moglie del presidente o l'amante sono nella stanza con il presidente
-            // senza l'altra contro parte, per decretare chi ha vinto fra le due
-            if (stanzaMogliePres(StanzaPresidente)) {
-                if (stanzaAmantePres(StanzaPresidente)) {
-                    .print("Moglie e amante del presidente in stessa stanza, non vince nessuna delle due!");
+                // Controllo se bombarolo e presidente sono nella stessa stanza
+                if (stanzaBombarolo(StanzaPresidente)) {
+                    .print("Bombarolo in stanza del presidente, vince la squadra ROSSA!");
                 } else {
-                    .print("Moglie del presidente in stanza col presidente senza la perfida amante, la Moglie vince!");
+                    .print("Presidente in stanza senza il bombarolo, vince la squadra BLU!");
                 }
-            } elif (stanzaAmantePres(StanzaPresidente)) {
-                .print("Amante del presidente in stanza col presidente senza quella racchia della moglie, l'Amante vince!");
-            } else {
-                .print("Moglie e Amante del presidente non sono con il presidente, peccato...");
-            }
 
+                // Controllo se moglie del presidente o l'amante sono nella stanza con il presidente
+                // senza l'altra contro parte, per decretare chi ha vinto fra le due
+                if (stanzaMogliePres(StanzaPresidente)) {
+                    if (stanzaAmantePres(StanzaPresidente)) {
+                        .print("Moglie e amante del presidente in stessa stanza, non vince nessuna delle due!");
+                    } else {
+                        .print("Moglie del presidente in stanza col presidente senza la perfida amante, la Moglie vince!");
+                    }
+                } elif (stanzaAmantePres(StanzaPresidente)) {
+                    .print("Amante del presidente in stanza col presidente senza quella racchia della moglie, l'Amante vince!");
+                } else {
+                    .print("Moglie e Amante del presidente non sono con il presidente, peccato...");
+                }
+            } else {
+                .print("Il numero di tuple sul Tuple Centre non corrisponde col numero di giocatori, impossibile valutare!");
+            }
         } else {
             .print("Errore nel recupero delle info di fine partita");
         }
