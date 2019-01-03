@@ -17,7 +17,7 @@ public class EnvironmentActions {
         boolean obstacleOnPath = ag.getPath() != null && !env.getModel().isFree(ag.getPath().getFirst().getLocation());
 
         if (noPath || obstacleOnPath) {
-            env.getLogger().info("Calculating path of [" + ag.getName() + "] to " + goal.x + "," + goal.y);
+            env.getLogger().fine("Calculating path of [" + ag.getName() + "] to " + goal.x + "," + goal.y);
 
             // get agent location
             final Location loc = env.getModel().getAgPos(ag.getIndex());

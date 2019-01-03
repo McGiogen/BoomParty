@@ -40,6 +40,7 @@ stanzaBombarolo(null).      // Stanza in cui si trova il bombarolo a fine partit
 stanzaPresidente(null).     // Stanza in cui si trova il presidente a fine partita
 stanzaMogliePres(null).     // Stanza in cui si trova la moglie del presidente a fine partita
 stanzaAmantePres(null).     // Stanza in cui si trova l'amante del presidente a fine partita
+turnoNumero(0).             // Numero del round corrente di gioco (5 round totali)
 
 /* Environment percepts */
 // area(roomA|roomB|hallway)
@@ -70,7 +71,7 @@ numberOfPlayerInMyRoom(N) :-
 
         if (ruoloLeader(true)) {
             // Attendi che tutti i giocatori siano pronti prima di iniziare a giocare
-            .wait(2000)
+            .wait(3000)
             !avviaRound;
         }
 
@@ -234,8 +235,16 @@ numberOfPlayerInMyRoom(N) :-
         ?riferimentoTimerID(TimerID);
 
         // Imposto il minutaggio e faccio partire il timer
-        setMinutes(1) [artifact_id(TimerID)];
-        startTimer [artifact_id(TimerID)];
+        ?turnoNumero(Index);
+
+        if (Index < 5) {
+            -+turnoNumero(Index + 1);
+            setMinutes(5 - Index) [artifact_id(TimerID)];
+            startTimer [artifact_id(TimerID)];
+            .print("Avvio del ", Index + 1, "° round");
+        } else {
+            // TODO niente? Finisce il gioco e devono essere stampati i risultati
+        }
         .
 
 +!giocaRound
@@ -245,17 +254,15 @@ numberOfPlayerInMyRoom(N) :-
 +!giocaRound
     : turnoIniziato(true)
     <-
-        .print("Inizio a giocare il round");
-
         ?knowledge(StartKnowledge);
         ?visible_players(Playerlist);
 
         .length(StartKnowledge, NumKnowledge);
         .length(Playerlist, NumPlayers);
-        .print("Conosco ", NumKnowledge, " su ", NumPlayers, " giocatori");
 
         if (desireToKnow(Someone)) {
             if (at(Someone)) {
+                .print("Provo a parlare con ", Someone);
                 !tryToSpeakWith(Someone);
                 -desireToKnow(Someone);
             } else {
@@ -305,7 +312,6 @@ numberOfPlayerInMyRoom(N) :-
         if (Target == null) {
             -desireToKnow(Target);
         }
-        .print("TROVATO ", Target);
         .
 
 +!tryToSpeakWith(Player)
