@@ -81,19 +81,6 @@ numberOfPlayerInMyRoom(N) :-
         .term2string(LeaderAtom, Leader);
         .
 
-+?knowFromName(PlayerName, Know)
-    <-
-        ?knowledge(KnowList);
-        +tmp(null);
-        for (.member(TmpKnow, KnowList)) {
-            know(name(TmpName), ruolo(val(_), conf(_)), team(val(_), conf(_))) = TmpKnow;
-            if (PlayerName = TmpName) {
-                -+tmp(TmpKnow);
-            }
-        }
-        -tmp(Know);
-        .
-
 +!boot
     <-  ?name(X);
         .print("PLAYER ", X, " START!");
@@ -303,14 +290,14 @@ numberOfPlayerInMyRoom(N) :-
         } else {
             ?card(MyTeam, _);
             ?myRoomLeader(Leader);
-            ?knowFromName(Leader, LeaderKnow);
+            !getTargetKnowledge(Leader, LeaderKnow);
             if (ruoloLeader(false) & LeaderKnow \== null & know(name(_), ruolo(val(_), conf(_)), team(val(LeaderTeam), conf(_))) = LeaderKnow & LeaderTeam \== MyTeam) {
                 // Il Leader non è della mia squadra, valuto se è il caso di propormi come leader
                 .wait(10000);
 
                 +conteggioPotenzialiVoti(1);
                 for (.member(Player, Playerlist)) {
-                    ?knowFromName(Player, PlayerKnow);
+                    !getTargetKnowledge(Player, PlayerKnow);
                     know(name(PP), ruolo(val(_), conf(_)), team(val(PlayerTeam), conf(_))) = PlayerKnow;
                     if (PlayerTeam \== LeaderTeam) {
                         ?conteggioPotenzialiVoti(NumVoti);
