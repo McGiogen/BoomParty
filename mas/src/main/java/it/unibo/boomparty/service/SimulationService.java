@@ -242,7 +242,7 @@ public class SimulationService {
         lines.add("\tagents:");
 
         for (String name: playersName) {
-            lines.add("\t\t"+name+" tucsonAgent agentArchClass "+ BoomPartyAgentArch.class.getName() +";");
+            lines.add("\t\t"+name+" intelligentAgent agentArchClass "+ BoomPartyAgentArch.class.getName() +";");
         }
         //TODO remove
         //lines.add("\t\treceiver testComunicationReceiver agentArchClass "+ BoomPartyAgentArch.class.getName() +";");

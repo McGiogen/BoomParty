@@ -245,111 +245,12 @@ numberOfPlayerInMyRoom(N) :-
     : turnoIniziato(false)
     <- true.
 
-+!giocaRound
-    : turnoIniziato(true)
-    <-
-        ?knowledge(KnowList);
-        ?visible_players(Playerlist);
-
-        .length(KnowList, NumKnowledge);
-        .length(Playerlist, NumPlayers);
-
-        if (desireToKnow(Someone)) {
-            if (at(Someone)) {
-                .print("Provo a parlare con ", Someone);
-                !tryToSpeakWith(Someone);
-                -desireToKnow(Someone);
-            } else {
-                !goto(Someone);
-            }
-        } elif (NumKnowledge < NumPlayers) {
-            !tryToDesireToKnow;
-        } else {
-            ?card(MyTeam, _);
-            ?myRoomLeader(Leader);
-            !getTargetKnowledge(Leader, LeaderKnow);
-            if (ruoloLeader(false) & LeaderKnow \== null & know(name(_), ruolo(val(_), conf(_)), team(val(LeaderTeam), conf(_))) = LeaderKnow & LeaderTeam \== MyTeam) {
-                // Il Leader non è della mia squadra, valuto se è il caso di propormi come leader
-                .wait(10000);
-
-                +conteggioPotenzialiVoti(1);
-                for (.member(Player, Playerlist)) {
-                    !getTargetKnowledge(Player, PlayerKnow);
-                    know(name(PP), ruolo(val(_), conf(_)), team(val(PlayerTeam), conf(_))) = PlayerKnow;
-                    if (PlayerTeam \== LeaderTeam) {
-                        ?conteggioPotenzialiVoti(NumVoti);
-                        -+conteggioPotenzialiVoti(NumVoti + 1);
-                    }
-                }
-                -conteggioPotenzialiVoti(NumVoti);
-
-                if (numberOfPlayerInMyRoom(Tot) & NumVoti > (Tot / 2)) {
-                    .print("Provo a candidarmi come leader, ci sono ", NumVoti, " possibili voti");
-                    !tryToCandidateAsLeader;
-                }
-            } else {
-                // TODO GIO
-                .print("Finito tutto... e poi cosa faccio?");
-
-                .wait(10000);
-            }
-        }
-        !giocaRound;
-        .
-
-+!tryToDesireToKnow
-    <-
-        // Cerco una persona con cui parlare
-        ?knowledge(MyKnowledge);
-        ?visible_players(Playerlist);
-        +desireToKnow(null);
-
-        // Per prima cosa cerco un giocatore di cui non conosco nulla
-        +index(0);
-        while (index(I) & desireToKnow(Target) & Target == null) {
-            .nth(I, Playerlist, TempName);
-            if (not(.member(know(name(TempName), ruolo(val(_), conf(_)), team(val(_), conf(_))), MyKnowledge))) {
-                // Ho trovato un giocatore di cui non so nulla
-                -+desireToKnow(TempName);
-            }
-            -+index(I+1);
-        }
-        -index(_);
-
-        ?desireToKnow(Target);
-        if (Target == null) {
-            -desireToKnow(Target);
-        }
-        .
-
-+!tryToSpeakWith(Player)
-    <-
-        // TODO scambia informazioni con il giocatore raggiunto
-        .wait(3000);
-
-        ?knowledge(StartKnowledge);
-        .union(StartKnowledge, [know(name(Player), ruolo(val(null), conf(null)), team(val("rosso"), conf(100)))], NewKnowledge);
-        -+knowledge(NewKnowledge);
-        .
-
-+!tryToCandidateAsLeader
-    <-
-        .count(startVotazioneLeader[source(_)], N);
-        if (N == 0 & ruoloLeader(false)) {
-            .print("Mi candido come leader");
-            !startVotazioneLeader;
-        } else {
-            .print("Mi candiderei ma c'è una votazione in corso oppure sono già leader");
-        }
-        .
-
 /* Triggerato dal signal dell'artifact Timer */
 
 +roundStarted
     <-
         -+turnoIniziato(true);
-        ?name(Me);
-        .print(Me, " ha percepito l'inizio del timer!");
+        .print("Percepito l'inizio del timer!");
         !giocaRound.
 
 +roundEnded
@@ -378,11 +279,18 @@ numberOfPlayerInMyRoom(N) :-
         .abolish(end_round_ack(_, Room)); // per non portarmi dietro gli ack di ogni round
         !scambiaPlayer.
 
-/* Mid turn phase */
+/* Handle ostaggi */
 
 +!scambiaPlayer
     <-
-        .print("Scambio i player").
+        .print("Scambio i player");
+        // TODO GIO 1: Lascia decidere gli ostaggi ad intelligentAgent e poi invia messaggio ai giocatori scelti
+        .
+
+// TODO GIO 2: Se il leader ti dice che sei un ostaggio, spostati nell'altra stanza e avvisa l'altro leader di essere arrivato
+
+// TODO GIO 3: Quando i nuovi ostaggi arrivano, avvisano il leader. Una volta che sono tutti arrivati
+// TODO GIO 3  ...il leader fa partire il timer per il round successivo o il mazziere fa il calcolo dei vincitori
 
 /* Handle movement */
 
@@ -393,24 +301,6 @@ numberOfPlayerInMyRoom(N) :-
 +!goto(Player) // if NOT arrived at destination Player
 	: not at(Player)
 	<- move_towards(Player).
-
-/* Handle voto leader */
-+!votaPerNuovoLeader(Sender, Result)
-    <-
-        ?knowledge(KnowledgeList);
-        if (.member(know(name(Sender), ruolo(val(_), conf(_)), team(val(ValTeam), conf(_))), KnowledgeList)) {
-            ?card(MyTeam, _);
-            .print("Secondo me il leader candidato ", Sender, " è del team: ", ValTeam, ". La mia carta: ", CardArtifID, "/", CardArtifName, "/", MyTeam);
-            if (ValTeam = MyTeam) {
-                Result = true;
-            } else {
-                Result = false;
-            }
-        } else {
-            .print("Non conosco il leader candidato ", Sender, ". Non voto.");
-            Result = false;
-        }
-        .
 
 /* Operazioni finali */
 +!rivelaRuolo
