@@ -53,8 +53,7 @@ turnoNumero(0).             // Numero del round corrente di gioco (5 round total
 
 /* Valuta se Room è la mia stanza */
 inMyRoom(Room) :-
-    stanzaCorrente(R)
-    & Room = R.
+    stanzaCorrente(Room).
 
 numberOfPlayerInMyRoom(N) :-
     visible_players(Playerlist) &
@@ -63,6 +62,37 @@ numberOfPlayerInMyRoom(N) :-
 /* Initial goals */
 
 !boot.
+
++?card(MyTeam, MyRole)
+    <-
+        ?ruoloCorrente(CardArtifName);
+        lookupArtifact(CardArtifName, CardArtifID);
+        getTeam(MyTeam)[artifact_id(CardArtifID)];
+        getRole(MyRole)[artifact_id(CardArtifID)];
+        .
+
++?myRoomLeader(Leader)
+    <-
+        ?stanzaCorrente(Room);
+        !tucsonOpRd(stanzaData(id(Room), leader(_)), Op0);
+        t4jn.api.getResult(Op0, StanzaDataStr);
+        .term2string(StanzaData, StanzaDataStr);
+        stanzaData(id(Room), leader(LeaderAtom)) = StanzaData;
+        .term2string(LeaderAtom, Leader);
+        .
+
++?knowFromName(PlayerName, Know)
+    <-
+        ?knowledge(KnowList);
+        +tmp(null);
+        for (.member(TmpKnow, KnowList)) {
+            know(name(TmpName), ruolo(val(_), conf(_)), team(val(_), conf(_))) = TmpKnow;
+            if (PlayerName = TmpName) {
+                -+tmp(TmpKnow);
+            }
+        }
+        -tmp(Know);
+        .
 
 +!boot
     <-  ?name(X);
@@ -254,10 +284,10 @@ numberOfPlayerInMyRoom(N) :-
 +!giocaRound
     : turnoIniziato(true)
     <-
-        ?knowledge(StartKnowledge);
+        ?knowledge(KnowList);
         ?visible_players(Playerlist);
 
-        .length(StartKnowledge, NumKnowledge);
+        .length(KnowList, NumKnowledge);
         .length(Playerlist, NumPlayers);
 
         if (desireToKnow(Someone)) {
@@ -271,20 +301,34 @@ numberOfPlayerInMyRoom(N) :-
         } elif (NumKnowledge < NumPlayers) {
             !tryToDesireToKnow;
         } else {
-            // TODO valutare se è il caso di candidarsi come leader... contare il numero di giocatori
-            // presenti in stanza che potrebbero votarmi e candidarmi solo se > NumPlayers/2
-            .wait(3000);
-            .count(startVotazioneLeader[source(_)], N);
-            ?ruoloLeader(ImLeader);
-            if (N == 0 & not ImLeader) {
-                .print("Mi candido come leader");
-                !startVotazioneLeader;
-            } else {
-                .print("Mi candiderei ma c'è una votazione in corso oppure sono già leader");
-            }
+            ?card(MyTeam, _);
+            ?myRoomLeader(Leader);
+            ?knowFromName(Leader, LeaderKnow);
+            if (ruoloLeader(false) & LeaderKnow \== null & know(name(_), ruolo(val(_), conf(_)), team(val(LeaderTeam), conf(_))) = LeaderKnow & LeaderTeam \== MyTeam) {
+                // Il Leader non è della mia squadra, valuto se è il caso di propormi come leader
+                .wait(10000);
 
-            // TODO anyone
-            .print("Finito tutto... e poi cosa faccio?");
+                +conteggioPotenzialiVoti(1);
+                for (.member(Player, Playerlist)) {
+                    ?knowFromName(Player, PlayerKnow);
+                    know(name(PP), ruolo(val(_), conf(_)), team(val(PlayerTeam), conf(_))) = PlayerKnow;
+                    if (PlayerTeam \== LeaderTeam) {
+                        ?conteggioPotenzialiVoti(NumVoti);
+                        -+conteggioPotenzialiVoti(NumVoti + 1);
+                    }
+                }
+                -conteggioPotenzialiVoti(NumVoti);
+
+                if (numberOfPlayerInMyRoom(Tot) & NumVoti > (Tot / 2)) {
+                    .print("Provo a candidarmi come leader, ci sono ", NumVoti, " possibili voti");
+                    !tryToCandidateAsLeader;
+                }
+            } else {
+                // TODO GIO
+                .print("Finito tutto... e poi cosa faccio?");
+
+                .wait(10000);
+            }
         }
         !giocaRound;
         .
@@ -322,6 +366,17 @@ numberOfPlayerInMyRoom(N) :-
         ?knowledge(StartKnowledge);
         .union(StartKnowledge, [know(name(Player), ruolo(val(null), conf(null)), team(val("rosso"), conf(100)))], NewKnowledge);
         -+knowledge(NewKnowledge);
+        .
+
++!tryToCandidateAsLeader
+    <-
+        .count(startVotazioneLeader[source(_)], N);
+        if (N == 0 & ruoloLeader(false)) {
+            .print("Mi candido come leader");
+            !startVotazioneLeader;
+        } else {
+            .print("Mi candiderei ma c'è una votazione in corso oppure sono già leader");
+        }
         .
 
 /* Triggerato dal signal dell'artifact Timer */
@@ -380,9 +435,7 @@ numberOfPlayerInMyRoom(N) :-
     <-
         ?knowledge(KnowledgeList);
         if (.member(know(name(Sender), ruolo(val(_), conf(_)), team(val(ValTeam), conf(_))), KnowledgeList)) {
-            ?ruoloCorrente(CardArtifName);
-            lookupArtifact(CardArtifName, CardArtifID);
-            getTeam(MyTeam)[artifact_id(CardArtifID)];
+            ?card(MyTeam, _);
             .print("Secondo me il leader candidato ", Sender, " è del team: ", ValTeam, ". La mia carta: ", CardArtifID, "/", CardArtifName, "/", MyTeam);
             if (ValTeam = MyTeam) {
                 Result = true;
@@ -398,11 +451,7 @@ numberOfPlayerInMyRoom(N) :-
 /* Operazioni finali */
 +!rivelaRuolo
     <-
-        ?ruoloCorrente(ArtifName);
-        lookupArtifact(ArtifName, ArtifID);
-
-        getRole(Role) [artifact_id(ArtifID)];
-        getTeam(Team) [artifact_id(ArtifID)];
+        ?card(Role, Team);
 
         ?stanzaCorrente(Stanza);
 
