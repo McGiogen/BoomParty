@@ -50,11 +50,6 @@ turnoNumero(0).             // Numero del round corrente di gioco (5 round total
 // visible_players(List)
 // neighbors(List)
 
-
-/* Valuta se Room è la mia stanza */
-inMyRoom(Room) :-
-    stanzaCorrente(Room).
-
 numberOfPlayerInMyRoom(N) :-
     visible_players(Playerlist) &
     .length(Playerlist, N).
@@ -93,24 +88,6 @@ numberOfPlayerInMyRoom(N) :-
         }
 
         .print("fine boot").
-
-/*
-+!boot
-    <-  !init;
-        ?visible_players(Players);
-        .nth(0, Players, NearestPlayer);    // Choosing the nearest (first) player
-        !goto(NearestPlayer).
-*/
-
-/*
-+!init
-    <-
-    	.all_names(List);
-    	.print("All players: ", List).
-    	//it.unibo.boomparty.agent.operations.nearPlayers(X, NearP);
-    	//.print("I giocatori vicini a me sono: ", NearP).
-*/
-
 
 /* Operazioni fase iniziale partita */
 
@@ -394,7 +371,7 @@ numberOfPlayerInMyRoom(N) :-
 
 // messaggio emesso dagli agenti che hanno terminato il turno
 +end_round_ack(Player, Room)[source(A)]
-    : ruoloLeader(true) & inMyRoom(Room) & numberOfPlayerInMyRoom(N) & .count(end_round_ack(_, Room), N)
+    : ruoloLeader(true) & stanzaCorrente(Room) & numberOfPlayerInMyRoom(N) & .count(end_round_ack(_, Room), N)
     <-
         // todo: qui andrebbe gestito se io stesso leader non sto facendo ben altro.. nel senso che devo avere turnoIniziato(false)
         .print("Tutti i player della mia stanza hanno terminato il turno! ", Room);
