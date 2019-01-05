@@ -149,4 +149,14 @@ public class PerceptsBuilder {
 
         return player;
     }
+
+    public static Literal going_to(PathFinder.Path path) {
+        LiteralImpl going_to = new LiteralImpl("going_to");
+        if (path == null) {
+            going_to.addTerm(new Atom("null"));
+        } else {
+            going_to.addTerm(position(path.getGoal().getLocation()));
+        }
+        return going_to;
+    }
 }

@@ -82,6 +82,9 @@ public class BasicEnvironment extends CartagoEnvironment {
         }
         percepts.add(PerceptsBuilder.visible_players(visiblesNamed));
 
+        // Going to a position, or null
+        percepts.add(PerceptsBuilder.going_to(player.getPath()));
+
         return percepts;
     }
 
@@ -106,7 +109,28 @@ public class BasicEnvironment extends CartagoEnvironment {
                     if (source != null && target != null) {
                         final Location goal = this.model.getAgPos(target.getIndex());
                         if (goal != null) {
-                            result = EnvironmentActions.moveTowards(this, source, goal);
+                            result = EnvironmentActions.moveTo(this, source, goal, false);
+                        }
+                    }
+                    break;
+                }
+                case "move_in": {
+                    // get where to move
+                    String areaName = action.getTerm(0).toString();
+
+                    HumanModel source = this.getPlayer(agName);
+                    Area target = WorldUtils.getArea(this.getModel(), areaName);
+
+                    if (source != null && target != null) {
+                        Location goal = null;
+                        boolean pathAlreadyCalculated = source.getPath() != null && WorldUtils.getArea(this.getModel(), source.getPath().getGoal().getLocation()).equals(target);
+                        if (pathAlreadyCalculated) {
+                            goal = source.getPath().getGoal().getLocation();
+                        } else {
+                            goal = this.getModel().getFreePos(target);
+                        }
+                        if (goal != null) {
+                            result = EnvironmentActions.moveTo(this, source, goal, true);
                         }
                     }
                     break;

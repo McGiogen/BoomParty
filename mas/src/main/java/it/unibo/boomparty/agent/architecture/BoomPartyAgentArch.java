@@ -46,8 +46,8 @@ public class BoomPartyAgentArch extends CAgentArch implements T4JnArch {
 
         this.counter = 0L;
         this.helper = new AsynchOpsHelper("helper4" + this.getAgName());
-        this.results = new HashMap();
-        this.suspendedIntentions = new HashMap();
+        this.results = new HashMap<>();
+        this.suspendedIntentions = new HashMap<>();
         this.mutex = new ReentrantLock(true);
     }
 
@@ -59,7 +59,7 @@ public class BoomPartyAgentArch extends CAgentArch implements T4JnArch {
         Map var10007 = this.suspendedIntentions;
         Lock var10008 = this.mutex;
         TransitionSystem var10009 = this.getTS();
-        this.getClass();
+        // this.getClass();
         var10000.enqueue(var1, new TucsonResultsHandler(var10004, var10005, var10006, var10007, var10008, var10009, true));
         return (long)(this.counter++);
     }
@@ -89,13 +89,14 @@ public class BoomPartyAgentArch extends CAgentArch implements T4JnArch {
     }
 
     private final void log(String var1) {
-        this.getClass();
+        // this.getClass();
         this.logger.info(var1);
     }
 
     public void act(ActionExec action) {
         switch(action.getActionTerm().getFunctor()) {
             case "move_towards":
+            case "move_in":
             case "start_in_area":
                 AgArch successor = this.getNextAgArch();
                 if (successor != null) {

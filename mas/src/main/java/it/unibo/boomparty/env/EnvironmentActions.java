@@ -4,7 +4,7 @@ import jason.environment.grid.Location;
 
 public class EnvironmentActions {
 
-    public static Result moveTowards(BasicEnvironment env, final HumanModel ag, final Location goal) {
+    public static Result moveTo(BasicEnvironment env, final HumanModel ag, final Location goal, final boolean exactlyAtGoal) {
         final Result result = new Result();
         final Location start = env.getModel().getAgPos(ag.getIndex());
 
@@ -17,7 +17,9 @@ public class EnvironmentActions {
         boolean obstacleOnPath = ag.getPath() != null && !env.getModel().isFree(ag.getPath().getFirst().getLocation());
 
         if (noPath || obstacleOnPath) {
-            env.getLogger().fine("Calculating path of [" + ag.getName() + "] to " + goal.x + "," + goal.y);
+            env.getLogger().fine(
+                    "Calculating path of [" + ag.getName() + "] from " + start.x + "," + start.y + " to " + goal.x + "," + goal.y +
+                    (noPath ? " for the first time" : " because there is an obstacle on the next step of my path"));
 
             // get agent location
             final Location loc = env.getModel().getAgPos(ag.getIndex());
@@ -35,7 +37,7 @@ public class EnvironmentActions {
 
             // remove start and destination nodes from path
             path.removeFirst();
-            path.removeLast();
+            if (!exactlyAtGoal) path.removeLast();
         }
 
         if (ag.getPath().size() > 0) {

@@ -41,6 +41,7 @@ stanzaPresidente(null).     // Stanza in cui si trova il presidente a fine parti
 stanzaMogliePres(null).     // Stanza in cui si trova la moglie del presidente a fine partita
 stanzaAmantePres(null).     // Stanza in cui si trova l'amante del presidente a fine partita
 turnoNumero(0).             // Numero del round corrente di gioco (5 round totali)
+stanzaCorrente(null).       // Stanza in cui si trova il giocatore
 
 /* Environment percepts */
 // area(roomA|roomB|hallway)
@@ -49,6 +50,7 @@ turnoNumero(0).             // Numero del round corrente di gioco (5 round total
 
 // visible_players(List)
 // neighbors(List)
+// going_to(position(X,Y))
 
 numberOfPlayerInMyRoom(N) :-
     visible_players(Playerlist) &
@@ -76,6 +78,22 @@ numberOfPlayerInMyRoom(N) :-
         .term2string(LeaderAtom, Leader);
         .
 
++?numberOfOstaggi(NumOstaggi)
+    <-
+        ?turnoNumero(T);
+        ?players(Players);
+        .length(Players, N);
+        if (N <= 13) {
+            .nth(T-1, [2,2,1,1,1], NumOstaggi);
+        } elif (N <= 17) {
+            .nth(T-1, [3,2,2,1,1], NumOstaggi);
+        } elif (N <= 21) {
+            .nth(T-1, [4,3,2,1,1], NumOstaggi);
+        } else {
+            .nth(T-1, [5,4,3,2,1], NumOstaggi);
+        }
+        .
+
 +!boot
     <-  ?name(X);
         .print("PLAYER ", X, " START!");
@@ -83,7 +101,7 @@ numberOfPlayerInMyRoom(N) :-
 
         if (ruoloLeader(true)) {
             // Attendi che tutti i giocatori siano pronti prima di iniziare a giocare
-            .wait(3000)
+            .wait(3000);
             !avviaRound;
         }
 
@@ -190,7 +208,7 @@ numberOfPlayerInMyRoom(N) :-
         if (StanzaAssegnLiteral \== null) {
             t4jn.api.getArg(StanzaAssegnLiteral, 0, StanzaAssegnString);
             .term2string(StanzaAssegnAtom, StanzaAssegnString);
-            +stanzaCorrente(StanzaAssegnAtom);
+            -+stanzaCorrente(StanzaAssegnAtom);
             .print("Stanza assegnatomi ", StanzaAssegnAtom);
 
             t4jn.api.getArg(StanzaAssegnLiteral, 1, IsLeader);
@@ -285,15 +303,42 @@ numberOfPlayerInMyRoom(N) :-
     <-
         .print("Scambio i player");
         // TODO GIO 1: Lascia decidere gli ostaggi ad intelligentAgent e poi invia messaggio ai giocatori scelti
+        ?stanzaCorrente(StanzaAssegnAtom);
+        ?numberOfOstaggi(NumOstaggi);
+        ?visible_players(Players);
+
+        for (.range(I, 0, NumOstaggi-1)) {
+            .nth(I, Players, Ostaggio);
+            .send(Ostaggio, tell, ostaggio);
+            .print("Ostaggio n.", (I+1), ": ", Ostaggio);
+        }
         .
 
 // TODO GIO 2: Se il leader ti dice che sei un ostaggio, spostati nell'altra stanza e avvisa l'altro leader di essere arrivato
++ostaggio
+    : ruoloLeader(false)
+    <-
+        ?stanzaCorrente(Partenza);
+        if (Partenza = roomA) {
+            Arrivo = roomB;
+        } else {
+            Arrivo = roomA;
+        }
+
+        !goinStart(Arrivo);
+        while (not going_to(null)) {
+            !goin(Arrivo);
+        }
+        -+stanzaCorrente(Arrivo);
+        -ostaggio;
+    .
 
 // TODO GIO 3: Quando i nuovi ostaggi arrivano, avvisano il leader. Una volta che sono tutti arrivati
 // TODO GIO 3  ...il leader fa partire il timer per il round successivo o il mazziere fa il calcolo dei vincitori
 
 /* Handle movement */
 
+// GO TO
 +!goto(Player) // if arrived at destination Player
 	: at(Player)
 	<- true. // that's all, do nothing
@@ -301,6 +346,19 @@ numberOfPlayerInMyRoom(N) :-
 +!goto(Player) // if NOT arrived at destination Player
 	: not at(Player)
 	<- move_towards(Player).
+
+// GO IN
++!goinStart(Area) // goin needs a start to define a free position in Area, without tests
+    <- move_in(Area).
+
++!goin(Area) // if arrived at free position in Area
+    : going_to(null)
+    <- true.
+
++!goin(Area) // if NOT arrived at free position in Area
+    : not going_to(null)
+    <- move_in(Area).
+
 
 /* Operazioni finali */
 +!rivelaRuolo
