@@ -21,19 +21,21 @@
             !tryToDesireToKnow;
         } else {
             ?card(MyTeam, _);
-            ?myRoomLeader(Leader);
+            ?leaderStanzaCorrente(Leader);
             !getTargetKnowledge(Leader, LeaderKnow);
             if (ruoloLeader(false) & LeaderKnow \== null & know(name(_), ruolo(val(_), conf(_)), team(val(LeaderTeam), conf(_))) = LeaderKnow & LeaderTeam \== MyTeam) {
                 // Il Leader non è della mia squadra, valuto se è il caso di propormi come leader
                 .wait(10000);
 
                 +conteggioPotenzialiVoti(1);
-                for (.member(Player, Playerlist)) {
+                for (.member(Player, Playerlist) & Player \== null) {
                     !getTargetKnowledge(Player, PlayerKnow);
-                    know(name(PP), ruolo(val(_), conf(_)), team(val(PlayerTeam), conf(_))) = PlayerKnow;
-                    if (PlayerTeam \== LeaderTeam) {
-                        ?conteggioPotenzialiVoti(NumVoti);
-                        -+conteggioPotenzialiVoti(NumVoti + 1);
+                    if (PlayerKnow \== null) {
+                        know(name(PP), ruolo(val(_), conf(_)), team(val(PlayerTeam), conf(_))) = PlayerKnow;
+                        if (PlayerTeam \== LeaderTeam) {
+                            ?conteggioPotenzialiVoti(NumVoti);
+                            -+conteggioPotenzialiVoti(NumVoti + 1);
+                        }
                     }
                 }
                 -conteggioPotenzialiVoti(NumVoti);

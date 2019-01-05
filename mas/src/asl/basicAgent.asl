@@ -44,13 +44,13 @@ turnoNumero(0).             // Numero del round corrente di gioco (5 round total
 stanzaCorrente(null).       // Stanza in cui si trova il giocatore
 
 /* Environment percepts */
-// area(roomA|roomB|hallway)
-// position(X,Y)
-// players([ player( name(N), area(A), position(X,Y) ), ... ])
+// area(roomA|roomB|hallway).
+// position(X,Y).
+// players([ player( name(N), area(A), position(X,Y) ), ... ]).
 
-// visible_players(List)
-// neighbors(List)
-// going_to(position(X,Y))
+visible_players([]).    //visible_players(List)
+// neighbors(List).
+// going_to(position(X,Y)).
 
 numberOfPlayerInMyRoom(N) :-
     visible_players(Playerlist) &
@@ -68,7 +68,7 @@ numberOfPlayerInMyRoom(N) :-
         getRole(MyRole)[artifact_id(CardArtifID)];
         .
 
-+?myRoomLeader(Leader)
++?leaderStanzaCorrente(Leader)
     <-
         ?stanzaCorrente(Room);
         !tucsonOpRd(stanzaData(id(Room), leader(_)), Op0);
@@ -250,7 +250,6 @@ numberOfPlayerInMyRoom(N) :-
         ?turnoNumero(Index);
 
         if (Index < 5) {
-            -+turnoNumero(Index + 1);
             setMinutes(5 - Index) [artifact_id(TimerID)];
             startTimer [artifact_id(TimerID)];
             .print("Avvio del ", Index + 1, "° round");
@@ -267,8 +266,11 @@ numberOfPlayerInMyRoom(N) :-
 
 +roundStarted
     <-
-        -+turnoIniziato(true);
         .print("Percepito l'inizio del timer!");
+        ?turnoNumero(Index);
+        -+turnoNumero(Index + 1);
+        -+turnoIniziato(true);
+        .perceive;
         !giocaRound.
 
 +roundEnded
@@ -336,10 +338,26 @@ numberOfPlayerInMyRoom(N) :-
         !invertiTimer;
 
         -ostaggio;
+
+        // Comunico il mio arrivo al leader della nuova stanza
+        ?leaderStanzaCorrente(Leader);
+        .send(Leader, tell, arrivoOstaggio);
     .
 
 // TODO GIO 3: Quando i nuovi ostaggi arrivano, avvisano il leader. Una volta che sono tutti arrivati
 // TODO GIO 3  ...il leader fa partire il timer per il round successivo o il mazziere fa il calcolo dei vincitori
++arrivoOstaggio[source(Ag)]
+    <-
+        ?numberOfOstaggi(Attesi);
+        .count(arrivoOstaggio[source(_)], Arrivati);
+
+        if (Arrivati >= Attesi) {
+            .abolish(arrivoOstaggio);
+            !avviaRound;
+        } else {
+            +arrivoOstaggio[source(Ag)];
+        }
+        .
 
 /* Handle movement */
 

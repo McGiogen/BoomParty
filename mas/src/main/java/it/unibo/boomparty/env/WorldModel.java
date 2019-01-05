@@ -4,6 +4,9 @@ import jason.environment.grid.Area;
 import jason.environment.grid.GridWorldModel;
 import jason.environment.grid.Location;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 public class WorldModel extends GridWorldModel {
 	Area roomA;
 	Area roomB;
@@ -64,11 +67,12 @@ public class WorldModel extends GridWorldModel {
     }
 
     /**
-     * Returns a random free location using isFree to test the availability of some possible location (it means free of agent and obstacles)
+     * Returns a random free location using isFree to test the availability of some possible locations (it means free of agents and obstacles)
+     * It checks randomly in all the input area.
      * @param a Search only in this Area
      * @return The free position or null
      */
-    protected Location getFreePos(Area a) {
+    protected Location getFreePos(final Area a) {
     	int areaWidth = a.br.x + 1;
     	int areaHeight = a.br.y + 1;
         for (int i = 0; i < (areaWidth * areaHeight * 5); i++) {
@@ -77,6 +81,34 @@ public class WorldModel extends GridWorldModel {
             Location l = new Location(x,y);
             if (isFree(l)) {
                 return l;
+            }
+        }
+        return null; // not found
+    }
+
+    /**
+     * Returns a random free location using isFree to test the availability of some possible location (it means free of agents and obstacles)
+     * It checks in the 8 locations around the input location
+     * @param l Input location
+     * @return The free position or null
+     */
+    protected Location getFreePos(final Location l) {
+        ArrayList<Location> around = new ArrayList<>(8);
+
+        // Genero l'elenco delle 8 possibili location attorno alla location in input
+        for (int x = l.x - 1; x <= l.x + 1; x++) {
+            for (int y = l.y - 1; y <= l.y; y++) {
+                if (l.x != x || l.y != y) {
+                    around.add(new Location(x,y));
+                }
+            }
+        }
+
+        Collections.shuffle(around);
+
+        for (Location ar: around) {
+            if (isFree(ar)) {
+                return ar;
             }
         }
         return null; // not found

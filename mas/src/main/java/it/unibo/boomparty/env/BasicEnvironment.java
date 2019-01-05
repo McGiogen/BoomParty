@@ -43,17 +43,17 @@ public class BasicEnvironment extends CartagoEnvironment {
 	public void updatePercepts() {
 	    for (HumanModel player : this.players) {
             // Add percepts
-            for (Literal percept : getPercepts(player)) {
+            List<Literal> percepts = getPercepts(player);
+            this.clearPercepts(player.getName());
+            for (Literal percept : percepts) {
                 this.addPercept(player.getName(), percept);
             }
         }
     }
 
     public List<Literal> getPercepts(HumanModel player) {
-        String pName = player.getName();
         Location pPosition = this.model.getAgPos(player.getIndex());
 
-        this.clearPercepts(pName);
         ArrayList<Literal> percepts = new ArrayList<>();
 
         // Area
@@ -80,7 +80,9 @@ public class BasicEnvironment extends CartagoEnvironment {
             String name = this.players.get(pair.getFirst()).getName();
             visiblesNamed.add(new Pair<>(name, pair.getSecond()));
         }
-        percepts.add(PerceptsBuilder.visible_players(visiblesNamed));
+        Literal vp = PerceptsBuilder.visible_players(visiblesNamed);
+        //this.getLogger().info("[" + player.getName() + "] visible_players = " + vp);
+        percepts.add(vp);
 
         // Going to a position, or null
         percepts.add(PerceptsBuilder.going_to(player.getPath()));
@@ -110,6 +112,9 @@ public class BasicEnvironment extends CartagoEnvironment {
                         final Location goal = this.model.getAgPos(target.getIndex());
                         if (goal != null) {
                             result = EnvironmentActions.moveTo(this, source, goal, false);
+                            if (!result.isSuccess()) {
+                                result = EnvironmentActions.moveIfPossible(this, source);
+                            }
                         }
                     }
                     break;
@@ -131,6 +136,9 @@ public class BasicEnvironment extends CartagoEnvironment {
                         }
                         if (goal != null) {
                             result = EnvironmentActions.moveTo(this, source, goal, true);
+                            if (!result.isSuccess()) {
+                                result = EnvironmentActions.moveIfPossible(this, source);
+                            }
                         }
                     }
                     break;

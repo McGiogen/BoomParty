@@ -57,6 +57,21 @@ public class EnvironmentActions {
         return result;
     }
 
+    public static Result moveIfPossible(BasicEnvironment env, final HumanModel ag) {
+        final Result result = new Result();
+        final Location agLoc = env.getModel().getAgPos(ag.getIndex());
+        final Location newLoc = env.getModel().getFreePos(agLoc);
+
+        if (newLoc != null) {
+            env.getModel().setAgPos(ag.getIndex(), newLoc); // actually move the agent in the grid
+        }
+        int randomWaitTime = (int)(Math.random() * 2000);
+
+        result.setTimeSpent(1000 + randomWaitTime);
+        result.setSuccess(true);
+        return result;
+    }
+
     public static class Result<T> {
         private int timeSpent;
         private boolean success;

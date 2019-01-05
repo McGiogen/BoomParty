@@ -64,4 +64,5 @@ knowledge([]).
         } else {
             TargetData = null;
         }
-        .print("getTargetKnowledge fine ", TargetData).
+        //.print("getTargetKnowledge fine ", TargetData);
+        .
