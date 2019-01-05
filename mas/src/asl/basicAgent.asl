@@ -329,7 +329,12 @@ numberOfPlayerInMyRoom(N) :-
         while (not going_to(null)) {
             !goin(Arrivo);
         }
+        // Aggiorno riferimento stanza corrente
         -+stanzaCorrente(Arrivo);
+
+        // Aggiorno riferimento timer
+        !invertiTimer;
+
         -ostaggio;
     .
 
@@ -446,5 +451,4 @@ numberOfPlayerInMyRoom(N) :-
         } else {
             .print("Errore nel recupero delle info di fine partita");
         }
-
         .
