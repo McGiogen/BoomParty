@@ -20,7 +20,7 @@ public class Main {
 
         SimulationArgs simArgs = new SimulationArgs();
         simArgs.setDebug(true);
-        simArgs.setPlayers(9);
+        simArgs.setPlayers(13);
 
         Map<TEAM_PLAYER, List<ROLE_PLAYER>> carte = new HashMap<TEAM_PLAYER, List<ROLE_PLAYER>>();
         List<ROLE_PLAYER> rolRed = new ArrayList<ROLE_PLAYER>();
@@ -30,7 +30,11 @@ public class Main {
         rolRed.add(ROLE_PLAYER.BOMBAROLO);
         rolRed.add(ROLE_PLAYER.BASE);
         rolRed.add(ROLE_PLAYER.BASE);
+        rolRed.add(ROLE_PLAYER.BASE);
+        rolRed.add(ROLE_PLAYER.BASE);
         rolBlu.add(ROLE_PLAYER.PRESIDENTE);
+        rolBlu.add(ROLE_PLAYER.BASE);
+        rolBlu.add(ROLE_PLAYER.BASE);
         rolBlu.add(ROLE_PLAYER.BASE);
         rolBlu.add(ROLE_PLAYER.BASE);
         rolGrig.add(ROLE_PLAYER.AMANTE_PRESIDENTE);
