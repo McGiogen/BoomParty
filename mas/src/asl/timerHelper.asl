@@ -100,6 +100,6 @@
         -+riferimentoTimerAlt(OldTimer);
 
         // Effettuo il focus sul nuovo timer
-        !focuTimer;
+        !focusTimer;
 
         .print("Fine plan per scambio riferimento timer").
