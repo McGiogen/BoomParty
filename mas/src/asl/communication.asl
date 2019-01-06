@@ -182,9 +182,9 @@
     <-
         // Informa tutti i giocatori della stanza dell'inizio della votazione
         ?visible_players(Playerlist);
-        Belief = startVotazioneLeader;
+        +startVotazioneLeader;
         for( .member(Receiver, Playerlist) ) {
-            .send(Receiver, tell, Belief);
+            .send(Receiver, tell, startVotazioneLeader);
         }
 
         // Si auto-vota
@@ -263,10 +263,10 @@
 
             // Pulizia
             .abolish(votoLeader);
+            -startVotazioneLeader;
 
-            Belief = endVotazioneLeader;
             for( .member(Receiver, Playerlist) ) {
-                .send(Receiver, tell, Belief);
+                .send(Receiver, tell, endVotazioneLeader);
             }
         }.
 
