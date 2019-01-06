@@ -254,7 +254,7 @@ numberOfPlayerInMyRoom(N) :-
             startTimer [artifact_id(TimerID)];
             .print("Avvio del ", Index + 1, "° round");
         } else {
-            // TODO niente? Finisce il gioco e devono essere stampati i risultati
+            // Niente? Il gioco è finito e devono essere stampati i risultati
         }
         .
 
@@ -278,7 +278,7 @@ numberOfPlayerInMyRoom(N) :-
     <-
         .print("Percepito lo scadere del timer!");
         -+turnoIniziato(false);
-        !rivelaRuolo.
+        .
 
 +roundEnded
     : ruoloLeader(false)
@@ -288,7 +288,7 @@ numberOfPlayerInMyRoom(N) :-
         ?name(Me);
         ?stanzaCorrente(R);
         .broadcast(tell, end_round_ack(Me, R));
-        !rivelaRuolo.
+        .
 
 // messaggio emesso dagli agenti che hanno terminato il turno
 +end_round_ack(Player, Room)[source(A)]
@@ -353,10 +353,20 @@ numberOfPlayerInMyRoom(N) :-
 
         if (Arrivati >= Attesi) {
             .abolish(arrivoOstaggio);
-            !avviaRound;
+            if (turnoNumero(5)) {
+                .broadcast(tell, gameEnded);
+                !rivelaRuolo;
+            } else {
+                !avviaRound;
+            }
         } else {
             +arrivoOstaggio[source(Ag)];
         }
+        .
+
++gameEnded
+    <-
+        !rivelaRuolo;
         .
 
 /* Handle movement */
