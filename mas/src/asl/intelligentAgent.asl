@@ -117,3 +117,9 @@
             Result = false;
         }
         .
+
+// Azioni di pulizia tra un round e il successivo
++!fineRound
+    <-
+        .abolish(desireToKnow(_));
+        .
