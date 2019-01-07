@@ -36,10 +36,10 @@ ruoloLeader(null).          // Booleano che indica se sono il leader della stanz
 turnoIniziato(false).       // Booleano che indica se il turno è già inizato
 mazziere(false).            // Booleano che indica se il giocatore è il mazziere. Il mazziere farà le valutazioni di fine partita
 ruoloCorrente(null).        // Artifact name della card in mio possesso
-stanzaBombarolo(null).      // Stanza in cui si trova il bombarolo a fine partita
-stanzaPresidente(null).     // Stanza in cui si trova il presidente a fine partita
-stanzaMogliePres(null).     // Stanza in cui si trova la moglie del presidente a fine partita
-stanzaAmantePres(null).     // Stanza in cui si trova l'amante del presidente a fine partita
+//stanzaBombarolo(null).      // Stanza in cui si trova il bombarolo a fine partita
+//stanzaPresidente(null).     // Stanza in cui si trova il presidente a fine partita
+//stanzaMogliePres(null).     // Stanza in cui si trova la moglie del presidente a fine partita
+//stanzaAmantePres(null).     // Stanza in cui si trova l'amante del presidente a fine partita
 turnoNumero(0).             // Numero del round corrente di gioco (5 round totali)
 stanzaCorrente(null).       // Stanza in cui si trova il giocatore
 
@@ -48,7 +48,7 @@ stanzaCorrente(null).       // Stanza in cui si trova il giocatore
 // position(X,Y).
 // players([ player( name(N), area(A), position(X,Y) ), ... ]).
 
-visible_players([]).    //visible_players(List)
+//visible_players(List)
 // neighbors(List).
 // going_to(position(X,Y)).
 
@@ -275,7 +275,20 @@ numberOfPlayerInMyRoom(N) :-
 
 +!giocaRound
     : turnoIniziato(false)
-    <- true.
+    <-
+        ?name(Me);
+        ?stanzaCorrente(R);
+        if (not ruoloLeader(true)) {
+            ?leaderStanzaCorrente(Leader);
+            .send(Leader, tell, end_round_ack(Me, R));
+        } else {
+            +end_round_ack(Me, R);
+        }
+        .
+
+// Gestione failure del plan
+-!giocaRound
+    <- !giocaRound.
 
 /* Triggerato dal signal dell'artifact Timer */
 
@@ -285,33 +298,19 @@ numberOfPlayerInMyRoom(N) :-
         ?turnoNumero(Index);
         -+turnoNumero(Index + 1);
         -+turnoIniziato(true);
-        .perceive;
         !giocaRound.
 
 +roundEnded
-    : ruoloLeader(true)
     <-
         .print("Percepito lo scadere del timer!");
         -+turnoIniziato(false);
-        !fineRound; // Gestito da intelligentAgent
-        .
-
-+roundEnded
-    : ruoloLeader(false)
-    <-
-        .print("Percepito lo scadere del timer!");
-        -+turnoIniziato(false);
-        ?name(Me);
-        ?stanzaCorrente(R);
-        .broadcast(tell, end_round_ack(Me, R));
-        !fineRound; // Gestito da intelligentAgent
+        !fineRound; // Pulizia gestita da intelligentAgent
         .
 
 // messaggio emesso dagli agenti che hanno terminato il turno
 +end_round_ack(Player, Room)[source(A)]
-    : ruoloLeader(true) & stanzaCorrente(Room) & numberOfPlayerInMyRoom(N) & .count(end_round_ack(_, Room), N)
+    : ruoloLeader(true) & stanzaCorrente(Room) & numberOfPlayerInMyRoom(N) & .count(end_round_ack(_, Room), N+1)
     <-
-        // todo: qui andrebbe gestito se io stesso leader non sto facendo ben altro.. nel senso che devo avere turnoIniziato(false)
         .print("Tutti i player della mia stanza hanno terminato il turno! ", Room);
         .abolish(end_round_ack(_, Room)); // per non portarmi dietro gli ack di ogni round
         !scambiaPlayer.
@@ -354,7 +353,7 @@ numberOfPlayerInMyRoom(N) :-
         // Aggiorno riferimento timer
         !invertiTimer;
 
-        -ostaggio;
+        .abolish(ostaggio);
 
         // Comunico il mio arrivo al leader della nuova stanza
         ?leaderStanzaCorrente(Leader);
@@ -407,6 +406,10 @@ numberOfPlayerInMyRoom(N) :-
 +gameEnded
     <-
         !rivelaRuolo;
+        // Sono il mazziere, aspetto che tutti scrivino sul TC e poi faccio le valutazioni
+        if (mazziere(true)) {
+            !valutaEndGame;
+        }
         .
 
 /* Handle movement */
@@ -436,7 +439,7 @@ numberOfPlayerInMyRoom(N) :-
 /* Operazioni finali */
 +!rivelaRuolo
     <-
-        ?card(Role, Team);
+        ?card(Team, Role);
 
         ?stanzaCorrente(Stanza);
 
@@ -446,11 +449,6 @@ numberOfPlayerInMyRoom(N) :-
         .print("Scrivo le mie info di fine partita sul Tuple Centre");
 
         !tucsonOpOut(statusEnd(player(MioNome),room(Stanza),team(Team),role(Role)), OpR);
-
-        // Sono il mazziere, aspetto che tutti scrivino sul TC e poi faccio le valutazioni
-        if (mazziere(true)) {
-            !valutaEndGame;
-        }
         .
 
 +!valutaEndGame // metto la guard per sicurezza, solo il mazziere è incaricato di questo compito
@@ -483,21 +481,16 @@ numberOfPlayerInMyRoom(N) :-
                 // Recuperando tramite .member si vede che perde
                 // il fatto di essere un literal
                 .term2string(PlayerStatusEndLiteral, PlayerStatusEndLiteralStr);
-
-                t4jn.api.getArg(PlayerStatusEndLiteral, 1, StanzaLiteral);
-                t4jn.api.getArg(StanzaLiteral, 0, Stanza);
-
-                t4jn.api.getArg(PlayerStatusEndLiteral, 3, RoleLiteral);
-                t4jn.api.getArg(RoleLiteral, 0, Role);
+                statusEnd(player(_),room(Stanza),team(_),role(Role)) = PlayerStatusEndLiteral;
 
                 if (Role == "bomb") {
-                    -+stanzaBombarolo(Stanza);
+                    +stanzaBombarolo(Stanza);
                 } elif (Role == "pres") {
-                    -+stanzaPresidente(Stanza);
+                    +stanzaPresidente(Stanza);
                 } elif (Role == "mogpres") {
-                    -+stanzaMogliePres(Stanza);
+                    +stanzaMogliePres(Stanza);
                 } elif (Role == "amapres") {
-                    -+stanzaAmantePres(Stanza);
+                    +stanzaAmantePres(Stanza);
                 }
             }
 
