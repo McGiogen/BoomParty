@@ -36,10 +36,10 @@ ruoloLeader(null).          // Booleano che indica se sono il leader della stanz
 turnoIniziato(false).       // Booleano che indica se il turno è già inizato
 mazziere(false).            // Booleano che indica se il giocatore è il mazziere. Il mazziere farà le valutazioni di fine partita
 ruoloCorrente(null).        // Artifact name della card in mio possesso
-//stanzaBombarolo(null).      // Stanza in cui si trova il bombarolo a fine partita
-//stanzaPresidente(null).     // Stanza in cui si trova il presidente a fine partita
-//stanzaMogliePres(null).     // Stanza in cui si trova la moglie del presidente a fine partita
-//stanzaAmantePres(null).     // Stanza in cui si trova l'amante del presidente a fine partita
+stanzaBombarolo(null).      // Stanza in cui si trova il bombarolo a fine partita
+stanzaPresidente(null).     // Stanza in cui si trova il presidente a fine partita
+stanzaMogliePres(null).     // Stanza in cui si trova la moglie del presidente a fine partita
+stanzaAmantePres(null).     // Stanza in cui si trova l'amante del presidente a fine partita
 turnoNumero(0).             // Numero del round corrente di gioco (5 round totali)
 stanzaCorrente(null).       // Stanza in cui si trova il giocatore
 
@@ -474,23 +474,30 @@ numberOfPlayerInMyRoom(N) :-
 
         -tmp(StatusEndListEnd);
 
+        // Recupero i nomi dei leader delle due stanze per controllare il caso del "Nato leader"
+        ?leaderStanzaCorrente(LeaderStanzaCorrente);
+        ?leaderAltraStanza(LeaderAltraStanza);
+        +natoLeader(false);
 
         if (StatusEndListEnd \== null) {
-
             for (.member(PlayerStatusEndLiteralStr, StatusEndListEnd)) {
                 // Recuperando tramite .member si vede che perde
                 // il fatto di essere un literal
                 .term2string(PlayerStatusEndLiteral, PlayerStatusEndLiteralStr);
-                statusEnd(player(_),room(Stanza),team(_),role(Role)) = PlayerStatusEndLiteral;
+                statusEnd(player(Nome),room(Stanza),team(_),role(Role)) = PlayerStatusEndLiteral;
 
                 if (Role == "bomb") {
-                    +stanzaBombarolo(Stanza);
+                    -+stanzaBombarolo(Stanza);
                 } elif (Role == "pres") {
-                    +stanzaPresidente(Stanza);
+                    -+stanzaPresidente(Stanza);
                 } elif (Role == "mogpres") {
-                    +stanzaMogliePres(Stanza);
+                    -+stanzaMogliePres(Stanza);
                 } elif (Role == "amapres") {
-                    +stanzaAmantePres(Stanza);
+                    -+stanzaAmantePres(Stanza);
+                } elif (Role == "natoleader") {
+                    if (Nome = LeaderStanzaCorrente | Nome = LeaderAltraStanza) {
+                        -+natoLeader(true);
+                    }
                 }
             }
 
@@ -515,6 +522,13 @@ numberOfPlayerInMyRoom(N) :-
                 .print("Amante del presidente in stanza col presidente senza quella racchia della moglie, l'Amante vince!");
             } else {
                 .print("Moglie e Amante del presidente non sono con il presidente, peccato...");
+            }
+
+            // Controllo se il "Nato leader" è leader, in tal caso VINCE!
+            if (natoLeader(true)) {
+                .print("Nato leader è leader di una delle due stanze, EGLI VINCE!");
+            } else {
+                .print("Nato leader non è leader, povero lui :(");
             }
 
         } else {
