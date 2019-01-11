@@ -46,7 +46,7 @@ public class GameConstans {
         BASE("Base", "base"),
         MOGLIE_PRESIDENTE("Moglie del presidente", "mogpres"),
         AMANTE_PRESIDENTE("Amante del presidente", "amapres"),
-        MAMMA_BOMBAROLO("Nato leader", "natoleader");
+        NATO_LEADER("Nato leader", "natoleader");
 
         private String value;
         private String codice;

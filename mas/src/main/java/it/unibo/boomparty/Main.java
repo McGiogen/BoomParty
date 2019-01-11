@@ -39,7 +39,7 @@ public class Main {
         rolBlu.add(ROLE_PLAYER.BASE);
         rolGrig.add(ROLE_PLAYER.AMANTE_PRESIDENTE);
         rolGrig.add(ROLE_PLAYER.MOGLIE_PRESIDENTE);
-        rolGrig.add(ROLE_PLAYER.MAMMA_BOMBAROLO);
+        rolGrig.add(ROLE_PLAYER.NATO_LEADER);
 
         carte.put(TEAM_PLAYER.ROSSO, rolRed);
         carte.put(TEAM_PLAYER.BLU, rolBlu);
