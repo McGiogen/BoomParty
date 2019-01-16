@@ -42,6 +42,7 @@ stanzaMogliePres(null).     // Stanza in cui si trova la moglie del presidente a
 stanzaAmantePres(null).     // Stanza in cui si trova l'amante del presidente a fine partita
 turnoNumero(0).             // Numero del round corrente di gioco (5 round totali)
 stanzaCorrente(null).       // Stanza in cui si trova il giocatore
+giocoFinito(false).         // Booleano che indica se è stato recepito il segnale di gameEnded
 
 /* Environment percepts */
 // area(roomA|roomB|hallway).
@@ -369,7 +370,9 @@ numberOfPlayerInMyRoom(N) :-
 
         if (Arrivati >= Attesi) {
             .abolish(arrivoOstaggio);
-            if (turnoNumero(5)) {
+            // Aggiungo controllo anche sul fatto che non sia già finito il gioco
+            // ovvero che l'altro leader abbia già dato il tana libera tutti
+            if (turnoNumero(5) & giocoFinito(false)) {
                 .broadcast(tell, gameEnded);
                 !rivelaRuolo;
             } else {
@@ -404,8 +407,12 @@ numberOfPlayerInMyRoom(N) :-
         .
 
 +gameEnded
+    : giocoFinito(false)
     <-
+        -+giocoFinito(true);
+
         !rivelaRuolo;
+
         // Sono il mazziere, aspetto che tutti scrivino sul TC e poi faccio le valutazioni
         if (mazziere(true)) {
             !valutaEndGame;
