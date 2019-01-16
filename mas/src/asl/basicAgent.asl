@@ -482,33 +482,54 @@ numberOfPlayerInMyRoom(N) :-
         -tmp(StatusEndListEnd);
 
         // Recupero i nomi dei leader delle due stanze per controllare il caso del "Nato leader"
-        ?leaderStanzaCorrente(LeaderStanzaCorrente);
-        ?leaderAltraStanza(LeaderAltraStanza);
+        ?leaderStanzaCorrente(LeaderCorr);
+        ?leaderAltraStanza(LeaderAlt);
+
         +natoLeader(false);
+        +nomeNatoLeader(null);
 
         if (StatusEndListEnd \== null) {
             for (.member(PlayerStatusEndLiteralStr, StatusEndListEnd)) {
                 // Recuperando tramite .member si vede che perde
                 // il fatto di essere un literal
                 .term2string(PlayerStatusEndLiteral, PlayerStatusEndLiteralStr);
-                statusEnd(player(Nome),room(Stanza),team(_),role(Role)) = PlayerStatusEndLiteral;
+
+                statusEnd(player(NomeAtom),room(StanzaAtom),team(_),role(RoleAtom)) = PlayerStatusEndLiteral;
+
+                // Li trasformo in stringa
+                .term2string(NomeAtom, Nome);
+                .term2string(StanzaAtom, Stanza);
+                .term2string(RoleAtom, Role);
 
                 if (Role == "bomb") {
+                    .print("Bombarolo: ", Nome);
                     -+stanzaBombarolo(Stanza);
                 } elif (Role == "pres") {
+                    .print("Presidente: ", Nome);
                     -+stanzaPresidente(Stanza);
                 } elif (Role == "mogpres") {
+                    .print("Moglie: ", Nome);
                     -+stanzaMogliePres(Stanza);
                 } elif (Role == "amapres") {
+                    .print("Amante: ", Nome);
                     -+stanzaAmantePres(Stanza);
                 } elif (Role == "natoleader") {
-                    if (Nome = LeaderStanzaCorrente | Nome = LeaderAltraStanza) {
+                    .print("NatoLeader: ", Nome);
+                    -+nomeNatoLeader(Nome);
+                    if (Nome = LeaderCorr | Nome = LeaderAlt) {
                         -+natoLeader(true);
                     }
                 }
             }
 
+            .print("-------------------------------------");
+
+            ?stanzaBombarolo(StanzaBomb);
             ?stanzaPresidente(StanzaPresidente);
+            ?stanzaMogliePres(StanzaMoglie);
+            ?stanzaAmantePres(StanzaAmante);
+
+            .print("Bomb: ", StanzaBomb, " Pres: ", StanzaPresidente, " Moglie: ", StanzaMoglie, " Amante: ", StanzaAmante);
 
             // Controllo se bombarolo e presidente sono nella stessa stanza
             if (stanzaBombarolo(StanzaPresidente)) {
@@ -530,6 +551,10 @@ numberOfPlayerInMyRoom(N) :-
             } else {
                 .print("Moglie e Amante del presidente non sono con il presidente, peccato...");
             }
+
+            ?nomeNatoLeader(NatoLeader);
+
+            .print("NatoLeader: ", NatoLeader,", Leader stanza corrente: ", LeaderCorr, ", Leader altra stanza: ", LeaderAlt);
 
             // Controllo se il "Nato leader" è leader, in tal caso VINCE!
             if (natoLeader(true)) {
