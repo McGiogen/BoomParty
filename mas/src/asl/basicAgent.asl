@@ -334,10 +334,10 @@ numberOfPlayerInMyRoom(N) :-
         }
         .
 
-// TODO GIO 2: Se il leader ti dice che sei un ostaggio, spostati nell'altra stanza e avvisa l'altro leader di essere arrivato
 +ostaggio
     : ruoloLeader(false)
     <-
+        // Calcolo la stanza in cui devo spostarmi come ostaggio
         ?stanzaCorrente(Partenza);
         if (Partenza = roomA) {
             Arrivo = roomB;
@@ -345,10 +345,12 @@ numberOfPlayerInMyRoom(N) :-
             Arrivo = roomA;
         }
 
+        // Mi sposto nell'altra stanza
         !goinStart(Arrivo);
         while (not going_to(null)) {
             !goin(Arrivo);
         }
+
         // Aggiorno riferimento stanza corrente
         -+stanzaCorrente(Arrivo);
 
