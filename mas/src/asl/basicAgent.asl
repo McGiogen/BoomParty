@@ -320,14 +320,15 @@ numberOfPlayerInMyRoom(N) :-
 
 +!scambiaPlayer
     <-
-        .print("Scambio i player");
-        // TODO GIO 1: Lascia decidere gli ostaggi ad intelligentAgent e poi invia messaggio ai giocatori scelti
-        ?stanzaCorrente(StanzaAssegnAtom);
+        .print("Scelgo e scambio gli ostaggi");
         ?numberOfOstaggi(NumOstaggi);
         ?visible_players(Players);
 
+        // Lascia decidere gli ostaggi ad intelligentAgent e poi invia messaggio ai giocatori scelti
+        !scegliOstaggi(Players, NumOstaggi, Ostaggi);
+
         for (.range(I, 0, NumOstaggi-1)) {
-            .nth(I, Players, Ostaggio);
+            .nth(I, Ostaggi, Ostaggio);
             .send(Ostaggio, tell, ostaggio);
             .print("Ostaggio n.", (I+1), ": ", Ostaggio);
         }

@@ -118,6 +118,19 @@
         }
         .
 
++!scegliOstaggi(GiocatoriInStanza, NumOstaggi, Ostaggi)
+    <-
+        +tempOstaggi([]);
+        for (.range(I, 0, NumOstaggi-1)) {
+            ?tempOstaggi(TempOstaggi);
+            .nth(I, GiocatoriInStanza, Ostaggio);
+            .union(TempOstaggi, [Ostaggio], NewOstaggi);
+
+            -+tempOstaggi(NewOstaggi);
+        }
+        -tempOstaggi(Ostaggi);
+        .
+
 // Azioni di pulizia tra un round e il successivo
 +!fineRound
     <-
