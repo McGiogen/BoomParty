@@ -28,7 +28,7 @@ public class PathFinder {
         this.m_openList.add(temp);
         while (!this.m_openList.isEmpty()) {
             if (temp.getLocation().equals(goal)) {
-                return this.constructPath(startNode, temp);
+                return this.constructPath(startNode, temp, true);
             }
 
             temp = this.lookingForBestNode();
@@ -38,7 +38,7 @@ public class PathFinder {
             this.addNeighbor(temp, startNode, goalNode, map);
         }
 
-        return null;
+        return this.constructPath(startNode, goalNode, false);
     }
 
     private void addNeighbor(Node parent, Node start, Node goal, WorldModel map) {
@@ -123,9 +123,9 @@ public class PathFinder {
         return node;
     }
 
-    private Path constructPath(Node start, Node goal) {
-        Path path = new Path(start, goal);
-        while (goal != null) {
+    private Path constructPath(Node start, Node goal, boolean practicable) {
+        Path path = new Path(start, goal, practicable);
+        while (practicable && goal != null) {
             path.addFirst(goal);
             goal = goal.getParent();
         }
@@ -135,10 +135,12 @@ public class PathFinder {
     public class Path extends LinkedList<Node> {
         private final Node start;
         private final Node goal;
+        private final boolean practicable;
 
-        public Path(Node start, Node goal) {
+        public Path(Node start, Node goal, boolean practicable) {
             this.start = start;
             this.goal = goal;
+            this.practicable = practicable;
         }
 
         public Node getStart() {
@@ -147,6 +149,10 @@ public class PathFinder {
 
         public Node getGoal() {
             return goal;
+        }
+
+        public boolean isPracticable() {
+            return practicable;
         }
     }
 

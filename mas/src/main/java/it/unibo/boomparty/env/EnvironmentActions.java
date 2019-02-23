@@ -14,7 +14,7 @@ public class EnvironmentActions {
         }
 
         boolean noPath = ag.getPath() == null || !ag.getPath().getGoal().getLocation().equals(goal);
-        boolean obstacleOnPath = ag.getPath() != null && !env.getModel().isFree(ag.getPath().getFirst().getLocation());
+        boolean obstacleOnPath = ag.getPath() != null && (!ag.getPath().isPracticable() || !env.getModel().isFree(ag.getPath().getFirst().getLocation()));
 
         if (noPath || obstacleOnPath) {
             env.getLogger().fine(
@@ -28,8 +28,8 @@ public class EnvironmentActions {
             PathFinder.Path path = new PathFinder().findPath(env.getModel(), loc, goal);
             ag.setPath(path);
 
-            if (path == null) {
-                // ERRORE non riesce a costruire il percorso...?!?
+            if (path == null || !path.isPracticable()) {
+                // Non è possibile costruire il percorso, uno o più ostacoli bloccano il percorso
                 result.setSuccess(false);
                 result.setTimeSpent(1000);
                 return result;
@@ -58,15 +58,15 @@ public class EnvironmentActions {
     }
 
     public static Result moveIfPossible(BasicEnvironment env, final HumanModel ag) {
-        final Result result = new Result();
         final Location agLoc = env.getModel().getAgPos(ag.getIndex());
         final Location newLoc = env.getModel().getFreePos(agLoc);
 
         if (newLoc != null) {
             env.getModel().setAgPos(ag.getIndex(), newLoc); // actually move the agent in the grid
         }
-        int randomWaitTime = (int)(Math.random() * 2000);
 
+        final Result result = new Result();
+        int randomWaitTime = (int)(Math.random() * 2000);
         result.setTimeSpent(1000 + randomWaitTime);
         result.setSuccess(true);
         return result;

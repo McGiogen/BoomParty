@@ -157,7 +157,7 @@ public class BasicEnvironment extends CartagoEnvironment {
                     this.getLogger().info("[" + agName + "] Failed to execute operations " + action);
             }
         } catch (final Exception e) {
-        	this.getLogger().info("[" + agName + "] EXCEPTION: " + e.getMessage());
+        	this.getLogger().info("[" + agName + "] EXCEPTION: " + e);
         }
 
         // Update all agent when the environment change
