@@ -48,7 +48,8 @@
                 // TODO
                 .print("Finito tutto... e poi cosa faccio?");
 
-                .wait(10000);
+                !moveRandomly
+                // .wait(10000);
             }
         }
         !giocaRound;
@@ -83,7 +84,7 @@
     <-
         !inviaRichiestaInfo(Player, "carta", true);
         // TODO qui o in !giocaRound bisogna aspettare il termine della conversazione prima di continuare a giocare
-        .wait(3000);
+        .wait(10000);
         .
 
 +!tryToCandidateAsLeaderc

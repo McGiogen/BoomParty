@@ -97,6 +97,7 @@ public class BoomPartyAgentArch extends CAgentArch implements T4JnArch {
         switch(action.getActionTerm().getFunctor()) {
             case "move_towards":
             case "move_in":
+            case "move_randomly":
             case "start_in_area":
                 AgArch successor = this.getNextAgArch();
                 if (successor != null) {

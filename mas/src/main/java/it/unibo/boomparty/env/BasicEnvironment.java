@@ -143,6 +143,12 @@ public class BasicEnvironment extends CartagoEnvironment {
                     }
                     break;
                 }
+                case "move_randomly": {
+                    HumanModel source = this.getPlayer(agName);
+                    if (source != null) {
+                        result = EnvironmentActions.moveIfPossible(this, source);
+                    }
+                }
                 case "start_in_area": {
                     String areaName = ((Atom) action.getTerm(0)).getFunctor();
                     HumanModel player = this.getPlayer(agName);
