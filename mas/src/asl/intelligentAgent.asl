@@ -45,7 +45,7 @@
                     !tryToCandidateAsLeader;
                 }
             } else {
-                // TODO GIO
+                // TODO
                 .print("Finito tutto... e poi cosa faccio?");
 
                 .wait(10000);

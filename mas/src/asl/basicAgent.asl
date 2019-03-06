@@ -53,9 +53,6 @@ giocoFinito(false).         // Booleano che indica se è stato recepito il segna
 // neighbors(List).
 // going_to(position(X,Y)).
 
-numberOfPlayerInMyRoom(N) :-
-    visible_players(Playerlist) &
-    .length(Playerlist, N).
 
 /* Initial goals */
 
@@ -364,8 +361,6 @@ numberOfPlayerInMyRoom(N) :-
         .send(Leader, tell, arrivoOstaggio);
     .
 
-// TODO GIO 3: Quando i nuovi ostaggi arrivano, avvisano il leader. Una volta che sono tutti arrivati
-// TODO GIO 3  ...il leader fa partire il timer per il round successivo o il mazziere fa il calcolo dei vincitori
 +arrivoOstaggio[source(Ag)]
     <-
         ?numberOfOstaggi(Attesi);
