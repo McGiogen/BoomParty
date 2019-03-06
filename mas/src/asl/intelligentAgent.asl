@@ -81,15 +81,12 @@
 
 +!tryToSpeakWith(Player)
     <-
-        // TODO scambia informazioni con il giocatore raggiunto
+        !inviaRichiestaInfo(Player, "carta", true);
+        // TODO qui o in !giocaRound bisogna aspettare il termine della conversazione prima di continuare a giocare
         .wait(3000);
-
-        ?knowledge(StartKnowledge);
-        .union(StartKnowledge, [know(name(Player), ruolo(val(null), conf(null)), team(val("rosso"), conf(100)))], NewKnowledge);
-        -+knowledge(NewKnowledge);
         .
 
-+!tryToCandidateAsLeader
++!tryToCandidateAsLeaderc
     <-
         .count(startVotazioneLeader[source(_)], N);
         if (N == 0 & ruoloLeader(false)) {
