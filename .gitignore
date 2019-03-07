@@ -5,3 +5,20 @@ MTPs-Main-Container.txt
 APDescription.txt
 *.log
 .stop___MAS
+
+# Eclipse
+.classpath
+.settings/
+
+# Intellij
+.idea/
+*.iml
+*.iws
+
+# Mac
+.DS_Store
+
+# Maven
+log/
+target/
+.project
