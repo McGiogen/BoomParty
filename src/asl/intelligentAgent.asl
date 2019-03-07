@@ -95,8 +95,12 @@
 
 +!tryToSpeakWith(Player)
     <-
-        !inviaRichiestaInfo(Player, "carta", true);
+        // !inviaRichiestaInfo(Player, "carta", true);
+
         // TODO qui o in !giocaRound bisogna aspettare il termine della conversazione prima di continuare a giocare
+        // TODO poi rimuovere le 3 righe qui sotto
+        ?name(MyName);
+        !updateConversations(Player, MyName, "carta", false, "accettata");
         .wait(10000);
         .
 
