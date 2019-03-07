@@ -113,7 +113,7 @@ public class BasicEnvironment extends CartagoEnvironment {
                         if (goal != null) {
                             result = EnvironmentActions.moveTo(this, source, goal, false);
                             if (!result.isSuccess()) {
-                                result = EnvironmentActions.moveIfPossible(this, source);
+                                result = EnvironmentActions.moveIfPossible(this, source, false);
                             }
                         }
                     }
@@ -137,7 +137,7 @@ public class BasicEnvironment extends CartagoEnvironment {
                         if (goal != null) {
                             result = EnvironmentActions.moveTo(this, source, goal, true);
                             if (!result.isSuccess()) {
-                                result = EnvironmentActions.moveIfPossible(this, source);
+                                result = EnvironmentActions.moveIfPossible(this, source, true);
                             }
                         }
                     }
@@ -146,8 +146,9 @@ public class BasicEnvironment extends CartagoEnvironment {
                 case MOVE_RANDOMLY: {
                     HumanModel source = this.getPlayer(agName);
                     if (source != null) {
-                        result = EnvironmentActions.moveIfPossible(this, source);
+                        result = EnvironmentActions.moveIfPossible(this, source, false);
                     }
+                    break;
                 }
                 case START_IN_AREA: {
                     String areaName = ((Atom) action.getTerm(0)).getFunctor();

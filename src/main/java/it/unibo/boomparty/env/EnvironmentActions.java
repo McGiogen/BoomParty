@@ -57,9 +57,9 @@ public class EnvironmentActions {
         return result;
     }
 
-    public static Result moveIfPossible(BasicEnvironment env, final HumanModel ag) {
+    public static Result moveIfPossible(BasicEnvironment env, final HumanModel ag, final boolean exitFromArea) {
         final Location agLoc = env.getModel().getAgPos(ag.getIndex());
-        final Location newLoc = env.getModel().getFreePos(agLoc);
+        final Location newLoc = env.getModel().getFreePos(agLoc, exitFromArea);
 
         if (newLoc != null) {
             env.getModel().setAgPos(ag.getIndex(), newLoc); // actually move the agent in the grid

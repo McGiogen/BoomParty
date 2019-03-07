@@ -6,8 +6,10 @@ import jason.environment.grid.Location;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 public class WorldModel extends GridWorldModel {
+    static Random random = new Random();
 	Area roomA;
 	Area roomB;
 	Area hallway;
@@ -92,22 +94,23 @@ public class WorldModel extends GridWorldModel {
      * @param l Input location
      * @return The free position or null
      */
-    protected Location getFreePos(final Location l) {
+    protected Location getFreePos(final Location l, final boolean exitFromArea) {
+        Area lArea = WorldUtils.getArea(this, l);
         ArrayList<Location> around = new ArrayList<>(8);
 
         // Genero l'elenco delle 8 possibili location attorno alla location in input
         for (int x = l.x - 1; x <= l.x + 1; x++) {
-            for (int y = l.y - 1; y <= l.y; y++) {
+            for (int y = l.y - 1; y <= l.y + 1; y++) {
                 if (l.x != x || l.y != y) {
                     around.add(new Location(x,y));
                 }
             }
         }
 
-        Collections.shuffle(around);
+        Collections.shuffle(around, random);
 
         for (Location ar: around) {
-            if (isFree(ar)) {
+            if (isFree(ar) && (exitFromArea || lArea.equals(WorldUtils.getArea(this, ar)))) {
                 return ar;
             }
         }
