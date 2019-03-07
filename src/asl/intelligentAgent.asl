@@ -4,10 +4,12 @@
     : turnoIniziato(true)
     <-
         ?knowledge(KnowList);
-        ?visible_players(Playerlist);
+        ?conversations(ConvList);
+        ?players(Playerlist);
 
         .length(KnowList, NumKnowledge);
         .length(Playerlist, NumPlayers);
+        .length(ConvList, NumConversations);
 
         if (desireToKnow(Someone)) {
             if (at(Someone)) {
@@ -17,56 +19,65 @@
             } else {
                 !goto(Someone);
             }
-        } elif (NumKnowledge < NumPlayers) {
-            !tryToDesireToKnow;
         } else {
-            ?card(MyTeam, _);
-            ?leaderStanzaCorrente(Leader);
-            !getTargetKnowledge(Leader, LeaderKnow);
-            if (ruoloLeader(false) & LeaderKnow \== null & know(name(_), ruolo(val(_), conf(_)), team(val(LeaderTeam), conf(_))) = LeaderKnow & LeaderTeam \== MyTeam) {
-                // Il Leader non è della mia squadra, valuto se è il caso di propormi come leader
-                .wait(10000);
+            // Provo a cercare qualcuno con cui scambiare informazioni
+            !tryToDesireToKnow(Success);
 
-                +conteggioPotenzialiVoti(1);
-                for (.member(Player, Playerlist) & Player \== null) {
-                    !getTargetKnowledge(Player, PlayerKnow);
-                    if (PlayerKnow \== null) {
-                        know(name(PP), ruolo(val(_), conf(_)), team(val(PlayerTeam), conf(_))) = PlayerKnow;
-                        if (PlayerTeam \== LeaderTeam) {
-                            ?conteggioPotenzialiVoti(NumVoti);
-                            -+conteggioPotenzialiVoti(NumVoti + 1);
+            if (NumConversations < NumPlayers & Success == false) {
+                .print("Faccio mosse più ardite");
+                ?card(MyTeam, _);
+                ?leaderStanzaCorrente(Leader);
+                !getTargetKnowledge(Leader, LeaderKnow);
+                if (ruoloLeader(false) & LeaderKnow \== null & know(name(_), ruolo(val(_), conf(_)), team(val(LeaderTeam), conf(_))) = LeaderKnow & LeaderTeam \== MyTeam) {
+                    // Il Leader non è della mia squadra, valuto se è il caso di propormi come leader
+                    .print("Valuto se è il caso di propormi come leader");
+                    .wait(10000);
+
+                    +conteggioPotenzialiVoti(1);
+                    for (.member(Player, Playerlist) & Player \== null) {
+                        !getTargetKnowledge(Player, PlayerKnow);
+                        if (PlayerKnow \== null) {
+                            know(name(PP), ruolo(val(_), conf(_)), team(val(PlayerTeam), conf(_))) = PlayerKnow;
+                            if (PlayerTeam \== LeaderTeam) {
+                                ?conteggioPotenzialiVoti(NumVoti);
+                                -+conteggioPotenzialiVoti(NumVoti + 1);
+                            }
                         }
                     }
-                }
-                -conteggioPotenzialiVoti(NumVoti);
+                    -conteggioPotenzialiVoti(NumVoti);
 
-                if (numberOfPlayerInMyRoom(Tot) & NumVoti > (Tot / 2)) {
-                    .print("Provo a candidarmi come leader, ci sono ", NumVoti, " possibili voti");
-                    !tryToCandidateAsLeader;
-                }
-            } else {
-                // TODO
-                .print("Finito tutto... e poi cosa faccio?");
+                    if (numberOfPlayerInMyRoom(Tot) & NumVoti > (Tot / 2)) {
+                        .print("Provo a candidarmi come leader, ci sono ", NumVoti, " possibili voti");
+                        !tryToCandidateAsLeader;
+                    }
+                } else {
+                    // TODO
+                    .print("Finito tutto... e poi cosa faccio?");
 
-                !moveRandomly
-                // .wait(10000);
+                    !moveRandomly;
+                    // .wait(10000);
+                }
             }
         }
         !giocaRound;
         .
 
-+!tryToDesireToKnow
++!tryToDesireToKnow(Success)
     <-
         // Cerco una persona con cui parlare
-        ?knowledge(MyKnowledge);
+        ?conversations(MyConversations);
         ?visible_players(Playerlist);
+        .length(Playerlist, NumPlayers);
         +desireToKnow(null);
 
         // Per prima cosa cerco un giocatore di cui non conosco nulla
         +index(0);
-        while (index(I) & desireToKnow(Target) & Target == null) {
+        while (index(I) & I < NumPlayers & desireToKnow(Target) & Target == null) {
             .nth(I, Playerlist, TempName);
-            if (not(.member(know(name(TempName), ruolo(val(_), conf(_)), team(val(_), conf(_))), MyKnowledge))) {
+            if (
+                not(.member(conversation(playerTarget(TempName), playerSpeaker(_), mode(_), flagOnlyTeam(_), esito(_)), MyConversations))
+                & not(.member(conversation(playerTarget(_), playerSpeaker(TempName), mode(_), flagOnlyTeam(_), esito(_)), MyConversations))
+                ) {
                 // Ho trovato un giocatore di cui non so nulla
                 -+desireToKnow(TempName);
             }
@@ -74,9 +85,11 @@
         }
         -index(_);
 
-        ?desireToKnow(Target);
-        if (Target == null) {
-            -desireToKnow(Target);
+        if (desireToKnow(Target) & Target == null) {
+            .abolish(desireToKnow(_));
+            Success = false;
+        } else {
+            Success = true;
         }
         .
 
