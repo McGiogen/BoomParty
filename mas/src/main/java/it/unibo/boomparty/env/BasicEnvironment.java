@@ -100,8 +100,8 @@ public class BasicEnvironment extends CartagoEnvironment {
         EnvironmentActions.Result result = new EnvironmentActions.Result();
 
         try {
-            switch(action.getFunctor()) {
-                case "move_towards": {
+            switch(EnvironmentActionsEnum.valueOf(action.getFunctor().toUpperCase())) {
+                case MOVE_TOWARDS: {
                     // get who (or where) to move
                     String goalName = ((StringTerm) action.getTerm(0)).getString();
 
@@ -119,7 +119,7 @@ public class BasicEnvironment extends CartagoEnvironment {
                     }
                     break;
                 }
-                case "move_in": {
+                case MOVE_IN: {
                     // get where to move
                     String areaName = action.getTerm(0).toString();
 
@@ -143,13 +143,13 @@ public class BasicEnvironment extends CartagoEnvironment {
                     }
                     break;
                 }
-                case "move_randomly": {
+                case MOVE_RANDOMLY: {
                     HumanModel source = this.getPlayer(agName);
                     if (source != null) {
                         result = EnvironmentActions.moveIfPossible(this, source);
                     }
                 }
-                case "start_in_area": {
+                case START_IN_AREA: {
                     String areaName = ((Atom) action.getTerm(0)).getFunctor();
                     HumanModel player = this.getPlayer(agName);
 

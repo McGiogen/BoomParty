@@ -2,6 +2,7 @@ package it.unibo.tucson4jason.architecture;
 
 import alice.tucson.asynchSupport.AsynchOpsHelper;
 import alice.tucson.asynchSupport.actions.AbstractTucsonOrdinaryAction;
+import it.unibo.boomparty.env.EnvironmentActionsEnum;
 import it.unibo.tucson4jason.operations.TucsonResult;
 import jaca.CAgentArch;
 import jason.architecture.AgArch;
@@ -94,18 +95,17 @@ public class BoomPartyAgentArch extends CAgentArch implements T4JnArch {
     }
 
     public void act(ActionExec action) {
-        switch(action.getActionTerm().getFunctor()) {
-            case "move_towards":
-            case "move_in":
-            case "move_randomly":
-            case "start_in_area":
-                AgArch successor = this.getNextAgArch();
-                if (successor != null) {
+        AgArch successor = this.getNextAgArch();
+        if (successor != null) {
+            String actionName = action.getActionTerm().getFunctor().toUpperCase();
+            for (EnvironmentActionsEnum a : EnvironmentActionsEnum.values()) {
+                if (a.name().equals(actionName)) {
                     successor.act(action);
+                    return;
                 }
-                break;
-            default:
-                super.act(action);
+            }
         }
+
+        super.act(action);
     }
 }
