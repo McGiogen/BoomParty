@@ -1,16 +1,7 @@
-# Eclipse
-.classpath
-.settings/
+bin/*
+!bin/c-boomparty.xml
 
-# Intellij
-.idea/
-*.iml
-*.iws
-
-# Mac
-.DS_Store
-
-# Maven
-log/
-target/
-.project
+MTPs-Main-Container.txt
+APDescription.txt
+*.log
+.stop___MAS
