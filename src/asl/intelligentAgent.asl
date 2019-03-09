@@ -1,7 +1,7 @@
 { include("basicAgent.asl") }
 
 +!giocaRound
-    : turnoIniziato(true) & not attendiFineConversazione(F1, F2, F3, F4)
+    : turnoIniziato(true) & not attendiFineConversazione(F1, F2, F3)
     <-
         ?knowledge(KnowList);
         ?conversations(ConvList);
@@ -64,7 +64,7 @@
 
 // sono in attesa della fine della convesazione corrente prima di riprendere il normale ciclo di round
 +!giocaRound
-    : turnoIniziato(true) & attendiFineConversazione(F1, F2, F3, F4)
+    : turnoIniziato(true) & attendiFineConversazione(F1, F2, F3)
     <- true.
 
 +!tryToDesireToKnow(Success)
@@ -101,20 +101,18 @@
 +!tryToSpeakWith(Player)
     <-
         ?name(MyName);
+        // TODO ASSEGNARE una logica alla decisione di CommunicationMode
         CommunicationMode = "carta";
         FlagOnlyTeam = true;
         !inviaRichiestaInfo(Player, CommunicationMode, FlagOnlyTeam);
-        +attendiFineConversazione(Player, MyName, CommunicationMode, FlagOnlyTeam);
-         .print("AGGIUNTOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO attendiFineConversazione: ", Player, MyName, CommunicationMode, FlagOnlyTeam);
-         //.wait(10000);
+        +attendiFineConversazione(Player, CommunicationMode, FlagOnlyTeam);
         .
 
-+updateConvComplete(Target, Source, CommunicationMode, FlagOnlyTeam, Response)
-    :  attendiFineConversazione(Target, Source, CommunicationMode, FlagOnlyTeam)
++updateConvComplete(Target, CommunicationMode, FlagOnlyTeam, Response)
+    :  attendiFineConversazione(Target, CommunicationMode, FlagOnlyTeam)
     <-
-         .print("rimuovooooooooooooooooooooooooooooooooooooooooooo attendiFineConversazione: ", Target, Source, CommunicationMode, FlagOnlyTeam);
-        -updateConvComplete(Target, Source, CommunicationMode, FlagOnlyTeam, Response);
-        -attendiFineConversazione(Target, Source, CommunicationMode, FlagOnlyTeam)
+        -updateConvComplete(Target, CommunicationMode, FlagOnlyTeam, Response);
+        -attendiFineConversazione(Target, CommunicationMode, FlagOnlyTeam)
         !giocaRound.
 
 +!tryToCandidateAsLeaderc
