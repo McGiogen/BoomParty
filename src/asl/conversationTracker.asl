@@ -17,7 +17,7 @@ conversations([]).
             .union(ConvList, [NewConvElem], NewConvList);
             -+conversations(NewConvList);
         }
-        +updateConvComplete(Target, CommunicationMode, FlagOnlyTeam, Response);
+        !updateConvComplete(Target, CommunicationMode, FlagOnlyTeam, Response);
         .print("Fine updateConversations").
 
 +!getConversation(Target, Source, CommunicationMode, FlagOnlyTeam, Response, ConvData)

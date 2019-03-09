@@ -31,7 +31,7 @@
         .print("richiestaInfo ", Target, " ", Sender);
         ?name(MyName);
         !getTargetKnowledge(Target, TargetKnowledge);
-        if(MyName == Target | TargetKnowledge \== null) {
+        if( (MyName == Target | TargetKnowledge \== null) & not attendiFineConversazione(_ , _ , _)) {
             if(TargetKnowledge \== null) {
                 know(name(Tar), ruolo(val(ValRuoloTar), conf(ConfRuoloTar)), team(val(ValTeamTar), conf(ConfTeamTar))) = TargetKnowledge;
             }
