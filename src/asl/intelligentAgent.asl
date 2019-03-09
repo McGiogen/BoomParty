@@ -103,7 +103,8 @@
         ?name(MyName);
         CommunicationMode = "carta";
         FlagOnlyTeam = true;
-        !inviaRichiestaInfo(Player, CommunicationMode, FlagOnlyTeam);
+        .term2string(PlayerAtom, Player);
+        !inviaRichiestaInfo(PlayerAtom, CommunicationMode, FlagOnlyTeam);
         +attendiFineConversazione(Player, MyName, CommunicationMode, FlagOnlyTeam);
          .print("AGGIUNTOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO attendiFineConversazione: ", Player, MyName, CommunicationMode, FlagOnlyTeam);
          //.wait(10000);
