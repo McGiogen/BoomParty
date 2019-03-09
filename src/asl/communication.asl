@@ -28,7 +28,7 @@
 */
 +richiestaInfo(Target, Mode, FlagOnlyTeam)[source(Sender)]
     <-
-        .print("richiestaInfo ", Target, Sender);
+        .print("richiestaInfo ", Target, " ", Sender);
         ?name(MyName);
         !getTargetKnowledge(Target, TargetKnowledge);
         if(MyName == Target | TargetKnowledge \== null) {

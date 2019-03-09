@@ -1,7 +1,7 @@
 { include("basicAgent.asl") }
 
 +!giocaRound
-    : turnoIniziato(true)
+    : turnoIniziato(true) & not attendiFineConversazione(F1, F2, F3, F4)
     <-
         ?knowledge(KnowList);
         ?conversations(ConvList);
@@ -62,6 +62,11 @@
         !giocaRound;
         .
 
+// sono in attesa della fine della convesazione corrente prima di riprendere il normale ciclo di round
++!giocaRound
+    : turnoIniziato(true) & attendiFineConversazione(F1, F2, F3, F4)
+    <- true.
+
 +!tryToDesireToKnow(Success)
     <-
         // Cerco una persona con cui parlare
@@ -95,14 +100,22 @@
 
 +!tryToSpeakWith(Player)
     <-
-        // !inviaRichiestaInfo(Player, "carta", true);
-
-        // TODO qui o in !giocaRound bisogna aspettare il termine della conversazione prima di continuare a giocare
-        // TODO poi rimuovere le 3 righe qui sotto
         ?name(MyName);
-        !updateConversations(Player, MyName, "carta", false, "accettata");
-        .wait(10000);
+        CommunicationMode = "carta";
+        FlagOnlyTeam = true;
+        !inviaRichiestaInfo(Player, CommunicationMode, FlagOnlyTeam);
+        +attendiFineConversazione(Player, MyName, CommunicationMode, FlagOnlyTeam);
+         .print("AGGIUNTOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO attendiFineConversazione: ", Player, MyName, CommunicationMode, FlagOnlyTeam);
+         //.wait(10000);
         .
+
++updateConvComplete(Target, Source, CommunicationMode, FlagOnlyTeam, Response)
+    :  attendiFineConversazione(Target, Source, CommunicationMode, FlagOnlyTeam)
+    <-
+         .print("rimuovooooooooooooooooooooooooooooooooooooooooooo attendiFineConversazione: ", Target, Source, CommunicationMode, FlagOnlyTeam);
+        -updateConvComplete(Target, Source, CommunicationMode, FlagOnlyTeam, Response);
+        -attendiFineConversazione(Target, Source, CommunicationMode, FlagOnlyTeam)
+        !giocaRound.
 
 +!tryToCandidateAsLeaderc
     <-

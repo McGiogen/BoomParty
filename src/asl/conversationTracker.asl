@@ -9,9 +9,7 @@ conversations([]).
         (Response = "accettata" | Response = "negata")
     <-
         ?conversations(ConvList);
-        /*
-        !getConversation(Target, Source, CommunicationMode, FlagOnlyTeam, Response, ConvData);
-        if( ConvData == null ) {*/
+
         if( .member(conversation(playerTarget(Target), playerSpeaker(Source), mode(ModeVal), flagOnlyTeam(FlagVal), esito(Resp)), ConvList) ) {
             .print("updateConversations, elemento già presente");
         } else {
@@ -19,6 +17,7 @@ conversations([]).
             .union(ConvList, [NewConvElem], NewConvList);
             -+conversations(NewConvList);
         }
+        +updateConvComplete(Target, Source, CommunicationMode, FlagOnlyTeam, Response);
         .print("Fine updateConversations").
 
 +!getConversation(Target, Source, CommunicationMode, FlagOnlyTeam, Response, ConvData)
