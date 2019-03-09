@@ -105,16 +105,20 @@
         CommunicationMode = "carta";
         FlagOnlyTeam = true;
         .term2string(PlayerAtom, Player);
+        +attendiFineConversazione(PlayerAtom, CommunicationMode, FlagOnlyTeam);
         !inviaRichiestaInfo(PlayerAtom, CommunicationMode, FlagOnlyTeam);
-        +attendiFineConversazione(Player, CommunicationMode, FlagOnlyTeam);
         .
 
 +updateConvComplete(Target, CommunicationMode, FlagOnlyTeam, Response)
     :  attendiFineConversazione(Target, CommunicationMode, FlagOnlyTeam)
     <-
         -updateConvComplete(Target, CommunicationMode, FlagOnlyTeam, Response);
-        -attendiFineConversazione(Target, CommunicationMode, FlagOnlyTeam)
+        -attendiFineConversazione(Target, CommunicationMode, FlagOnlyTeam);
         !giocaRound.
+
++updateConvComplete(Target, CommunicationMode, FlagOnlyTeam, Response)
+     <-
+        -updateConvComplete(Target, CommunicationMode, FlagOnlyTeam, Response).
 
 +!tryToCandidateAsLeaderc
     <-

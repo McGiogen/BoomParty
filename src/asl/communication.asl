@@ -77,10 +77,10 @@
     Sender ha rifiutato una mia richiesta di informazioni.
 */
 +rispostaInfoNegata[source(Sender)]
-    : .term2string(Sender, SenderStr) & waitingRispostaInfo(SenderStr, richiestaInfo(Target, Mode, FlagOnlyTeam))
+    : waitingRispostaInfo(Sender, richiestaInfo(Target, Mode, FlagOnlyTeam))
     <-
-        -waitingRispostaInfo(SenderStr, richiestaInfo(Target, Mode, FlagOnlyTeam));
-        !updateConversations(Target, SenderStr, Mode, FlagOnlyTeam, "negata");
+        -waitingRispostaInfo(Sender, richiestaInfo(Target, Mode, FlagOnlyTeam));
+        !updateConversations(Target, Sender, Mode, FlagOnlyTeam, "negata");
         -rispostaInfoNegata[source(Sender)].
 
 /**
