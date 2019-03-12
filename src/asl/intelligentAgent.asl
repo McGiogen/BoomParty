@@ -79,9 +79,10 @@
         +index(0);
         while (index(I) & I < NumPlayers & desireToKnow(Target) & Target == null) {
             .nth(I, Playerlist, TempName);
+            .term2string(TempNameAtom, TempName);
             if (
-                not(.member(conversation(playerTarget(TempName), playerSpeaker(_), mode(_), flagOnlyTeam(_), esito(_)), MyConversations))
-                & not(.member(conversation(playerTarget(_), playerSpeaker(TempName), mode(_), flagOnlyTeam(_), esito(_)), MyConversations))
+                not(.member(conversation(playerTarget(TempNameAtom), playerSpeaker(_), mode(_), flagOnlyTeam(_), esito(_)), MyConversations))
+                & not(.member(conversation(playerTarget(_), playerSpeaker(TempNameAtom), mode(_), flagOnlyTeam(_), esito(_)), MyConversations))
                 ) {
                 // Ho trovato un giocatore di cui non so nulla
                 -+desireToKnow(TempName);
