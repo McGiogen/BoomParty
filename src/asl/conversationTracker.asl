@@ -1,34 +1,34 @@
 
-// contenuto conversation(playerTarget(Target), playerSpeaker(Source), mode(ModeVal), flagOnlyTeam(FlagVal), esito(Resp))
-// ModeVal = ["parlato"|"carta"]; FlagVal = [true|false]; Resp = ["accettata"|"negata"]
+// contenuto conversation(initiator(Initiator), playerTarget(Target), playerSpeaker(Source), mode(ModeVal), flagOnlyTeam(FlagVal), esito(Resp), Time(system.time))
+// Initiator = [self|speaker]; ModeVal = ["parlato"|"carta"]; FlagVal = [true|false]; Resp = ["accettata"|"negata"]
 conversations([]).
 
-+!updateConversations(Target, Source, CommunicationMode, FlagOnlyTeam, Response)
++!updateConversations(Initiator, Target, Source, CommunicationMode, FlagOnlyTeam, Response)
     :   (CommunicationMode = "parlato" | CommunicationMode = "carta") &
         (FlagOnlyTeam = true | FlagOnlyTeam = false) &
         (Response = "accettata" | Response = "negata")
     <-
         ?conversations(ConvList);
 
-        if( .member(conversation(playerTarget(Target), playerSpeaker(Source), mode(ModeVal), flagOnlyTeam(FlagVal), esito(Resp)), ConvList) ) {
+        Time = system.time;
+        if( .member(conversation(initiator(Initiator), playerTarget(Target), playerSpeaker(Source), mode(ModeVal), flagOnlyTeam(FlagVal), esito(Resp), time(Time)), ConvList) ) {
             .print("updateConversations, elemento già presente");
         } else {
-            Time = system.time;
-            NewConvElem = conversation(playerTarget(Target), playerSpeaker(Source), mode(CommunicationMode), flagOnlyTeam(FlagOnlyTeam), esito(Response), time(Time));
+            NewConvElem = conversation(initiator(Initiator), playerTarget(Target), playerSpeaker(Source), mode(CommunicationMode), flagOnlyTeam(FlagOnlyTeam), esito(Response), time(Time));
             .union(ConvList, [NewConvElem], NewConvList);
             -+conversations(NewConvList);
         }
         !updateConvComplete(Target, CommunicationMode, FlagOnlyTeam, Response);
         .print("Fine updateConversations").
 
-+!getConversation(Target, Source, CommunicationMode, FlagOnlyTeam, Response, ConvData)
++!getConversation(Initiator, Target, Source, CommunicationMode, FlagOnlyTeam, Response, ConvData)
     :   (CommunicationMode = "parlato" | CommunicationMode = "carta") &
         (FlagOnlyTeam = true | FlagOnlyTeam = false) &
         (Response = "accettata" | Response = "negata")
     <-
         ?conversations(ConvList);
-        if(.member(conversation(playerTarget(Target), playerSpeaker(Source), mode(ModeVal), flagOnlyTeam(FlagVal), esito(Resp)), ConvList)) {
-            .nth(Pos, ConvList, conversation(playerTarget(Target), playerSpeaker(Source), mode(ModeVal), flagOnlyTeam(FlagVal), esito(Resp)));
+        if(.member(conversation(initiator(Initiator), playerTarget(Target), playerSpeaker(Source), mode(ModeVal), flagOnlyTeam(FlagVal), esito(Resp), time(_)), ConvList)) {
+            .nth(Pos, ConvList, conversation(initiator(Initiator), playerTarget(Target), playerSpeaker(Source), mode(ModeVal), flagOnlyTeam(FlagVal), esito(Resp), time(_)));
             .nth(Pos, ConvList, ConvData);
         } else {
             ConvData = null;

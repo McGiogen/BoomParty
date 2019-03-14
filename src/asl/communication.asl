@@ -47,7 +47,7 @@
                                 //comunico tramite send di aver accettato la richiesta
                                 .send(Sender, tell, rispostaInfoAccetta);
                             }
-                            !updateConversations(Sender, Sender, Mode, FlagOnlyTeam, "accettata");
+                            !updateConversations(speaker, Sender, Sender, Mode, FlagOnlyTeam, "accettata");
                             !inviaRispostaInfo(Sender, Target, Mode, FlagOnlyTeam);
                         } else {
                             .send(Sender, tell, rispostaInfoNegata);
@@ -60,7 +60,7 @@
                         //comunico tramite send di aver accettato la richiesta
                         .send(Sender, tell, rispostaInfoAccetta);
                     }
-                    !updateConversations(Sender, Sender, Mode, FlagOnlyTeam, "accettata");
+                    !updateConversations(speaker, Sender, Sender, Mode, FlagOnlyTeam, "accettata");
                     !inviaRispostaInfo(Sender, Target, Mode, FlagOnlyTeam);
                 } else {
                     .send(Sender, tell, rispostaInfoNegata);
@@ -80,7 +80,7 @@
     : waitingRispostaInfo(Sender, richiestaInfo(Target, Mode, FlagOnlyTeam))
     <-
         -waitingRispostaInfo(Sender, richiestaInfo(Target, Mode, FlagOnlyTeam));
-        !updateConversations(Target, Sender, Mode, FlagOnlyTeam, "negata");
+        !updateConversations(self, Target, Sender, Mode, FlagOnlyTeam, "negata");
         -rispostaInfoNegata[source(Sender)].
 
 /**
@@ -91,7 +91,7 @@
     <-
         -waitingRispostaInfo(Sender, richiestaInfo(Target, "carta", FlagOnlyTeam));
         -rispostaInfoAccetta[source(Sender)];
-        !updateConversations(Sender, Target, "carta", FlagOnlyTeam, "accettata");
+        !updateConversations(self, Target, Sender, "carta", FlagOnlyTeam, "accettata");
         !inviaRispostaInfo(Sender, Target, "carta", FlagOnlyTeam);.
 
 /**
@@ -99,13 +99,13 @@
     sul giocatore Target. Ero in attesa di una sua risposta.
 */
 +rispostaInfo(Target, CardTeam, CardRole)[source(Sender)]
-    : waitingRispostaInfo(Sender, richiestaInfo(Target, "parlato", FlagOnlyTeam))
+    : waitingRispostaInfo(Sender, richiestaInfo(Target, "parlato", FlagOnlyTeam))[source(self)]
     <-
         .print("rispostaInfo con richiesta risposta, inizio");
         ?name(MyName);
-        !updateConversations(Sender, Target, "parlato", FlagOnlyTeam, "accettata");
+        !updateConversations(self, Target, Sender, "parlato", FlagOnlyTeam, "accettata");
         !inviaRispostaInfo(Sender, MyName, "parlato", FlagOnlyTeam);
-        -waitingRispostaInfo(Sender, richiestaInfo(Target, "parlato", FlagOnlyTeam));
+        -waitingRispostaInfo(Sender, richiestaInfo(Target, "parlato", FlagOnlyTeam))[source(self)];
 
         // Ci hanno inviato la squadra (Team) e -forse- il ruolo (CardRole) di un giocatore (Target)
         !updateKnowledge(Sender, Target, "parlato", CardTeam, CardRole);
