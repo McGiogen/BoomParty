@@ -13,7 +13,8 @@ conversations([]).
         if( .member(conversation(playerTarget(Target), playerSpeaker(Source), mode(ModeVal), flagOnlyTeam(FlagVal), esito(Resp)), ConvList) ) {
             .print("updateConversations, elemento già presente");
         } else {
-            NewConvElem = conversation(playerTarget(Target), playerSpeaker(Source), mode(CommunicationMode), flagOnlyTeam(FlagOnlyTeam), esito(Response));
+            Time = system.time;
+            NewConvElem = conversation(playerTarget(Target), playerSpeaker(Source), mode(CommunicationMode), flagOnlyTeam(FlagOnlyTeam), esito(Response), time(Time));
             .union(ConvList, [NewConvElem], NewConvList);
             -+conversations(NewConvList);
         }

@@ -81,8 +81,8 @@
             .nth(I, Playerlist, TempName);
             .term2string(TempNameAtom, TempName);
             if (
-                not(.member(conversation(playerTarget(TempNameAtom), playerSpeaker(_), mode(_), flagOnlyTeam(_), esito(_)), MyConversations))
-                & not(.member(conversation(playerTarget(_), playerSpeaker(TempNameAtom), mode(_), flagOnlyTeam(_), esito(_)), MyConversations))
+                not(.member(conversation(playerTarget(TempNameAtom), playerSpeaker(_), mode(_), flagOnlyTeam(_), esito(_), time(_)), MyConversations))
+                & not(.member(conversation(playerTarget(_), playerSpeaker(TempNameAtom), mode(_), flagOnlyTeam(_), esito(_), time(_)), MyConversations))
                 ) {
                 // Ho trovato un giocatore di cui non so nulla
                 -+desireToKnow(TempName);
