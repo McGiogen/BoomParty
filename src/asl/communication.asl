@@ -43,10 +43,6 @@
                     if (Mode == "parlato") {
 
                         if( ConfRuoloSen<50 | (FlagOnlyTeam==true & (ValTeamSen==null | ( ConfTeamSen \== null & ConfTeamSen<50)))) {
-                            if(Mode == "carta") {
-                                //comunico tramite send di aver accettato la richiesta
-                                .send(Sender, tell, rispostaInfoAccetta);
-                            }
                             !updateConversations(speaker, Sender, Sender, Mode, FlagOnlyTeam, "accettata");
                             !inviaRispostaInfo(Sender, Target, Mode, FlagOnlyTeam);
                         } else {
@@ -174,7 +170,7 @@
                 .print(ReceiverCardArtifName, " le sue info sono -> TEAM: ", ReceiverTeam, "; RUOLO: ", ReceiverRole);
             }
         }
-    .print("inviaRispostaInfo ", Mode, " fine").
+        .print("inviaRispostaInfo ", Mode, " fine").
 
 
 // Il giocatore inizia una votazione candidandosi come leader
