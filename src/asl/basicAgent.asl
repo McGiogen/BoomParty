@@ -272,7 +272,7 @@ giocoFinito(false).         // Booleano che indica se è stato recepito il segna
         }
         .
 
-+!giocaRound
++giocaRound(N)
     : turnoIniziato(false)
     <-
         ?name(Me);
@@ -283,12 +283,13 @@ giocoFinito(false).         // Booleano che indica se è stato recepito il segna
         } else {
             +end_round_ack(Me, R);
         }
+        .abolish(giocaRound(_));
         .
-
+/*
 // Gestione failure del plan
--!giocaRound
-    <- !giocaRound.
-
+-giocaRound
+    <- +giocaRound.
+*/
 /* Triggerato dal signal dell'artifact Timer */
 
 +roundStarted
@@ -297,12 +298,13 @@ giocoFinito(false).         // Booleano che indica se è stato recepito il segna
         ?turnoNumero(Index);
         -+turnoNumero(Index + 1);
         -+turnoIniziato(true);
-        !giocaRound.
+        +giocaRound(1).
 
 +roundEnded
     <-
         .print("Percepito lo scadere del timer!");
         -+turnoIniziato(false);
+        //.abolish(giocaRound(_));
         !fineRound; // Pulizia gestita da intelligentAgent
         .
 

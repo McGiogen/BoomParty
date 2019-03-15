@@ -1,6 +1,6 @@
 { include("basicAgent.asl") }
 
-+!giocaRound
++giocaRound(N)
     : turnoIniziato(true) & not attendiFineConversazione(F1, F2, F3)
     <-
         ?knowledge(KnowList);
@@ -59,14 +59,16 @@
                 }
             }
         }
-        !giocaRound;
+        -giocaRound(N);
+        Next = N+1;
+        +giocaRound(Next);
         .
-
+/*
 // sono in attesa della fine della conversazione corrente prima di riprendere il normale ciclo di round
-+!giocaRound
++giocaRound(N)
     : turnoIniziato(true) & attendiFineConversazione(F1, F2, F3)
     <- true.
-
+*/
 +!tryToDesireToKnow(Success)
     <-
         // Cerco una persona con cui parlare
@@ -109,18 +111,22 @@
         !inviaRichiestaInfo(PlayerAtom, CommunicationMode, FlagOnlyTeam);
         .
 
-+!updateConvComplete(Target, CommunicationMode, FlagOnlyTeam, Response)
++updateConvComplete(Target, CommunicationMode, FlagOnlyTeam, Response)
     :  attendiFineConversazione(Target, CommunicationMode, FlagOnlyTeam)
     <-
         .print("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO", Target);
-        //-updateConvComplete(Target, CommunicationMode, FlagOnlyTeam, Response);
+        -updateConvComplete(Target, CommunicationMode, FlagOnlyTeam, Response);
         -attendiFineConversazione(Target, CommunicationMode, FlagOnlyTeam);
-        !giocaRound.
+        -giocaRound(N);
+        Next = N+1;
+        +giocaRound(Next);
+        .
 
-+!updateConvComplete(Target, CommunicationMode, FlagOnlyTeam, Response)
++updateConvComplete(Target, CommunicationMode, FlagOnlyTeam, Response)
+    :  not attendiFineConversazione(Target, CommunicationMode, FlagOnlyTeam)
      <-
-        //-updateConvComplete(Target, CommunicationMode, FlagOnlyTeam, Response).
-        true.
+        -updateConvComplete(Target, CommunicationMode, FlagOnlyTeam, Response).
+        //true.
 
 +!tryToCandidateAsLeaderc
     <-
