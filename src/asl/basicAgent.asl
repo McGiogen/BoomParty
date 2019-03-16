@@ -272,24 +272,6 @@ giocoFinito(false).         // Booleano che indica se è stato recepito il segna
         }
         .
 
-+giocaRound(N)
-    : turnoIniziato(false)
-    <-
-        ?name(Me);
-        ?stanzaCorrente(R);
-        if (not ruoloLeader(true)) {
-            ?leaderStanzaCorrente(Leader);
-            .send(Leader, tell, end_round_ack(Me, R));
-        } else {
-            +end_round_ack(Me, R);
-        }
-        .abolish(giocaRound(_));
-        .
-/*
-// Gestione failure del plan
--giocaRound
-    <- +giocaRound.
-*/
 /* Triggerato dal signal dell'artifact Timer */
 
 +roundStarted
@@ -298,13 +280,36 @@ giocoFinito(false).         // Booleano che indica se è stato recepito il segna
         ?turnoNumero(Index);
         -+turnoNumero(Index + 1);
         -+turnoIniziato(true);
-        +giocaRound(1).
+        !play;
+        .
+
++!play
+    <-
+        +playing;
+        while (turnoIniziato(true) & not attendiFineConversazione(_, _, _)) {
+            !giocaRound;
+        }
+        .abolish(playing);
+        .
+
+// Gestione failure del plan
+-giocaRound
+    <- +giocaRound.
 
 +roundEnded
     <-
         .print("Percepito lo scadere del timer!");
         -+turnoIniziato(false);
-        //.abolish(giocaRound(_));
+
+        ?name(Me);
+        ?stanzaCorrente(R);
+        if (not ruoloLeader(true)) {
+            ?leaderStanzaCorrente(Leader);
+            .send(Leader, tell, end_round_ack(Me, R));
+        } else {
+            +end_round_ack(Me, R);
+        }
+
         !fineRound; // Pulizia gestita da intelligentAgent
         .
 

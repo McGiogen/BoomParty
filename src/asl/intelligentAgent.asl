@@ -1,7 +1,6 @@
 { include("basicAgent.asl") }
 
-+giocaRound(N)
-    : turnoIniziato(true) & not attendiFineConversazione(F1, F2, F3)
++!giocaRound
     <-
         ?knowledge(KnowList);
         ?conversations(ConvList);
@@ -14,8 +13,9 @@
         if (desireToKnow(Someone)) {
             if (at(Someone)) {
                 .print("Provo a parlare con ", Someone);
+                ?desireToKnow(Someone);
+                .abolish(desireToKnow(_));
                 !tryToSpeakWith(Someone);
-                -desireToKnow(Someone);
             } else {
                 !goto(Someone);
             }
@@ -59,45 +59,40 @@
                 }
             }
         }
-        -giocaRound(N);
-        Next = N+1;
-        +giocaRound(Next);
         .
-/*
-// sono in attesa della fine della conversazione corrente prima di riprendere il normale ciclo di round
-+giocaRound(N)
-    : turnoIniziato(true) & attendiFineConversazione(F1, F2, F3)
-    <- true.
-*/
+
 +!tryToDesireToKnow(Success)
     <-
         // Cerco una persona con cui parlare
-        ?conversations(MyConversations);
-        ?visible_players(Playerlist);
-        .length(Playerlist, NumPlayers);
-        +desireToKnow(null);
+        if (conversations(MyConversations) & visible_players(Playerlist)) {
+            .length(Playerlist, NumPlayers);
+            +tmpDesireToKnow(null);
 
-        // Per prima cosa cerco un giocatore di cui non conosco nulla
-        +index(0);
-        while (index(I) & I < NumPlayers & desireToKnow(Target) & Target == null) {
-            .nth(I, Playerlist, TempName);
-            .term2string(TempNameAtom, TempName);
-            if (
-                not(.member(conversation(initiator(_), playerTarget(TempNameAtom), playerSpeaker(_), mode(_), flagOnlyTeam(_), esito(_), time(_)), MyConversations))
-                & not(.member(conversation(initiator(_), playerTarget(_), playerSpeaker(TempNameAtom), mode(_), flagOnlyTeam(_), esito(_), time(_)), MyConversations))
-                ) {
-                // Ho trovato un giocatore di cui non so nulla
-                -+desireToKnow(TempName);
+            // Per prima cosa cerco un giocatore di cui non conosco nulla
+            +index(0);
+            while (index(I) & I < NumPlayers & tmpDesireToKnow(Target) & Target == null) {
+                .nth(I, Playerlist, TempName);
+                .term2string(TempNameAtom, TempName);
+                if (
+                    not(.member(conversation(initiator(_), playerTarget(TempNameAtom), playerSpeaker(_), mode(_), flagOnlyTeam(_), esito(_), time(_)), MyConversations))
+                    & not(.member(conversation(initiator(_), playerTarget(_), playerSpeaker(TempNameAtom), mode(_), flagOnlyTeam(_), esito(_), time(_)), MyConversations))
+                    ) {
+                    // Ho trovato un giocatore di cui non so nulla
+                    -+tmpDesireToKnow(TempName);
+                }
+                -+index(I+1);
             }
-            -+index(I+1);
-        }
-        -index(_);
+            -index(_);
 
-        if (desireToKnow(Target) & Target == null) {
-            .abolish(desireToKnow(_));
-            Success = false;
+            -tmpDesireToKnow(Target);
+            if (Target == null) {
+                Success = false;
+            } else {
+                +desireToKnow(Target);
+                Success = true;
+            }
         } else {
-            Success = true;
+            Success = false;
         }
         .
 
@@ -107,26 +102,8 @@
         CommunicationMode = "parlato";
         FlagOnlyTeam = true;
         .term2string(PlayerAtom, Player);
-        +attendiFineConversazione(PlayerAtom, CommunicationMode, FlagOnlyTeam);
         !inviaRichiestaInfo(PlayerAtom, CommunicationMode, FlagOnlyTeam);
         .
-
-+updateConvComplete(Target, CommunicationMode, FlagOnlyTeam, Response)
-    :  attendiFineConversazione(Target, CommunicationMode, FlagOnlyTeam)
-    <-
-        .print("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO", Target);
-        -updateConvComplete(Target, CommunicationMode, FlagOnlyTeam, Response);
-        -attendiFineConversazione(Target, CommunicationMode, FlagOnlyTeam);
-        -giocaRound(N);
-        Next = N+1;
-        +giocaRound(Next);
-        .
-
-+updateConvComplete(Target, CommunicationMode, FlagOnlyTeam, Response)
-    :  not attendiFineConversazione(Target, CommunicationMode, FlagOnlyTeam)
-     <-
-        -updateConvComplete(Target, CommunicationMode, FlagOnlyTeam, Response).
-        //true.
 
 +!tryToCandidateAsLeaderc
     <-
