@@ -1,18 +1,22 @@
 package it.unibo.boomparty.constants;
 
+import java.awt.*;
+
 public class GameConstans {
 
     public static enum TEAM_PLAYER {
-        ROSSO("Rosso", "rosso"),
-        BLU("Blu", "blu"),
-        GRIGIO("Grigio", "grigio");
+        ROSSO("Rosso", "rosso", Color.red),
+        BLU("Blu", "blu", Color.blue),
+        GRIGIO("Grigio", "grigio", Color.gray);
 
         private String value;
         private String codice;
+        private Color colore;
 
-        private TEAM_PLAYER(String v, String c) {
+        private TEAM_PLAYER(String v, String c, Color col) {
             value = v;
             codice = c;
+            colore = col;
         }
 
         @Override
@@ -24,6 +28,9 @@ public class GameConstans {
         }
         public String getCodice(){
             return codice;
+        }
+        public Color getColore(){
+            return colore;
         }
 
         public static TEAM_PLAYER byCodice(String codice) {
@@ -41,19 +48,21 @@ public class GameConstans {
     }
 
     public static enum ROLE_PLAYER {
-        PRESIDENTE("Presidente", "pres"),
-        BOMBAROLO("Bombarolo", "bomb"),
-        BASE("Base", "base"),
-        MOGLIE_PRESIDENTE("Moglie del presidente", "mogpres"),
-        AMANTE_PRESIDENTE("Amante del presidente", "amapres"),
-        NATO_LEADER("Nato leader", "natoleader");
+        PRESIDENTE("Presidente", "pres", "P"),
+        BOMBAROLO("Bombarolo", "bomb", "B"),
+        BASE("Base", "base", "s"),
+        MOGLIE_PRESIDENTE("Moglie del presidente", "mogpres", "mp"),
+        AMANTE_PRESIDENTE("Amante del presidente", "amapres", "ap"),
+        NATO_LEADER("Nato leader", "natoleader", "nl");
 
         private String value;
         private String codice;
+        private String sigla;
 
-        private ROLE_PLAYER(String v, String c) {
+        private ROLE_PLAYER(String v, String c, String s) {
             value = v;
             codice = c;
+            sigla = s;
         }
 
         @Override
@@ -65,6 +74,9 @@ public class GameConstans {
         }
         public String getCodice(){
             return codice;
+        }
+        public String getSigla(){
+            return sigla;
         }
 
         public static ROLE_PLAYER byCodice(String codice) {

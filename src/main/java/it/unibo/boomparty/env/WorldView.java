@@ -23,8 +23,13 @@ public class WorldView extends GridWorldView {
 
     @Override
     public void drawAgent(final Graphics g, final int x, final int y, Color c, final int id) {
-        super.drawAgent(g, x, y, c, -1);
+
+        HumanModel agentModel = model.getPlayer(id);
+        Color agentColor = (agentModel.getTeam() != null) ? agentModel.getTeam().getColore() : Color.black;
+        String agentText = (agentModel.getRuolo() != null) ? agentModel.getRuolo().getSigla() : Integer.toString(id);
+
+        super.drawAgent(g, x, y, agentColor, -1);
         g.setColor(Color.white);
-        super.drawString(g, x, y, this.defaultFont, Integer.toString(id));
+        super.drawString(g, x, y, this.defaultFont, agentText);
     }
 }

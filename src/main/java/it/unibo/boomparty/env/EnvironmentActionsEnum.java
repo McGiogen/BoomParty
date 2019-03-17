@@ -4,5 +4,6 @@ public enum EnvironmentActionsEnum {
     MOVE_TOWARDS,
     MOVE_IN,
     MOVE_RANDOMLY,
-    START_IN_AREA
+    START_IN_AREA,
+    REGISTER
 }

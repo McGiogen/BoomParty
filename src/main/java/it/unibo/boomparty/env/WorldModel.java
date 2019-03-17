@@ -6,6 +6,7 @@ import jason.environment.grid.Location;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 public class WorldModel extends GridWorldModel {
@@ -13,14 +14,16 @@ public class WorldModel extends GridWorldModel {
 	Area roomA;
 	Area roomB;
 	Area hallway;
+    private List<HumanModel> players;
 	
 	/**
 	 * Create a world with two squared rooms and a hallway
-	 * @param numPlayers
+	 * @param playersNames
 	 */
-	public WorldModel(int numPlayers) {
+	public WorldModel(String[] playersNames) {
     	super(0,0,0);
-    	
+
+    	int numPlayers = playersNames.length;
     	int roomSize = WorldUtils.calculateRoomSize(numPlayers, 10);
     	int worldWidth = roomSize*2 + 1;
     	int worldHeight = roomSize + 2;
@@ -35,12 +38,11 @@ public class WorldModel extends GridWorldModel {
         WorldUtils.digArea(this.data, this.roomA);
         WorldUtils.digArea(this.data, this.roomB);
         WorldUtils.digArea(this.data, this.hallway);
-    	
-    	// Choose a random position for every player
-    	//for (int i = 0; i < numPlayers; i++) {
-    	//	Area room = i % 2 == 0 ? roomA : roomB;
-        //    this.setAgPos(i, this.getFreePos(room));
-    	//}
+
+        this.players = new ArrayList<>(numPlayers);
+        for (int i = 0; i < numPlayers; i++) {
+            players.add(new HumanModel(playersNames[i], i));
+        }
     }
 
 	/**
@@ -64,7 +66,7 @@ public class WorldModel extends GridWorldModel {
         // inizializzazione location agenti fuori dalla mappa
         this.agPos = new Location[nbAgs];
         for (int i = 0; i < this.agPos.length; i++) {
-        	this.agPos[i] = new Location(-1, -1);;
+        	this.agPos[i] = new Location(-1, -1);
         }
     }
 
@@ -123,5 +125,35 @@ public class WorldModel extends GridWorldModel {
 
     public int get(int x, int y) {
         return this.data[x][y];
+    }
+
+    public List<HumanModel> getPlayers() {
+        return players;
+    }
+
+    /**
+     * Returns the HumanModel from the actor unique name
+     * @param name name of the actor
+     * @return the model of the actor or null
+     */
+    public HumanModel getPlayer(String name) {
+        for (HumanModel player : this.players) {
+            if (player.getName().equals(name))
+                return player;
+        }
+        return null;
+    }
+
+    /**
+     * Returns the HumanModel from the WorldModel index
+     * @param index index of the actor
+     * @return the model of the actor or null
+     */
+    public HumanModel getPlayer(int index) {
+        for (HumanModel player : this.players) {
+            if (player.getIndex() == index)
+                return player;
+        }
+        return null;
     }
 }

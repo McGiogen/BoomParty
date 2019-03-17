@@ -1,5 +1,7 @@
 package it.unibo.boomparty.env;
 
+import it.unibo.boomparty.constants.GameConstans.ROLE_PLAYER;
+import it.unibo.boomparty.constants.GameConstans.TEAM_PLAYER;
 import jaca.CartagoEnvironment;
 import jason.asSyntax.Atom;
 import jason.asSyntax.Literal;
@@ -16,19 +18,12 @@ import java.util.List;
 public class BasicEnvironment extends CartagoEnvironment {
 
     private WorldModel model; // the model of the grid
-	private List<HumanModel> players;
 
 	@Override
 	public void init(String[] args) {
 	    String[] playersNames = args[0].split(",");
 	    super.init(Arrays.copyOfRange(args, 1, args.length));
-
-        this.players = new ArrayList<>(playersNames.length);
-	    for (int i = 0; i < playersNames.length; i++) {
-	        this.players.add(new HumanModel(playersNames[i], i));
-        }
-
-        this.model = new WorldModel(this.players.size());
+        this.model = new WorldModel(playersNames);
 
         final WorldView view = new WorldView(this.model);
         this.model.setView(view);
@@ -41,7 +36,7 @@ public class BasicEnvironment extends CartagoEnvironment {
      * Aggiorna i percepts (o beliefs) di tutti gli agenti ad ogni modifica dell'environment.
      */
 	public void updatePercepts() {
-	    for (HumanModel player : this.players) {
+	    for (HumanModel player : model.getPlayers()) {
             // Add percepts
             List<Literal> percepts = getPercepts(player);
             this.clearPercepts(player.getName());
@@ -63,13 +58,13 @@ public class BasicEnvironment extends CartagoEnvironment {
         percepts.add(PerceptsBuilder.position(pPosition));
 
         // Players
-        percepts.add(PerceptsBuilder.players(this.players, model));
+        percepts.add(PerceptsBuilder.players(model.getPlayers(), model));
 
         // Neighbors
         List<Integer> neighborsIndexes = WorldUtils.getNeighbors(this.model, player);
         List<String> neighborsNames = new ArrayList<>(neighborsIndexes.size());
         for (int i : neighborsIndexes) {
-            neighborsNames.add(this.players.get(i).getName());
+            neighborsNames.add(model.getPlayer(i).getName());
         }
         percepts.add(PerceptsBuilder.neighbors(neighborsNames));
 
@@ -77,7 +72,7 @@ public class BasicEnvironment extends CartagoEnvironment {
         List<Pair<Integer, Integer>> visiblesIndexes = WorldUtils.getVisiblePlayers(this.model, player);
         List<Pair<String, Integer>> visiblesNamed = new ArrayList<>(visiblesIndexes.size());
         for (Pair<Integer, Integer> pair : visiblesIndexes) {
-            String name = this.players.get(pair.getFirst()).getName();
+            String name = model.getPlayer(pair.getFirst()).getName();
             visiblesNamed.add(new Pair<>(name, pair.getSecond()));
         }
         Literal vp = PerceptsBuilder.visible_players(visiblesNamed);
@@ -160,6 +155,20 @@ public class BasicEnvironment extends CartagoEnvironment {
                     result.setSuccess(true);
                     break;
                 }
+                case REGISTER: {
+                    String codiceTeam = ((StringTerm) action.getTerm(0)).getString();
+                    String codiceRuolo = ((StringTerm) action.getTerm(1)).getString();
+
+                    TEAM_PLAYER team = TEAM_PLAYER.byCodice(codiceTeam);
+                    ROLE_PLAYER ruolo = ROLE_PLAYER.byCodice(codiceRuolo);
+
+                    HumanModel agentModel = this.getPlayer(agName);
+                    agentModel.setRuolo(ruolo);
+                    agentModel.setTeam(team);
+
+                    result.setSuccess(true);
+                    break;
+                }
                 default:
                     this.getLogger().info("[" + agName + "] Failed to execute operations " + action);
             }
@@ -191,7 +200,7 @@ public class BasicEnvironment extends CartagoEnvironment {
     }
 
     public List<HumanModel> getPlayers() {
-        return players;
+        return model.getPlayers();
     }
 
     /**
@@ -200,11 +209,7 @@ public class BasicEnvironment extends CartagoEnvironment {
      * @return the model of the actor or null
      */
     public HumanModel getPlayer(String name) {
-        for (HumanModel player : this.players) {
-            if (player.getName().equals(name))
-                return player;
-        }
-        return null;
+        return model.getPlayer(name);
     }
 
     /**
@@ -213,10 +218,6 @@ public class BasicEnvironment extends CartagoEnvironment {
      * @return the model of the actor or null
      */
     public HumanModel getPlayer(int index) {
-        for (HumanModel player : this.players) {
-            if (player.getIndex() == index)
-                return player;
-        }
-        return null;
+        return model.getPlayer(index);
     }
 }

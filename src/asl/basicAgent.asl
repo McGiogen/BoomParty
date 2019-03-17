@@ -207,6 +207,8 @@ giocoFinito(false).         // Booleano che indica se è stato recepito il segna
             t4jn.api.getArg(InfoRuoloDisp, 0, ArtifAtom);
             t4jn.api.getArg(ArtifAtom, 0, ArtifactName);
             -+ruoloCorrente(ArtifactName);
+            ?card(Team, Role);
+            register(Team, Role);
             .print("Ruolo assegnatomi ", ArtifactName);
         } else {
             .print("Errore recupero ruolo");
