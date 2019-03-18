@@ -3,10 +3,7 @@ package it.unibo.boomparty.env;
 import it.unibo.boomparty.constants.GameConstans.ROLE_PLAYER;
 import it.unibo.boomparty.constants.GameConstans.TEAM_PLAYER;
 import jaca.CartagoEnvironment;
-import jason.asSyntax.Atom;
-import jason.asSyntax.Literal;
-import jason.asSyntax.StringTerm;
-import jason.asSyntax.Structure;
+import jason.asSyntax.*;
 import jason.environment.grid.Area;
 import jason.environment.grid.Location;
 import jason.util.Pair;
@@ -14,6 +11,7 @@ import jason.util.Pair;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BasicEnvironment extends CartagoEnvironment {
 
@@ -165,6 +163,23 @@ public class BasicEnvironment extends CartagoEnvironment {
                     HumanModel agentModel = this.getPlayer(agName);
                     agentModel.setRuolo(ruolo);
                     agentModel.setTeam(team);
+
+                    result.setSuccess(true);
+                    break;
+                }
+                case TELL_WINNERS: {
+                    List<Term> vincitoriTerm = ((ListTermImpl) action.getTerm(0)).getAsList();
+                    List<String> vincitori = vincitoriTerm.stream()
+                            .map(term -> ((StringTerm) term).getString())
+                            .filter(name -> !"none".equals(name))
+                            .collect(Collectors.toList());
+
+                    this.model.squadraVincitrice = TEAM_PLAYER.byCodice(vincitori.remove(0));
+                    this.model.grigiVincitori = vincitori.stream()
+                            .map(ROLE_PLAYER::byCodice)
+                            .collect(Collectors.toList());
+
+                    this.model.getView().repaint();
 
                     result.setSuccess(true);
                     break;

@@ -1,7 +1,10 @@
 package it.unibo.boomparty.env;
 
+import it.unibo.boomparty.constants.GameConstans.ROLE_PLAYER;
+import it.unibo.boomparty.constants.GameConstans.TEAM_PLAYER;
 import jason.environment.grid.Area;
 import jason.environment.grid.GridWorldModel;
+import jason.environment.grid.GridWorldView;
 import jason.environment.grid.Location;
 
 import java.util.ArrayList;
@@ -15,6 +18,8 @@ public class WorldModel extends GridWorldModel {
 	Area roomB;
 	Area hallway;
     private List<HumanModel> players;
+    TEAM_PLAYER squadraVincitrice;
+    List<ROLE_PLAYER> grigiVincitori;
 	
 	/**
 	 * Create a world with two squared rooms and a hallway
@@ -156,4 +161,6 @@ public class WorldModel extends GridWorldModel {
         }
         return null;
     }
+
+    public GridWorldView getView() { return this.view; }
 }

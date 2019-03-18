@@ -3,7 +3,10 @@ package it.unibo.boomparty.env;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.FontMetrics;
 
+import it.unibo.boomparty.constants.GameConstans.TEAM_PLAYER;
+import it.unibo.boomparty.constants.GameConstans.ROLE_PLAYER;
 import jason.environment.grid.GridWorldView;
 
 public class WorldView extends GridWorldView {
@@ -31,5 +34,24 @@ public class WorldView extends GridWorldView {
         super.drawAgent(g, x, y, agentColor, -1);
         g.setColor(Color.white);
         super.drawString(g, x, y, this.defaultFont, agentText);
+
+        if (
+            agentModel.getRuolo().equals(ROLE_PLAYER.PRESIDENTE)
+            && this.model.squadraVincitrice != null
+            && this.model.grigiVincitori != null
+        ) {
+            this.drawVincitori(g, x, y);
+        }
+    }
+
+    public void drawVincitori(final Graphics g, final int x, final int y) {
+        // TODO Stampa anche i grigi
+        // TODO Migliora la stampa
+        String s = "Vincono i " + (this.model.squadraVincitrice.equals(TEAM_PLAYER.ROSSO) ? "Rossi" : "Blue") + "!!!";
+
+        g.setFont(this.defaultFont);
+        FontMetrics metrics = g.getFontMetrics();
+        int height = metrics.getHeight();
+        g.drawString( s, cellSizeW/2, cellSizeH/2 + height/2);
     }
 }

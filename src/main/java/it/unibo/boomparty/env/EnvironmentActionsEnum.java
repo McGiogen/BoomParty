@@ -5,5 +5,6 @@ public enum EnvironmentActionsEnum {
     MOVE_IN,
     MOVE_RANDOMLY,
     START_IN_AREA,
-    REGISTER
+    REGISTER,
+    TELL_WINNERS
 }
