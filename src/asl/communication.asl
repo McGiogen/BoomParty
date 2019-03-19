@@ -229,6 +229,7 @@
         ?visible_players(Playerlist);
         .length(Playerlist, NumAltriGiocatori);
         NumPlayers = NumAltriGiocatori + 1;
+        ?name(MioNome);
 
         .count(votoLeader[source(_)], NumVoti);
 
@@ -237,10 +238,10 @@
             if (NumVoti > NumPlayers/2) {
                 // Recupero info
                 ?stanzaCorrente(StanzaAssegnAtom);
-                ?name(MioNome);
 
                 // Mi rimuovo dalla posizione leader
                 -+ruoloLeader(false);
+                destituito_leader;
                 !tucsonOpIn(stanzaData(id(StanzaAssegnAtom), leader(MioNome)), Op0);
 
                 // Rendo nuovo leader il candidato
@@ -253,6 +254,7 @@
             if (NumVoti > NumPlayers/2) {
                 .print("Votazione per cambio leader completata con successo, ", NumVoti, " voti su ", NumPlayers);
                 -+ruoloLeader(true);
+                eletto_leader;
             } else {
                 .print("Votazione per cambio leader completata con fallimento, ", NumVoti, " voti su ", NumPlayers);
             }

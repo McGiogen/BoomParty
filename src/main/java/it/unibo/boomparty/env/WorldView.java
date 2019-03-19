@@ -29,7 +29,11 @@ public class WorldView extends GridWorldView {
         String agentText = (agentModel.getRuolo() != null) ? agentModel.getRuolo().getSigla() : Integer.toString(id);
 
         super.drawAgent(g, x, y, agentColor, -1);
-        g.setColor(Color.white);
+        if(agentModel.isLeader()) {
+            g.setColor(Color.orange);
+        } else {
+            g.setColor(Color.white);
+        }
         super.drawString(g, x, y, this.defaultFont, agentText);
     }
 }

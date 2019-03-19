@@ -10,10 +10,12 @@ public class HumanModel {
     private PathFinder.Path path;
     private TEAM_PLAYER team;
     private ROLE_PLAYER ruolo;
+    private boolean isLeader;
 
     public HumanModel(String name, int index) {
         this.name = name;
         this.index = index;
+        this.isLeader = false;
     }
 
     public PathFinder.Path getPath() {
@@ -46,5 +48,13 @@ public class HumanModel {
 
     public void setTeam(TEAM_PLAYER team) {
         this.team = team;
+    }
+
+    public boolean isLeader() {
+        return isLeader;
+    }
+
+    public void setLeader(boolean leader) {
+        isLeader = leader;
     }
 }

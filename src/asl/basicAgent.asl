@@ -231,9 +231,11 @@ giocoFinito(false).         // Booleano che indica se è stato recepito il segna
             if (IsLeader == "true") {
                 .print("Mi è stato assegnato il ruolo di leader");
                 -+ruoloLeader(true);
+                eletto_leader;
                 t4jn.api.out("default", "127.0.0.1", "20504", stanzaData(id(StanzaAssegnAtom), leader(MioNome)), OpL);
             } else {
                 -+ruoloLeader(false);
+                deposto_leader;
             }
 
             // Recupero i nomi dei Timer per potervi fare il focus successivamente

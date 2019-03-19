@@ -169,6 +169,20 @@ public class BasicEnvironment extends CartagoEnvironment {
                     result.setSuccess(true);
                     break;
                 }
+                case ELETTO_LEADER: {
+                    HumanModel agentModel = this.getPlayer(agName);
+                    agentModel.setLeader(true);
+
+                    result.setSuccess(true);
+                    break;
+                }
+                case DEPOSTO_LEADER: {
+                    HumanModel agentModel = this.getPlayer(agName);
+                    agentModel.setLeader(false);
+
+                    result.setSuccess(true);
+                    break;
+                }
                 default:
                     this.getLogger().info("[" + agName + "] Failed to execute operations " + action);
             }
