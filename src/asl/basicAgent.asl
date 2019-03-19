@@ -515,8 +515,10 @@ giocoFinito(false).         // Booleano che indica se è stato recepito il segna
 
             // Controllo se bombarolo e presidente sono nella stessa stanza
             if (stanzaBombarolo(StanzaPresidente)) {
+                SquadraVincitrice = "rosso";
                 .print("Bombarolo in stanza del presidente, vince la squadra ROSSA!");
             } else {
+                SquadraVincitrice = "blu";
                 .print("Presidente in stanza senza il bombarolo, vince la squadra BLU!");
             }
 
@@ -525,13 +527,17 @@ giocoFinito(false).         // Booleano che indica se è stato recepito il segna
             if (stanzaMogliePres(StanzaPresidente)) {
                 if (stanzaAmantePres(StanzaPresidente)) {
                     .print("Moglie e amante del presidente in stessa stanza, non vince nessuna delle due!");
+                    MoglieAmante = "none";
                 } else {
                     .print("Moglie del presidente in stanza col presidente senza la perfida amante, la Moglie vince!");
+                    MoglieAmante = "mogpres";
                 }
             } elif (stanzaAmantePres(StanzaPresidente)) {
                 .print("Amante del presidente in stanza col presidente senza quella racchia della moglie, l'Amante vince!");
+                MoglieAmante = "amapres";
             } else {
                 .print("Moglie e Amante del presidente non sono con il presidente, peccato...");
+                MoglieAmante = "none";
             }
 
             ?nomeNatoLeader(NatoLeader);
@@ -541,9 +547,13 @@ giocoFinito(false).         // Booleano che indica se è stato recepito il segna
             // Controllo se il "Nato leader" è leader, in tal caso VINCE!
             if (natoLeader(true)) {
                 .print("Nato leader è leader di una delle due stanze, EGLI VINCE!");
+                GreyLeader = "natoleader";
             } else {
                 .print("Nato leader non è leader, povero lui :(");
+                GreyLeader = "none";
             }
+
+            tell_winners([SquadraVincitrice, MoglieAmante, GreyLeader]);
 
         } else {
             .print("Errore nel recupero delle info di fine partita");

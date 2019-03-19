@@ -7,5 +7,6 @@ public enum EnvironmentActionsEnum {
     START_IN_AREA,
     REGISTER,
     ELETTO_LEADER,
-    DEPOSTO_LEADER
+    DEPOSTO_LEADER,
+    TELL_WINNERS
 }
