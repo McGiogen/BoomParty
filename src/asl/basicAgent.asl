@@ -284,6 +284,12 @@ giocoFinito(false).         // Booleano che indica se è stato recepito il segna
         ?turnoNumero(Index);
         -+turnoNumero(Index + 1);
         -+turnoIniziato(true);
+
+        if (mazziere(true)) {
+            // Il mazziere "informa" l'environment del turno
+            turn(Index + 1);
+        }
+
         !play;
         .
 

@@ -54,6 +54,10 @@ public class WorldView extends GridWorldView {
         ) {
             this.drawVincitori(g, x, y);
         }
+
+        if (this.model.turn != null) {
+            this.drawTurno(g, x, y);
+        }
     }
 
     public void drawVincitori(final Graphics g, final int x, final int y) {
@@ -83,5 +87,20 @@ public class WorldView extends GridWorldView {
         g.setColor(Color.white);
         g.drawString(s1, cellSizeW/2, cellSizeH/2 + height/2);
         g.drawString(s2, cellSizeW/2, height + 2 + cellSizeH/2 + height/2);
+    }
+
+    public void drawTurno(final Graphics g, final int x, final int y) {
+        String s = "Turno " + this.model.turn;
+
+        g.setFont(this.defaultFont);
+        FontMetrics metrics = g.getFontMetrics();
+        int height = metrics.getHeight();
+        int width = metrics.stringWidth(s);
+
+        g.setColor(Color.MAGENTA);
+        g.fillRect((cellSizeW * (this.model.getWidth() - 4)) - 2, cellSizeH/2 - 6, width + 4, height + 2);
+
+        g.setColor(Color.white);
+        g.drawString(s, cellSizeW * (this.model.getWidth() - 4), cellSizeH/2 + height/2);
     }
 }

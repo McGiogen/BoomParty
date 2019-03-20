@@ -8,5 +8,6 @@ public enum EnvironmentActionsEnum {
     REGISTER,
     ELETTO_LEADER,
     DEPOSTO_LEADER,
-    TELL_WINNERS
+    TELL_WINNERS,
+    TURN
 }

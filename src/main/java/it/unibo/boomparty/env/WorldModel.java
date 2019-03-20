@@ -20,6 +20,7 @@ public class WorldModel extends GridWorldModel {
     private List<HumanModel> players;
     TEAM_PLAYER squadraVincitrice;
     List<ROLE_PLAYER> grigiVincitori;
+    String turn;
 	
 	/**
 	 * Create a world with two squared rooms and a hallway

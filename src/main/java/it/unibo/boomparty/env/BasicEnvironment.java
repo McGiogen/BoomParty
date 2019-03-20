@@ -198,6 +198,14 @@ public class BasicEnvironment extends CartagoEnvironment {
                     result.setSuccess(true);
                     break;
                 }
+                case TURN: {
+                    String turn = action.getTerm(0).toString();
+
+                    this.model.turn = turn;
+
+                    this.model.getView().repaint();
+                    break;
+                }
                 default:
                     this.getLogger().info("[" + agName + "] Failed to execute operations " + action);
             }
