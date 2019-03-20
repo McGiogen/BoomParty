@@ -40,11 +40,17 @@ public class WorldView extends GridWorldView {
             g.setColor(Color.white);
         }
         super.drawString(g, x, y, this.defaultFont, agentText);
+    }
+
+    @Override
+    public void drawObstacle(Graphics g, int x, int y) {
+        super.drawObstacle(g, x, y);
 
         if (
-            agentModel.getRuolo().equals(ROLE_PLAYER.PRESIDENTE)
-            && this.model.squadraVincitrice != null
-            && this.model.grigiVincitori != null
+               x == this.model.getWidth() - 1
+               && y == 1
+               && this.model.squadraVincitrice != null
+               && this.model.grigiVincitori != null
         ) {
             this.drawVincitori(g, x, y);
         }
