@@ -13,7 +13,6 @@
         if (desireToKnow(Someone)) {
             if (at(Someone)) {
                 .print("Provo a parlare con ", Someone);
-                ?desireToKnow(Someone);
                 .abolish(desireToKnow(_));
                 !tryToSpeakWith(Someone);
             } else {
