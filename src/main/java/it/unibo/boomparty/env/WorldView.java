@@ -52,7 +52,7 @@ public class WorldView extends GridWorldView {
 
     public void drawVincitori(final Graphics g, final int x, final int y) {
         // Stampa team vincitore
-        String s1 = "Vincono i " + (this.model.squadraVincitrice.equals(TEAM_PLAYER.ROSSO) ? "Rossi" : "Blue") + "!!!";
+        String s1 = "Vincono i " + (this.model.squadraVincitrice.equals(TEAM_PLAYER.ROSSO) ? "Rossi" : "Blu") + "!!!";
 
         // Stampa vincitori grigi
         List<String> grigiVincitori = this.model.grigiVincitori.stream()
