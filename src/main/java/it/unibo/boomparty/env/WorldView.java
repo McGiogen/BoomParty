@@ -55,7 +55,11 @@ public class WorldView extends GridWorldView {
             this.drawVincitori(g, x, y);
         }
 
-        if (this.model.turn != null) {
+        if (
+                this.model.turn != null
+                && x == this.model.getWidth() - 1
+                && y == 1
+        ) {
             this.drawTurno(g, x, y);
         }
     }
@@ -75,18 +79,19 @@ public class WorldView extends GridWorldView {
         int height = metrics.getHeight();
         int width1 = metrics.stringWidth( s1 );
         int width2 = metrics.stringWidth( s2 );
+        int margin = height/2;
 
         // Disegno gli sfondi
         g.setColor(this.model.squadraVincitrice.equals(TEAM_PLAYER.ROSSO) ? Color.red : Color.blue);
-        g.fillRect(cellSizeW/2 - 2,cellSizeH/2 - 6, width1 + 4, height + 2);
+        g.fillRect(margin, margin, width1 + 4, height + 2);
 
         g.setColor(Color.gray);
-        g.fillRect(cellSizeW/2 - 2, height + cellSizeH/2 - 4, width2 + 4, height + 2);
+        g.fillRect(margin, height + margin + 2, width2 + 4, height + 2);
 
         // Stampo i testi
         g.setColor(Color.white);
-        g.drawString(s1, cellSizeW/2, cellSizeH/2 + height/2);
-        g.drawString(s2, cellSizeW/2, height + 2 + cellSizeH/2 + height/2);
+        g.drawString(s1, margin + 2, margin + 5 + height/2);
+        g.drawString(s2, margin + 2, height + 2 + margin + 5 + height/2 );
     }
 
     public void drawTurno(final Graphics g, final int x, final int y) {
@@ -96,11 +101,13 @@ public class WorldView extends GridWorldView {
         FontMetrics metrics = g.getFontMetrics();
         int height = metrics.getHeight();
         int width = metrics.stringWidth(s);
+        int maxWidth = cellSizeW * this.model.getWidth();
+        int margin = height/2;
 
         g.setColor(Color.MAGENTA);
-        g.fillRect((cellSizeW * (this.model.getWidth() - 4)) - 2, cellSizeH/2 - 6, width + 4, height + 2);
+        g.fillRect(maxWidth - width - margin - 2, margin, width + 4, height + 2);
 
         g.setColor(Color.white);
-        g.drawString(s, cellSizeW * (this.model.getWidth() - 4), cellSizeH/2 + height/2);
+        g.drawString(s, maxWidth - width - margin, margin + 5 + height/2);
     }
 }
