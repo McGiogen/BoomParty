@@ -17,6 +17,7 @@
 +!inviaRichiestaInfo(Receiver, Target, Mode, FlagOnlyTeam)
     : Mode == "parlato" | (Mode == "carta" & Target == Receiver)
     <-
+        +attendiFineConversazione(Receiver, Mode, FlagOnlyTeam);
         Belief = richiestaInfo(Target, Mode, FlagOnlyTeam);
         +waitingRispostaInfo(Receiver, Belief);
         .print("inviaRichiestaInfo ", Receiver, Target);
@@ -28,46 +29,60 @@
 */
 +richiestaInfo(Target, Mode, FlagOnlyTeam)[source(Sender)]
     <-
-        .print("richiestaInfo ", Target, " ", Sender);
-        ?name(MyName);
-        !getTargetKnowledge(Target, TargetKnowledge);
-        if( (MyName == Target | TargetKnowledge \== null) & not attendiFineConversazione(_ , _ , _)) {
-            if(TargetKnowledge \== null) {
-                know(name(Tar), ruolo(val(ValRuoloTar), conf(ConfRuoloTar)), team(val(ValTeamTar), conf(ConfTeamTar))) = TargetKnowledge;
-            }
+        -richiestaInfo(Target, Mode, FlagOnlyTeam)[source(Sender)];
+        if (not attendiFineConversazione(_ , _ , _)) {
+            +attendiFineConversazione(Sender, Mode, FlagOnlyTeam);
+            .print("richiestaInfo ", Target, " ", Sender);
+            ?name(MyName);
+            !getTargetKnowledge(Target, TargetKnowledge);
+            if( (MyName == Target | TargetKnowledge \== null)) {
+                if(TargetKnowledge \== null) {
+                    know(name(Tar), ruolo(val(ValRuoloTar), conf(ConfRuoloTar)), team(val(ValTeamTar), conf(ConfTeamTar))) = TargetKnowledge;
+                }
 
-            if(FlagOnlyTeam == false | ValTeamTar \== null | MyName == Target) {
-                !getTargetKnowledge(Sender, SenderKnowledge);
-                if(SenderKnowledge \== null) {
-                    know(name(Sen), ruolo(val(ValRuoloSen), conf(ConfRuoloSen)), team(val(ValTeamSen), conf(ConfTeamSen))) = SenderKnowledge;
-                    if (Mode == "parlato") {
+                if(FlagOnlyTeam == false | ValTeamTar \== null | MyName == Target) {
+                    !getTargetKnowledge(Sender, SenderKnowledge);
+                    if(SenderKnowledge \== null) {
+                        know(name(Sen), ruolo(val(ValRuoloSen), conf(ConfRuoloSen)), team(val(ValTeamSen), conf(ConfTeamSen))) = SenderKnowledge;
+                        if (Mode == "parlato") {
 
-                        if( ConfRuoloSen<50 | (FlagOnlyTeam==true & (ValTeamSen==null | ( ConfTeamSen \== null & ConfTeamSen<50)))) {
-                            !updateConversations(speaker, Sender, Sender, Mode, FlagOnlyTeam, "accettata");
-                            !inviaRispostaInfo(Sender, Target, Mode, FlagOnlyTeam);
+                            if( ConfRuoloSen<50 | (FlagOnlyTeam==true & (ValTeamSen==null | ( ConfTeamSen \== null & ConfTeamSen<50)))) {
+                                !updateConversations(speaker, Sender, Sender, Mode, FlagOnlyTeam, "accettata");
+                                !inviaRispostaInfo(Sender, Target, Mode, FlagOnlyTeam);
+                                !concludiConversazione(Sender, Mode, FlagOnlyTeam);
+                            } else {
+                                .send(Sender, tell, rispostaInfoNegata);
+                                !concludiConversazione(Sender, Mode, FlagOnlyTeam);
+                            }
                         } else {
                             .send(Sender, tell, rispostaInfoNegata);
+                            !concludiConversazione(Sender, Mode, FlagOnlyTeam);
                         }
+                    } elif (Mode == "parlato" | MyName == Target) {
+                        if(Mode == "carta") {
+                            //comunico tramite send di aver accettato la richiesta
+                            .send(Sender, tell, rispostaInfoAccetta);
+                        }
+                        !updateConversations(speaker, Sender, Sender, Mode, FlagOnlyTeam, "accettata");
+                        !inviaRispostaInfo(Sender, Target, Mode, FlagOnlyTeam);
+                        !concludiConversazione(Sender, Mode, FlagOnlyTeam);
                     } else {
                         .send(Sender, tell, rispostaInfoNegata);
+                        !concludiConversazione(Sender, Mode, FlagOnlyTeam);
                     }
-                } elif (Mode == "parlato" | MyName == Target) {
-                    if(Mode == "carta") {
-                        //comunico tramite send di aver accettato la richiesta
-                        .send(Sender, tell, rispostaInfoAccetta);
-                    }
-                    !updateConversations(speaker, Sender, Sender, Mode, FlagOnlyTeam, "accettata");
-                    !inviaRispostaInfo(Sender, Target, Mode, FlagOnlyTeam);
                 } else {
                     .send(Sender, tell, rispostaInfoNegata);
+                    !concludiConversazione(Sender, Mode, FlagOnlyTeam);
                 }
             } else {
                 .send(Sender, tell, rispostaInfoNegata);
+                !concludiConversazione(Sender, Mode, FlagOnlyTeam);
             }
         } else {
-            .send(Sender, tell, rispostaInfoNegata);
-        }
-        -richiestaInfo(Target, Mode, FlagOnlyTeam)[source(Sender)].
+             .send(Sender, tell, rispostaInfoNegata);
+             !concludiConversazione(Sender, Mode, FlagOnlyTeam);
+         }
+        .
 
 /**
     Sender ha rifiutato una mia richiesta di informazioni.
@@ -75,9 +90,11 @@
 +rispostaInfoNegata[source(Sender)]
     : waitingRispostaInfo(Sender, richiestaInfo(Target, Mode, FlagOnlyTeam))
     <-
+        -rispostaInfoNegata[source(Sender)];
         -waitingRispostaInfo(Sender, richiestaInfo(Target, Mode, FlagOnlyTeam));
         !updateConversations(self, Target, Sender, Mode, FlagOnlyTeam, "negata");
-        -rispostaInfoNegata[source(Sender)].
+        !concludiConversazione(Sender, Mode, FlagOnlyTeam);
+        .
 
 /**
     Sender ha accettato uno scambio carta. Ero in attesa di una sua risposta.
@@ -85,10 +102,12 @@
 +rispostaInfoAccetta[source(Sender)]
     : waitingRispostaInfo(Sender, richiestaInfo(Target, "carta", FlagOnlyTeam))
     <-
-        -waitingRispostaInfo(Sender, richiestaInfo(Target, "carta", FlagOnlyTeam));
         -rispostaInfoAccetta[source(Sender)];
+        -waitingRispostaInfo(Sender, richiestaInfo(Target, "carta", FlagOnlyTeam));
         !updateConversations(self, Target, Sender, "carta", FlagOnlyTeam, "accettata");
-        !inviaRispostaInfo(Sender, Target, "carta", FlagOnlyTeam);.
+        !inviaRispostaInfo(Sender, Target, "carta", FlagOnlyTeam);
+        !concludiConversazione(Sender, Mode, FlagOnlyTeam);
+        .
 
 /**
     Sender ha accettato uno scambio e mi ha risposto ad una richiesta di informazioni
@@ -97,6 +116,7 @@
 +rispostaInfo(Target, CardTeam, CardRole)[source(Sender)]
     : waitingRispostaInfo(Sender, richiestaInfo(Target, "parlato", FlagOnlyTeam))[source(self)]
     <-
+        -rispostaInfo(Target, CardTeam, CardRole)[source(Sender)];
         .print("rispostaInfo con richiesta risposta, inizio");
         ?name(MyName);
         !updateConversations(self, Target, Sender, "parlato", FlagOnlyTeam, "accettata");
@@ -105,7 +125,8 @@
 
         // Ci hanno inviato la squadra (Team) e -forse- il ruolo (CardRole) di un giocatore (Target)
         !updateKnowledge(Sender, Target, "parlato", CardTeam, CardRole);
-        -rispostaInfo(Target, CardTeam, CardRole)[source(Sender)].
+        !concludiConversazione(Sender, Mode, FlagOnlyTeam);
+        .
 
 /**
     Sender mi aveva richiesto uno scambio di informazioni. Io ho inviato quanto richiesto e
@@ -113,10 +134,11 @@
 */
 +rispostaInfo(Target, CardTeam, CardRole)[source(Sender)]
     <-
+        -rispostaInfo(Target, CardTeam, CardRole)[source(Sender)];
         // Ci hanno inviato la squadra (Team) e -forse- il ruolo (CardRole) di un giocatore (Target)
         .print("rispostaInfo senza richiesta risposta, inizio");
         !updateKnowledge(Sender, Target, "parlato", CardTeam, CardRole);
-        -rispostaInfo(Target, CardTeam, CardRole)[source(Sender)].
+        .
 
 /**
     Metodo per l'invio di una risposta ad una richiesta di informazioni.
@@ -171,6 +193,15 @@
             }
         }
         .print("inviaRispostaInfo ", Mode, " fine").
+
++!concludiConversazione(Ricevitore, Mode, FlagOnlyTeam)
+    <-
+        -attendiFineConversazione(Ricevitore, Mode, FlagOnlyTeam);
+        if (not playing) {
+            !play;
+        }
+        .
+
 
 
 // Il giocatore inizia una votazione candidandosi come leader
