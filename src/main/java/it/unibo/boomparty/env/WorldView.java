@@ -10,10 +10,14 @@ import java.util.stream.Collectors;
 import it.unibo.boomparty.constants.GameConstans.TEAM_PLAYER;
 import it.unibo.boomparty.constants.GameConstans.ROLE_PLAYER;
 import jason.environment.grid.GridWorldView;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class WorldView extends GridWorldView {
 
 	private static final long serialVersionUID = -4073575483650955313L;
+
+    private static Logger log = LogManager.getRootLogger();
 	WorldModel model;
 
     public WorldView(final WorldModel model) {
@@ -30,16 +34,20 @@ public class WorldView extends GridWorldView {
     public void drawAgent(final Graphics g, final int x, final int y, Color c, final int id) {
 
         HumanModel agentModel = model.getPlayer(id);
-        Color agentColor = (agentModel.getTeam() != null) ? agentModel.getTeam().getColore() : Color.black;
-        String agentText = (agentModel.getRuolo() != null) ? agentModel.getRuolo().getSigla() : Integer.toString(id);
+        if(agentModel != null) {
+            Color agentColor = (agentModel.getTeam() != null) ? agentModel.getTeam().getColore() : Color.black;
+            String agentText = (agentModel.getRuolo() != null) ? agentModel.getRuolo().getSigla() : Integer.toString(id);
 
-        super.drawAgent(g, x, y, agentColor, -1);
-        if(agentModel.isLeader()) {
-            g.setColor(Color.orange);
+            super.drawAgent(g, x, y, agentColor, -1);
+            if(agentModel.isLeader()) {
+                g.setColor(Color.green);
+            } else {
+                g.setColor(Color.white);
+            }
+            super.drawString(g, x, y, this.defaultFont, agentText);
         } else {
-            g.setColor(Color.white);
+            log.error("Fallito recupero agentModel per player con id: " + id);
         }
-        super.drawString(g, x, y, this.defaultFont, agentText);
     }
 
     @Override
