@@ -87,15 +87,16 @@
             if (Target == null) {
                 // Cerco un gicoatore di cui non dipsongo tutte le informazioni con certezza
                 +index(0);
+                +tmpDesireToKnow(null);
                 while(index(J) & J < NumPlayers & tmpDesireToKnow(Target) & Target == null) {
-                    .nth(J, Playerlist, TempName);
-                    .term2string(TempNameAtom, TempName);
-                    !gotMaxKnowledge(TempNameAtom, Result);
+                    .nth(J, Playerlist, TempNameD);
+                    .term2string(TempNameAtomD, TempNameD);
+                    !gotMaxKnowledge(TempNameAtomD, Result);
                     if(Result == false) {
                         // Ho trovato un giocatore di cui non so nulla
-                        -+tmpDesireToKnow(TempName);
+                        -+tmpDesireToKnow(TempNameD);
                     }
-                    -+index(I+1);
+                    -+index(J+1);
                 }
                 -index(_);
 

@@ -4,9 +4,9 @@
 conversations([]).
 
 +!updateConversations(Initiator, Target, Source, CommunicationMode, FlagOnlyTeam, Response)
-    :   (CommunicationMode = "parlato" | CommunicationMode = "carta") &
-        (FlagOnlyTeam = true | FlagOnlyTeam = false) &
-        (Response = "accettata" | Response = "negata")
+    :   (CommunicationMode == "parlato" | CommunicationMode == "carta") &
+        (FlagOnlyTeam == true | FlagOnlyTeam == false) &
+        (Response == "accettata" | Response == "negata")
     <-
         ?conversations(ConvList);
 
@@ -21,9 +21,9 @@ conversations([]).
         .print("Fine updateConversations").
 
 +!getConversation(Initiator, Target, Source, CommunicationMode, FlagOnlyTeam, Response, ConvData)
-    :   (CommunicationMode = "parlato" | CommunicationMode = "carta") &
-        (FlagOnlyTeam = true | FlagOnlyTeam = false) &
-        (Response = "accettata" | Response = "negata")
+    :   (CommunicationMode == "parlato" | CommunicationMode == "carta") &
+        (FlagOnlyTeam == true | FlagOnlyTeam == false) &
+        (Response == "accettata" | Response == "negata")
     <-
         ?conversations(ConvList);
         if(.member(conversation(initiator(Initiator), playerTarget(Target), playerSpeaker(Source), mode(ModeVal), flagOnlyTeam(FlagVal), esito(Resp), time(_)), ConvList)) {

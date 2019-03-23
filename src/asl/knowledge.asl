@@ -98,6 +98,7 @@ knowledge([]).
             CommunicationMode = "parlato";
             FlagOnlyTeam = true;
         }
+        .print("getLeastKnowledgeIncreaseMode, fine, target: ", Player, ", CommunicationMode: ", CommunicationMode, ", FlagOnlyTeam: ", FlagOnlyTeam);
         .
 
 /* verifica se per il player richiesto sono state recuperate tutte le informazioni possibili */
