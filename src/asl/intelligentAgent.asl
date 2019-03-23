@@ -69,10 +69,10 @@
 
             // Per prima cosa cerco un giocatore di cui non conosco nulla
             +index(0);
-            while (index(I) & I < NumPlayers & tmpDesireToKnow(Target) & Target == null) {
+            while(index(I) & I < NumPlayers & tmpDesireToKnow(Target) & Target == null) {
                 .nth(I, Playerlist, TempName);
                 .term2string(TempNameAtom, TempName);
-                if (
+                if(
                     not(.member(conversation(initiator(_), playerTarget(TempNameAtom), playerSpeaker(_), mode(_), flagOnlyTeam(_), esito(_), time(_)), MyConversations))
                     & not(.member(conversation(initiator(_), playerTarget(_), playerSpeaker(TempNameAtom), mode(_), flagOnlyTeam(_), esito(_), time(_)), MyConversations))
                     ) {
@@ -85,7 +85,27 @@
 
             -tmpDesireToKnow(Target);
             if (Target == null) {
-                Success = false;
+                // Cerco un gicoatore di cui non dipsongo tutte le informazioni con certezza
+                +index(0);
+                while(index(J) & J < NumPlayers & tmpDesireToKnow(Target) & Target == null) {
+                    .nth(J, Playerlist, TempName);
+                    .term2string(TempNameAtom, TempName);
+                    !gotMaxKnowledge(TempNameAtom, Result);
+                    if(Result == false) {
+                        // Ho trovato un giocatore di cui non so nulla
+                        -+tmpDesireToKnow(TempName);
+                    }
+                    -+index(I+1);
+                }
+                -index(_);
+
+                -tmpDesireToKnow(Target);
+                if (Target == null) {
+                    Success = false;
+                } else {
+                    +desireToKnow(Target);
+                    Success = true;
+                }
             } else {
                 +desireToKnow(Target);
                 Success = true;
@@ -97,10 +117,8 @@
 
 +!tryToSpeakWith(Player)
     <-
-        // TODO ASSEGNARE una logica alla decisione di CommunicationMode
-        CommunicationMode = "parlato";
-        FlagOnlyTeam = true;
         .term2string(PlayerAtom, Player);
+        !getLeastKnowledgeIncreaseMode(PlayerAtom, CommunicationMode, FlagOnlyTeam);
         !inviaRichiestaInfo(PlayerAtom, CommunicationMode, FlagOnlyTeam);
         .
 

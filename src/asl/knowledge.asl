@@ -66,3 +66,53 @@ knowledge([]).
         }
         //.print("getTargetKnowledge fine ", TargetData);
         .
+
+/* recupera la modalità minima di comunicazione per player richiesto per acquisire nuove infomazioni */
++!getLeastKnowledgeIncreaseMode(Player, CommunicationMode, FlagOnlyTeam)
+    <-
+        .print("getLeastKnowledgeIncreaseMode, inizio, target: ", Player);
+        !getTargetKnowledge(Player, TargetKnowledge);
+        if(TargetKnowledge \== null) {
+            know(name(Tar), ruolo(val(ValRuoloTar), conf(ConfRuoloTar)), team(val(ValTeamTar), conf(ConfTeamTar))) = TargetKnowledge;
+            if(ConfTeamTar \== null) {
+                if(ConfTeamTar < 50) {
+                    CommunicationMode = "parlato";
+                    FlagOnlyTeam = true;
+                } elif(ConfTeamTar == 50) {
+                    if(ConfRuoloTar == null | ConfRuoloTar < 50) {
+                        CommunicationMode = "parlato";
+                        FlagOnlyTeam = false;
+                    } else {
+                        CommunicationMode = "carta";
+                        FlagOnlyTeam = false;
+                    }
+                } else {
+                    CommunicationMode = "carta";
+                    FlagOnlyTeam = false;
+                }
+            } else {
+                CommunicationMode = "parlato";
+                FlagOnlyTeam = true;
+            }
+        } else {
+            CommunicationMode = "parlato";
+            FlagOnlyTeam = true;
+        }
+        .
+
+/* verifica se per il player richiesto sono state recuperate tutte le informazioni possibili */
++!gotMaxKnowledge(Player, Result)
+<-
+    .print("gotMaxKnowledge, inizio, target: ", Player);
+    !getTargetKnowledge(Player, TargetKnowledge);
+    if(TargetKnowledge \== null) {
+        know(name(Tar), ruolo(val(ValRuoloTar), conf(ConfRuoloTar)), team(val(ValTeamTar), conf(ConfTeamTar))) = TargetKnowledge;
+        if(ConfRuoloTar \== null & ConfRuoloTar == 100 & ConfTeamTar \== null & ConfTeamTar == 100) {
+            Result = true;
+        } else {
+            Result = false;
+        }
+    } else {
+        Result = false;
+    }
+    .
