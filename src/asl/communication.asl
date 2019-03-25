@@ -44,8 +44,7 @@
                     !getTargetKnowledge(Sender, SenderKnowledge);
                     if(SenderKnowledge \== null) {
                         know(name(Sen), ruolo(val(ValRuoloSen), conf(ConfRuoloSen)), team(val(ValTeamSen), conf(ConfTeamSen))) = SenderKnowledge;
-                        if (Mode == "parlato") {
-
+                        if(Mode == "parlato") {
                             if( ConfRuoloSen<50 | (FlagOnlyTeam==true & (ValTeamSen==null | ( ConfTeamSen \== null & ConfTeamSen<50)))) {
                                 !updateConversations(speaker, Sender, Sender, Mode, FlagOnlyTeam, "accettata");
                                 !inviaRispostaInfo(Sender, Target, Mode, FlagOnlyTeam);
@@ -55,8 +54,17 @@
                                 !concludiConversazione(Sender, Mode, FlagOnlyTeam);
                             }
                         } else {
-                            .send(Sender, tell, rispostaInfoNegata);
-                            !concludiConversazione(Sender, Mode, FlagOnlyTeam);
+                            /* Mode == "carta" */
+                            if( ConfRuoloSen<100 | (FlagOnlyTeam==true & (ValTeamSen==null | ( ConfTeamSen \== null & ConfTeamSen<100))) ) {
+                                //comunico tramite send di aver accettato la richiesta
+                                .send(Sender, tell, rispostaInfoAccetta);
+                                !updateConversations(speaker, Sender, Sender, Mode, FlagOnlyTeam, "accettata");
+                                !inviaRispostaInfo(Sender, Target, Mode, FlagOnlyTeam);
+                                !concludiConversazione(Sender, Mode, FlagOnlyTeam);
+                            } else {
+                                .send(Sender, tell, rispostaInfoNegata);
+                                !concludiConversazione(Sender, Mode, FlagOnlyTeam);
+                            }
                         }
                     } elif (Mode == "parlato" | MyName == Target) {
                         if(Mode == "carta") {
@@ -160,14 +168,13 @@
                 getTeam(CardTeam) [artifact_id(CardArtifID)];
                 getRole(CardRole) [artifact_id(CardArtifID)];
             } else {
-                // TODO (Recuperare le info di Target da knowledge) TESTARE
                 !getTargetKnowledge(Target, know(name(Tar), ruolo(val(CardRole), conf(ConfRuolo)), team(val(CardTeam), conf(ConfTeam))));
             }
 
             if (FlagOnlyTeam == true) {
-                Belief = rispostaInfo(Target, CardTeam, CardRole);
-            } else {
                 Belief = rispostaInfo(Target, CardTeam, null);
+            } else {
+                Belief = rispostaInfo(Target, CardTeam, CardRole);
             }
             .send(Receiver, tell, Belief);
         } elif (Mode == "carta") {
