@@ -70,7 +70,7 @@ knowledge([]).
 /* recupera la modalità minima di comunicazione per player richiesto per acquisire nuove infomazioni */
 +!getLeastKnowledgeIncreaseMode(Player, CommunicationMode, FlagOnlyTeam)
     <-
-        .print("getLeastKnowledgeIncreaseMode, inizio, target: ", Player);
+        //.print("getLeastKnowledgeIncreaseMode, inizio, target: ", Player);
         !getTargetKnowledge(Player, TargetKnowledge);
         if(TargetKnowledge \== null) {
             know(name(Tar), ruolo(val(ValRuoloTar), conf(ConfRuoloTar)), team(val(ValTeamTar), conf(ConfTeamTar))) = TargetKnowledge;
@@ -104,7 +104,7 @@ knowledge([]).
 /* verifica se per il player richiesto sono state recuperate tutte le informazioni possibili */
 +!gotMaxKnowledge(Player, Result)
 <-
-    .print("gotMaxKnowledge, inizio, target: ", Player);
+    //.print("gotMaxKnowledge, inizio, target: ", Player);
     !getTargetKnowledge(Player, TargetKnowledge);
     if(TargetKnowledge \== null) {
         know(name(Tar), ruolo(val(ValRuoloTar), conf(ConfRuoloTar)), team(val(ValTeamTar), conf(ConfTeamTar))) = TargetKnowledge;
@@ -116,4 +116,5 @@ knowledge([]).
     } else {
         Result = false;
     }
+    .print("gotMaxKnowledge, fine, target: ", Player, " Result: ", Result);
     .

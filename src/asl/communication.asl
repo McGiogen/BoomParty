@@ -43,6 +43,7 @@
                 if(FlagOnlyTeam == false | ValTeamTar \== null | MyName == Target) {
                     !getTargetKnowledge(Sender, SenderKnowledge);
                     if(SenderKnowledge \== null) {
+                        // verifico che posso migliorare la qualità delle informazioni in mio possesso con questa richiesta
                         know(name(Sen), ruolo(val(ValRuoloSen), conf(ConfRuoloSen)), team(val(ValTeamSen), conf(ConfTeamSen))) = SenderKnowledge;
                         if(Mode == "parlato") {
                             if( ConfRuoloSen<50 | (FlagOnlyTeam==true & (ValTeamSen==null | ( ConfTeamSen \== null & ConfTeamSen<50)))) {
@@ -67,6 +68,7 @@
                             }
                         }
                     } elif (Mode == "parlato" | MyName == Target) {
+                        //non possiedo le info quindi sono interessato
                         if(Mode == "carta") {
                             //comunico tramite send di aver accettato la richiesta
                             .send(Sender, tell, rispostaInfoAccetta);
@@ -75,21 +77,26 @@
                         !inviaRispostaInfo(Sender, Target, Mode, FlagOnlyTeam);
                         !concludiConversazione(Sender, Mode, FlagOnlyTeam);
                     } else {
+                        // non sono interessato
                         .send(Sender, tell, rispostaInfoNegata);
                         !concludiConversazione(Sender, Mode, FlagOnlyTeam);
                     }
                 } else {
+                    // non possiedo le informazioni richieste
                     .send(Sender, tell, rispostaInfoNegata);
                     !concludiConversazione(Sender, Mode, FlagOnlyTeam);
                 }
             } else {
+                // non possiedo le informazioni richieste
                 .send(Sender, tell, rispostaInfoNegata);
                 !concludiConversazione(Sender, Mode, FlagOnlyTeam);
             }
         } else {
+            // sto già conversando rifiuto l'offerta di comunicazione
              .send(Sender, tell, rispostaInfoNegata);
+             -+conversazioneNegataOccupato(Sender);
              !concludiConversazione(Sender, Mode, FlagOnlyTeam);
-         }
+        }
         .
 
 /**

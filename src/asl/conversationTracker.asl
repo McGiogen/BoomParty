@@ -11,7 +11,7 @@ conversations([]).
         ?conversations(ConvList);
 
         Time = system.time;
-        if( .member(conversation(initiator(Initiator), playerTarget(Target), playerSpeaker(Source), mode(ModeVal), flagOnlyTeam(FlagVal), esito(Resp), time(Time)), ConvList) ) {
+        if( .member(conversation(initiator(Initiator), playerTarget(Target), playerSpeaker(Source), mode(CommunicationMode), flagOnlyTeam(FlagOnlyTeam), esito(Response), time(_)), ConvList) ) {
             .print("updateConversations, elemento già presente");
         } else {
             NewConvElem = conversation(initiator(Initiator), playerTarget(Target), playerSpeaker(Source), mode(CommunicationMode), flagOnlyTeam(FlagOnlyTeam), esito(Response), time(Time));
@@ -26,8 +26,8 @@ conversations([]).
         (Response == "accettata" | Response == "negata")
     <-
         ?conversations(ConvList);
-        if(.member(conversation(initiator(Initiator), playerTarget(Target), playerSpeaker(Source), mode(ModeVal), flagOnlyTeam(FlagVal), esito(Resp), time(_)), ConvList)) {
-            .nth(Pos, ConvList, conversation(initiator(Initiator), playerTarget(Target), playerSpeaker(Source), mode(ModeVal), flagOnlyTeam(FlagVal), esito(Resp), time(_)));
+        if(.member(conversation(initiator(Initiator), playerTarget(Target), playerSpeaker(Source), mode(CommunicationMode), flagOnlyTeam(FlagOnlyTeam), esito(Response), time(_)), ConvList)) {
+            .nth(Pos, ConvList, conversation(initiator(Initiator), playerTarget(Target), playerSpeaker(Source), mode(CommunicationMode), flagOnlyTeam(FlagOnlyTeam), esito(Response), time(_)));
             .nth(Pos, ConvList, ConvData);
         } else {
             ConvData = null;

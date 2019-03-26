@@ -11,19 +11,23 @@
         .length(ConvList, NumConversations);
 
         if (desireToKnow(Someone)) {
-            if (at(Someone)) {
+            .print("Inizio turno, provo a parlare con ", Someone);
+            if(at(Someone)) {
                 .print("Provo a parlare con ", Someone);
                 .abolish(desireToKnow(_));
                 !tryToSpeakWith(Someone);
-            } else {
+            } elif( visible_players(VisiblePlayer) & .member(Someone, VisiblePlayer) ) {
                 !goto(Someone);
+            } else {
+                -desireToKnow(Someone);
             }
         } else {
+            .print("Inizio turno, avvio ricerca player con cui comunicare...");
             // Provo a cercare qualcuno con cui scambiare informazioni
             !tryToDesireToKnow(Success);
 
             if (NumConversations < NumPlayers & Success == false) {
-                .print("Faccio mosse più ardite");
+                .print("Nessun player individuato, faccio mosse più ardite");
                 ?card(MyTeam, _);
                 ?leaderStanzaCorrente(Leader);
                 !getTargetKnowledge(Leader, LeaderKnow);
@@ -33,13 +37,15 @@
                     .wait(10000);
 
                     +conteggioPotenzialiVoti(1);
-                    for (.member(Player, Playerlist) & Player \== null) {
-                        !getTargetKnowledge(Player, PlayerKnow);
-                        if (PlayerKnow \== null) {
-                            know(name(PP), ruolo(val(_), conf(_)), team(val(PlayerTeam), conf(_))) = PlayerKnow;
-                            if (PlayerTeam \== LeaderTeam) {
-                                ?conteggioPotenzialiVoti(NumVoti);
-                                -+conteggioPotenzialiVoti(NumVoti + 1);
+                    for (.member(Player, Playerlist)) {
+                        if(Player \== null) {
+                            !getTargetKnowledge(Player, PlayerKnow);
+                            if (PlayerKnow \== null) {
+                                know(name(PP), ruolo(val(_), conf(_)), team(val(PlayerTeam), conf(_))) = PlayerKnow;
+                                if (PlayerTeam \== LeaderTeam) {
+                                    ?conteggioPotenzialiVoti(NumVoti);
+                                    -+conteggioPotenzialiVoti(NumVoti + 1);
+                                }
                             }
                         }
                     }
@@ -56,6 +62,8 @@
                     !moveRandomly;
                     // .wait(10000);
                 }
+            } else {
+                .print("Player individuato per conversazione");
             }
         }
         .
@@ -85,26 +93,29 @@
 
             -tmpDesireToKnow(Target);
             if (Target == null) {
-                // Cerco un gicoatore di cui non dipsongo tutte le informazioni con certezza
-                +index(0);
-                +tmpDesireToKnow(null);
-                while(index(J) & J < NumPlayers & tmpDesireToKnow(Target) & Target == null) {
-                    .nth(J, Playerlist, TempNameD);
-                    .term2string(TempNameAtomD, TempNameD);
-                    !gotMaxKnowledge(TempNameAtomD, Result);
-                    if(Result == false) {
-                        // Ho trovato un giocatore di cui non so nulla
-                        -+tmpDesireToKnow(TempNameD);
-                    }
-                    -+index(J+1);
-                }
-                -index(_);
 
-                -tmpDesireToKnow(Target);
-                if (Target == null) {
+                // Cerco un giocatore di cui non dispongo tutte le informazioni con certezza
+                +tmpDesireToKnow(null);
+                for( .member(TempNameD, Playerlist) ) {
+                    if(tmpDesireToKnow(Target) & Target == null) {
+                        .term2string(TempNameAtomD, TempNameD);
+                        !gotMaxKnowledge(TempNameAtomD, Result);
+                        if(Result == false) {
+                            !getLeastKnowledgeIncreaseMode(TempNameAtomD, CommunicationMode, FlagOnlyTeam);
+                            !getConversation(self, TempNameAtomD, TempNameAtomD, CommunicationMode, FlagOnlyTeam, "negata", ConvData);
+                            if(ConvData == null) {
+                                // Ho trovato un giocatore di cui non so nulla
+                                -+tmpDesireToKnow(TempNameD);
+                            }
+                        }
+                    }
+                }
+
+                -tmpDesireToKnow(TargetD);
+                if (TargetD == null) {
                     Success = false;
                 } else {
-                    +desireToKnow(Target);
+                    +desireToKnow(TargetD);
                     Success = true;
                 }
             } else {
@@ -169,4 +180,14 @@
 +!fineRound
     <-
         .abolish(desireToKnow(_));
+        .
+
+// Ho rifiutato una conversazione perche occupato, verifico se poteva interessarmi parlare con quel player nel caso lo contatto io quando mi libero
++conversazioneNegataOccupato(Player)
+    <-
+        .print("conversazioneNegataOccupato, verifico se mi sono perso una conversazione interessante con ", Player);
+        !gotMaxKnowledge(Player, Result);
+        if(Result == false) {
+            +desireToKnow(Player);
+        }
         .
