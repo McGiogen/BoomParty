@@ -386,22 +386,19 @@ giocoFinito(false).         // Booleano che indica se è stato recepito il segna
 
         if (Arrivati >= Attesi) {
             .abolish(arrivoOstaggio);
-            // Aggiungo controllo anche sul fatto che non sia già finito il gioco
-            // ovvero che l'altro leader abbia già dato il tana libera tutti
-            if (turnoNumero(5) & giocoFinito(false)) {
-                .broadcast(tell, gameEnded);
-                !rivelaRuolo;
-            } else {
-                // Avverto l'altro leader che i miei ostaggi sono arrivati
-                ?stanzaCorrente(Stanza);
-                ?leaderAltraStanza(Leader);
-                .send(Leader, tell, ostaggiArrivati(Stanza));
 
-                +ostaggiArrivati(Stanza);
+            // Avverto l'altro leader che i miei ostaggi sono arrivati
+            ?stanzaCorrente(Stanza);
+            ?leaderAltraStanza(Leader);
+            .send(Leader, tell, ostaggiArrivati(Stanza));
 
-                // Quando gli ostaggi di entrambe le stanze sono arrivati inizia il nuovo turno
-                if (.count(ostaggiArrivati(_)) > 1) {
-                    .abolish(ostaggiArrivati(_));
+            +ostaggiArrivati(Stanza);
+
+            // Quando gli ostaggi di entrambe le stanze sono arrivati inizia il nuovo turno o finisce il gioco
+            if (.count(ostaggiArrivati(_)) > 1) {
+                .abolish(ostaggiArrivati(_));
+
+                if (not turnoNumero(5) | giocoFinito(false)) {
                     !avviaRound;
                 }
             }
@@ -415,10 +412,18 @@ giocoFinito(false).         // Booleano che indica se è stato recepito il segna
     <-
         +ostaggiArrivati(Stanza)[source(Source)];
 
-        // Quando gli ostaggi di entrambe le stanze sono arrivati inizia il nuovo turno
+        // Quando gli ostaggi di entrambe le stanze sono arrivati inizia il nuovo turno o finisce il gioco
         if (.count(ostaggiArrivati(_)) > 1) {
             .abolish(ostaggiArrivati(_));
-            !avviaRound;
+
+            if (turnoNumero(5) & giocoFinito(false)) {
+                // Aggiungo controllo anche sul fatto che non sia già finito il gioco
+                // ovvero che l'altro leader abbia già dato il tana libera tutti
+                .broadcast(tell, gameEnded);
+                !rivelaRuolo;
+            } else {
+                !avviaRound;
+            }
         }
         .
 
