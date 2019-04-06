@@ -9,6 +9,10 @@
 	: not at(Player)
 	<- move_towards(Player).
 
+// Gestione failure del plan
+-!goto(Player)
+    <- true.
+
 // GO IN
 +!goinStart(Area) // goin needs a start to define a free position in Area, without tests
     <- move_in(Area).

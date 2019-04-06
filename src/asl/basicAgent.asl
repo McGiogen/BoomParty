@@ -288,8 +288,8 @@ giocoFinito(false).         // Booleano che indica se è stato recepito il segna
         .
 
 // Gestione failure del plan
--giocaRound
-    <- +giocaRound.
+-!giocaRound
+    <- true.
 
 +roundEnded
     <-

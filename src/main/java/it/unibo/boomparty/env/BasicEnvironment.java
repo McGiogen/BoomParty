@@ -206,6 +206,8 @@ public class BasicEnvironment extends CartagoEnvironment {
                     this.model.turn = turn;
 
                     this.model.getView().repaint();
+
+                    result.setSuccess(true);
                     break;
                 }
                 default:
