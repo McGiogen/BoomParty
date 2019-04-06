@@ -92,22 +92,6 @@ giocoFinito(false).         // Booleano che indica se è stato recepito il segna
         .term2string(LeaderAtom, Leader);
         .
 
-+?numberOfOstaggi(NumOstaggi)
-    <-
-        ?turnoNumero(T);
-        ?players(Players);
-        .length(Players, N);
-        if (N <= 13) {
-            .nth(T-1, [2,2,1,1,1], NumOstaggi);
-        } elif (N <= 17) {
-            .nth(T-1, [3,2,2,1,1], NumOstaggi);
-        } elif (N <= 21) {
-            .nth(T-1, [4,3,2,1,1], NumOstaggi);
-        } else {
-            .nth(T-1, [5,4,3,2,1], NumOstaggi);
-        }
-        .
-
 +!boot
     <-  ?name(X);
         .print("PLAYER ", X, " START!");
@@ -267,8 +251,9 @@ giocoFinito(false).         // Booleano che indica se è stato recepito il segna
         // Imposto il minutaggio e faccio partire il timer
         ?turnoNumero(Index);
 
-        if (Index < 5) {
-            setMinutes(5 - Index) [artifact_id(TimerID)];
+        if (not totaleTurni(Index)) {
+            ?minutiTurno(Minutes, Index + 1);
+            setMinutes(Minutes) [artifact_id(TimerID)];
             startTimer [artifact_id(TimerID)];
             .print("Avvio del ", Index + 1, "° round");
         } else {
@@ -398,7 +383,8 @@ giocoFinito(false).         // Booleano che indica se è stato recepito il segna
             if (.count(ostaggiArrivati(_)) > 1) {
                 .abolish(ostaggiArrivati(_));
 
-                if (not turnoNumero(5) | giocoFinito(false)) {
+                ?turnoNumero(Index);
+                if (not totaleTurni(Index) & giocoFinito(false)) {
                     !avviaRound;
                 }
             }
@@ -416,7 +402,8 @@ giocoFinito(false).         // Booleano che indica se è stato recepito il segna
         if (.count(ostaggiArrivati(_)) > 1) {
             .abolish(ostaggiArrivati(_));
 
-            if (turnoNumero(5) & giocoFinito(false)) {
+            ?turnoNumero(Index);
+            if (totaleTurni(Index) & giocoFinito(false)) {
                 // Aggiungo controllo anche sul fatto che non sia già finito il gioco
                 // ovvero che l'altro leader abbia già dato il tana libera tutti
                 .broadcast(tell, gameEnded);
