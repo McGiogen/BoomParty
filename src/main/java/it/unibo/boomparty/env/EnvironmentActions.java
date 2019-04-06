@@ -4,6 +4,10 @@ import jason.environment.grid.Location;
 
 public class EnvironmentActions {
 
+    public static boolean hasObstacleOnPath(PathFinder.Path path, WorldModel model) {
+        return path != null && (!path.isPracticable() || !model.isFree(path.getFirst().getLocation()));
+    }
+
     public static Result moveTo(BasicEnvironment env, final HumanModel ag, final Location goal, final boolean exactlyAtGoal) {
         final Result result = new Result();
         final Location start = env.getModel().getAgPos(ag.getIndex());
@@ -14,7 +18,7 @@ public class EnvironmentActions {
         }
 
         boolean noPath = ag.getPath() == null || !ag.getPath().getGoal().getLocation().equals(goal);
-        boolean obstacleOnPath = ag.getPath() != null && (!ag.getPath().isPracticable() || !env.getModel().isFree(ag.getPath().getFirst().getLocation()));
+        boolean obstacleOnPath = hasObstacleOnPath(ag.getPath(), env.getModel());
 
         if (noPath || obstacleOnPath) {
             env.getLogger().fine(
@@ -42,9 +46,16 @@ public class EnvironmentActions {
 
         if (ag.getPath().size() > 0) {
             // the path is defined, move one step to the goal
-            final Location loc = ag.getPath().pop().getLocation();
-            env.getModel().setAgPos(ag.getIndex(), loc); // actually move the agent in the grid
+            final Location loc = ag.getPath().getFirst().getLocation();
+            boolean success = setAgentPosition(ag, loc, env.getModel()); // actually move the agent in the grid
             result.setTimeSpent(1000);
+
+            if (success) {
+                ag.getPath().removeFirst();
+            } else {
+                result.setSuccess(false);
+                return result;
+            }
         }
 
         if (ag.getPath().size() == 0) {
@@ -62,7 +73,7 @@ public class EnvironmentActions {
         final Location newLoc = env.getModel().getFreePos(agLoc, exitFromArea);
 
         if (newLoc != null) {
-            env.getModel().setAgPos(ag.getIndex(), newLoc); // actually move the agent in the grid
+            setAgentPosition(ag, newLoc, env.getModel()); // don't mind if it has no success
         }
 
         final Result result = new Result();
@@ -70,6 +81,12 @@ public class EnvironmentActions {
         result.setTimeSpent(1000 + randomWaitTime);
         result.setSuccess(true);
         return result;
+    }
+
+    private static synchronized boolean setAgentPosition(final HumanModel ag, final Location loc, WorldModel model) {
+        if (!model.isFree(loc)) return false;
+        model.setAgPos(ag.getIndex(), loc); // actually move the agent in the grid
+        return true;
     }
 
     public static class Result<T> {

@@ -147,8 +147,10 @@ public class BasicEnvironment extends CartagoEnvironment {
                     String areaName = ((Atom) action.getTerm(0)).getFunctor();
                     HumanModel player = this.getPlayer(agName);
 
-                    Area room = WorldUtils.getArea(this.model, areaName);
-                    this.model.setAgPos(player.getIndex(), this.model.getFreePos(room));
+                    synchronized (this) {
+                        Area room = WorldUtils.getArea(this.model, areaName);
+                        this.model.setAgPos(player.getIndex(), this.model.getFreePos(room));
+                    }
 
                     result.setSuccess(true);
                     break;
