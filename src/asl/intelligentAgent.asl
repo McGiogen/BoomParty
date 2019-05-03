@@ -56,11 +56,7 @@
                         !tryToCandidateAsLeader;
                     }
                 } else {
-                    // TODO
-                    .print("Finito tutto... e poi cosa faccio?");
-
                     !moveRandomly;
-                    // .wait(10000);
                 }
             } else {
                 .print("Player individuato per conversazione");

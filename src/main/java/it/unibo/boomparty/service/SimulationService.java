@@ -244,9 +244,6 @@ public class SimulationService {
         for (String name: playersName) {
             lines.add("\t\t"+name+" intelligentAgent agentArchClass "+ BoomPartyAgentArch.class.getName() +";");
         }
-        //TODO remove
-        //lines.add("\t\treceiver testComunicationReceiver agentArchClass "+ BoomPartyAgentArch.class.getName() +";");
-        //lines.add("\t\tsender testComunicationSender agentArchClass "+ BoomPartyAgentArch.class.getName() +";");
         lines.add("\taslSourcePath:");
         lines.add("\t\t\"src/asl\";");
         lines.add("}");
