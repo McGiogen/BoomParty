@@ -6,7 +6,7 @@ import cartago.OPERATION;
 
 public class Timer extends Artifact {
 
-    private final static long MILLISECONDS_IN_MINUTE = 60000;
+    private final static long MILLISECONDS_IN_MINUTE = 6000;
     private boolean started = false;
     private long countdown;
 
