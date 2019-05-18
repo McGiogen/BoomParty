@@ -51,7 +51,7 @@ public class SimulationService {
             // mas project
             if(args.isDistributed()){
                 // go jade
-                startDistributedJadeMasProject(false);
+                startDistributedJadeMasProject(buildMas2jFile(args, playersName));
             } else {
                 // go centralised
                 startCentralisedMasProject(args.isDebug(), buildMas2jFile(args, playersName));
@@ -72,7 +72,6 @@ public class SimulationService {
     private void startCentralisedMasProject(boolean debug, String mas2jPath) throws JasonException {
         System.out.println("Launching mas2j project");
         // start mas
-        debug = false;
         if(debug){
             // nb: jason in modalità debug funziona "passo passo"
             RunCentralisedMAS.main(new String[]{mas2jPath, "-debug"});
@@ -90,23 +89,11 @@ public class SimulationService {
      * If you need any of these features, you should choose the JADE infrastructure (or implement/plug a new infrastructure for/into Jason yourself).
      * The interoperability with non-Jason agent is achieved by JADE through FIPA-ACL communication.
      */
-    private void startDistributedJadeMasProject(boolean debug) {
-        System.out.println("Launching mas2j project");
+    private void startDistributedJadeMasProject(String mas2jPath) {
+        System.out.println("Launching jade mas2j project");
         try {
-            if (debug) {
-                RunCentralisedMAS.main(new String[]{"boomparty.mas2j", "-debug"});
-            } else {
-                // tucson
-                startTucson(debug);
-
-                // jade
-                startJade(false);
-
-                // jason
-                RunJadeMAS.main(new String[]{"boomparty.mas2j"});
-
-                // qui non arriva fino a quando MAS è attivo
-            }
+            // jason con jade
+            RunJadeMAS.main(new String[]{mas2jPath});
         }catch (JasonException e) {
             e.printStackTrace();
         }
@@ -144,6 +131,69 @@ public class SimulationService {
     }
 
     /**
+     * Crea il file mas2j della simulazione in memoria
+     * @param playersName La lista dei giocatori
+     * @return Il percorso al file generato
+     */
+    private String buildMas2jFile(SimulationArgs args, List<String> playersName){
+
+        List<String> lines = new ArrayList<>();
+        lines.add("MAS boomparty {");
+        lines.add("\tinfrastructure: " + (args.isDistributed() ? "Jade(main_container_host(\""+ args.getJadeHost()+":"+args.getJadePort()+"\"))": "Centralised"));
+        lines.add("\tenvironment: " + BasicEnvironment.class.getName() + "(\"" + String.join(",", playersName) + "\")");
+        lines.add("\tagents:");
+
+        for (String name: playersName) {
+            lines.add("\t\t"+name+" intelligentAgent agentArchClass "+ BoomPartyAgentArch.class.getName() +";");
+        }
+        lines.add("\taslSourcePath:");
+        lines.add("\t\t\"src/asl\";");
+        lines.add("}");
+
+        try {
+            Path file = Files.createTempFile("tmp-mas2j",".mas2j");
+            Files.write(file, lines, Charset.forName("UTF-8"));
+            return file.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Genera un nome per ogni player della partita
+     * @param players Numero di giocatori
+     * @return La lista di nomi
+     */
+    private List<String> generatePlayersName(int players){
+        Faker f = new Faker();
+        List<String> names = new ArrayList<>();
+        for (int i = 0; i < players; i++){
+            //names.add(f.gameOfThrones().character());
+            String normalizedName = f.superhero().name().replaceAll("[^A-Za-z]", "").toLowerCase();
+            log.info("Generated name: " + normalizedName);
+            names.add(normalizedName);
+        }
+        return names;
+    }
+
+    /**
+     * Inserisco le config di simulazione su tucson
+     */
+    private void putSettingsOnTupleSpace(TucsonChannel tChannel, List<String> playersName, Map<TEAM, List<ROLE>> carteRuolo) throws InvalidLogicTupleException {
+        // inserisco i giocatori della partita
+        for (String name: playersName){
+            tChannel.actionSynch(Out.class, new PlayerTuple(name, null).toTuple());
+        }
+        InitialRoleTuple initialRole = new InitialRoleTuple(carteRuolo.get(TEAM.ROSSO), carteRuolo.get(TEAM.BLU), carteRuolo.get(TEAM.GRIGIO));
+        tChannel.actionSynch(Out.class, initialRole.toTuple());
+
+        // inserisco il token che tutti gli agenti proveranno a "claimare"
+        // il primo che riesce a prenderlo -> diventa mazziere
+        tChannel.actionSynch(Out.class, "token(mazziere)");
+    }
+
+    /**
      * Start jade platform
      * @param isRemote true when the current node is being distributed
      */
@@ -157,7 +207,7 @@ public class SimulationService {
         }
     }
 
-//    /**
+    //    /**
 //     * Nel caso si volesse simulare il comportamento del jason eclipse plugin
 //     * DO NOT REMOVE
 //     */
@@ -226,69 +276,5 @@ public class SimulationService {
 //        br.close();
 //        return outputBuf.toString().trim();
 //    }
-
-    /**
-     * Crea il file mas2j della simulazione
-     * @param playersName La lista dei giocatori
-     * @return Il percorso al file generato
-     */
-    private String buildMas2jFile(SimulationArgs args, List<String> playersName){
-
-        List<String> lines = new ArrayList<>();
-        lines.add("MAS boomparty {");
-        lines.add("\tinfrastructure: " + (args.isDistributed() ? "Jade": "Centralised"));
-        lines.add("\tenvironment: " + BasicEnvironment.class.getName() + "(\"" + String.join(",", playersName) + "\")");
-        lines.add("\tagents:");
-
-        for (String name: playersName) {
-            lines.add("\t\t"+name+" intelligentAgent agentArchClass "+ BoomPartyAgentArch.class.getName() +";");
-        }
-        lines.add("\taslSourcePath:");
-        lines.add("\t\t\"src/asl\";");
-        lines.add("}");
-
-        try {
-            Path file = Files.createTempFile("tmp-mas2j",".mas2j");
-            //Path file = Paths.get("/home/aleneri/Downloads/test.mas2j");
-            Files.write(file, lines, Charset.forName("UTF-8"));
-            return file.toString();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
-     * Genera un nome per ogni player della partita
-     * @param players Numero di giocatori
-     * @return La lista di nomi
-     */
-    private List<String> generatePlayersName(int players){
-        Faker f = new Faker();
-        List<String> names = new ArrayList<>();
-        for (int i = 0; i < players; i++){
-            //names.add(f.gameOfThrones().character());
-            String normalizedName = f.superhero().name().replaceAll("[^A-Za-z]", "").toLowerCase();
-            log.info("Generated name: " + normalizedName);
-            names.add(normalizedName);
-        }
-        return names;
-    }
-
-    /**
-     * Inserisco le config di simulazione su tucson
-     */
-    private void putSettingsOnTupleSpace(TucsonChannel tChannel, List<String> playersName, Map<TEAM, List<ROLE>> carteRuolo) throws InvalidLogicTupleException {
-        // inserisco i giocatori della partita
-        for (String name: playersName){
-            tChannel.actionSynch(Out.class, new PlayerTuple(name, null).toTuple());
-        }
-        InitialRoleTuple initialRole = new InitialRoleTuple(carteRuolo.get(TEAM.ROSSO), carteRuolo.get(TEAM.BLU), carteRuolo.get(TEAM.GRIGIO));
-        tChannel.actionSynch(Out.class, initialRole.toTuple());
-
-        // inserisco il token che tutti gli agenti proveranno a "claimare"
-        // il primo che riesce a prenderlo -> diventa mazziere
-        tChannel.actionSynch(Out.class, "token(mazziere)");
-    }
 }
 
