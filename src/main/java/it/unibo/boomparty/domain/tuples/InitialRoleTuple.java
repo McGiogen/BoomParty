@@ -2,7 +2,7 @@ package it.unibo.boomparty.domain.tuples;
 
 import alice.logictuple.LogicTuple;
 import alice.logictuple.exceptions.InvalidLogicTupleException;
-import it.unibo.boomparty.constants.GameConstans.ROLE_PLAYER;
+import it.unibo.boomparty.constants.GameConstans.ROLE;
 import it.unibo.boomparty.utils.TupleUtils;
 
 import java.util.ArrayList;
@@ -12,11 +12,11 @@ public class InitialRoleTuple extends BaseTuple {
 
     public static final String TEMPLATE = asTupleString("GT", "GB", "GT");
 
-    private List<ROLE_PLAYER> redTeam;
-    private List<ROLE_PLAYER> blueTeam;
-    private List<ROLE_PLAYER> greyTeam;
+    private List<ROLE> redTeam;
+    private List<ROLE> blueTeam;
+    private List<ROLE> greyTeam;
 
-    public InitialRoleTuple(List<ROLE_PLAYER> redTeam, List<ROLE_PLAYER> blueTeam, List<ROLE_PLAYER> greyTeam) {
+    public InitialRoleTuple(List<ROLE> redTeam, List<ROLE> blueTeam, List<ROLE> greyTeam) {
         super();
 
         this.redTeam = redTeam;
@@ -49,13 +49,13 @@ public class InitialRoleTuple extends BaseTuple {
         this.greyTeam = getTeamFromTuple("greyTeam", tuple);
     }
 
-    private List<ROLE_PLAYER> getTeamFromTuple(String teamName, LogicTuple tuple) {
-        List<ROLE_PLAYER> team = new ArrayList<ROLE_PLAYER>();
+    private List<ROLE> getTeamFromTuple(String teamName, LogicTuple tuple) {
+        List<ROLE> team = new ArrayList<ROLE>();
         String redTeam = TupleUtils.stringValue(tuple.getArg(teamName).getArg(0));
         if(redTeam != null){
             String cleanString = redTeam.replace("[", "").replace("]", "").replaceAll("\\s", "");
             for(String role : cleanString.split(",")) {
-                ROLE_PLAYER rolePlayer = ROLE_PLAYER.byCodice(role);
+                ROLE rolePlayer = ROLE.byCodice(role);
                 if(rolePlayer != null){
                     team.add(rolePlayer);
                 }
@@ -69,22 +69,22 @@ public class InitialRoleTuple extends BaseTuple {
         return TEMPLATE;
     }
 
-    public List<ROLE_PLAYER> getRedTeam() {
+    public List<ROLE> getRedTeam() {
         return this.redTeam;
     }
-    public void setRedTeam(List<ROLE_PLAYER> redTeam) {
+    public void setRedTeam(List<ROLE> redTeam) {
         this.redTeam = redTeam;
     }
-    public List<ROLE_PLAYER> getBlueTeam() {
+    public List<ROLE> getBlueTeam() {
         return this.blueTeam;
     }
-    public void setBlueTeam(List<ROLE_PLAYER> blueTeam) {
+    public void setBlueTeam(List<ROLE> blueTeam) {
         this.blueTeam = blueTeam;
     }
-    public List<ROLE_PLAYER> getGreyTeam() {
+    public List<ROLE> getGreyTeam() {
         return this.greyTeam;
     }
-    public void setGreyTeam(List<ROLE_PLAYER> greyTeam) {
+    public void setGreyTeam(List<ROLE> greyTeam) {
         this.greyTeam = greyTeam;
     }
 }

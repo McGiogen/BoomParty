@@ -1,15 +1,15 @@
 package it.unibo.boomparty.env;
 
-import it.unibo.boomparty.constants.GameConstans.TEAM_PLAYER;
-import it.unibo.boomparty.constants.GameConstans.ROLE_PLAYER;
+import it.unibo.boomparty.constants.GameConstans.TEAM;
+import it.unibo.boomparty.constants.GameConstans.ROLE;
 
 public class HumanModel {
 
     private final String name;
     private final int index;
     private PathFinder.Path path;
-    private TEAM_PLAYER team;
-    private ROLE_PLAYER ruolo;
+    private TEAM team;
+    private ROLE ruolo;
     private boolean isLeader;
 
     public HumanModel(String name, int index) {
@@ -34,19 +34,19 @@ public class HumanModel {
         return index;
     }
 
-    public ROLE_PLAYER getRuolo() {
+    public ROLE getRuolo() {
         return ruolo;
     }
 
-    public void setRuolo(ROLE_PLAYER ruolo) {
+    public void setRuolo(ROLE ruolo) {
         this.ruolo = ruolo;
     }
 
-    public TEAM_PLAYER getTeam() {
+    public TEAM getTeam() {
         return team;
     }
 
-    public void setTeam(TEAM_PLAYER team) {
+    public void setTeam(TEAM team) {
         this.team = team;
     }
 

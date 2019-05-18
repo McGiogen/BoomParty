@@ -7,8 +7,8 @@ import java.awt.FontMetrics;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import it.unibo.boomparty.constants.GameConstans.TEAM_PLAYER;
-import it.unibo.boomparty.constants.GameConstans.ROLE_PLAYER;
+import it.unibo.boomparty.constants.GameConstans.TEAM;
+import it.unibo.boomparty.constants.GameConstans.ROLE;
 import jason.environment.grid.GridWorldView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -74,11 +74,11 @@ public class WorldView extends GridWorldView {
 
     public void drawVincitori(final Graphics g, final int x, final int y) {
         // Stampa team vincitore
-        String s1 = "Vincono i " + (this.model.squadraVincitrice.equals(TEAM_PLAYER.ROSSO) ? "Rossi" : "Blu") + "!!!";
+        String s1 = "Vincono i " + (this.model.squadraVincitrice.equals(TEAM.ROSSO) ? "Rossi" : "Blu") + "!!!";
 
         // Stampa vincitori grigi
         List<String> grigiVincitori = this.model.grigiVincitori.stream()
-                .map(ROLE_PLAYER::getValue)
+                .map(ROLE::getValue)
                 .collect(Collectors.toList());
         String s2 = grigiVincitori.size() > 0 ? "Vincitori grigi: " + String.join(", ", grigiVincitori) : "Nessun vincitore grigio";
 
@@ -90,7 +90,7 @@ public class WorldView extends GridWorldView {
         int margin = height/2;
 
         // Disegno gli sfondi
-        g.setColor(this.model.squadraVincitrice.equals(TEAM_PLAYER.ROSSO) ? Color.red : Color.blue);
+        g.setColor(this.model.squadraVincitrice.equals(TEAM.ROSSO) ? Color.red : Color.blue);
         g.fillRect(margin, margin, width1 + 4, height + 2);
 
         g.setColor(Color.gray);

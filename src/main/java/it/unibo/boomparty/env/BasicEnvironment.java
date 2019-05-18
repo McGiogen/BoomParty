@@ -1,7 +1,7 @@
 package it.unibo.boomparty.env;
 
-import it.unibo.boomparty.constants.GameConstans.ROLE_PLAYER;
-import it.unibo.boomparty.constants.GameConstans.TEAM_PLAYER;
+import it.unibo.boomparty.constants.GameConstans.ROLE;
+import it.unibo.boomparty.constants.GameConstans.TEAM;
 import jaca.CartagoEnvironment;
 import jason.asSyntax.*;
 import jason.environment.grid.Area;
@@ -159,8 +159,8 @@ public class BasicEnvironment extends CartagoEnvironment {
                     String codiceTeam = ((StringTerm) action.getTerm(0)).getString();
                     String codiceRuolo = ((StringTerm) action.getTerm(1)).getString();
 
-                    TEAM_PLAYER team = TEAM_PLAYER.byCodice(codiceTeam);
-                    ROLE_PLAYER ruolo = ROLE_PLAYER.byCodice(codiceRuolo);
+                    TEAM team = TEAM.byCodice(codiceTeam);
+                    ROLE ruolo = ROLE.byCodice(codiceRuolo);
 
                     HumanModel agentModel = this.getPlayer(agName);
                     agentModel.setRuolo(ruolo);
@@ -190,9 +190,9 @@ public class BasicEnvironment extends CartagoEnvironment {
                             .filter(name -> !"none".equals(name))
                             .collect(Collectors.toList());
 
-                    this.model.squadraVincitrice = TEAM_PLAYER.byCodice(vincitori.remove(0));
+                    this.model.squadraVincitrice = TEAM.byCodice(vincitori.remove(0));
                     this.model.grigiVincitori = vincitori.stream()
-                            .map(ROLE_PLAYER::byCodice)
+                            .map(ROLE::byCodice)
                             .collect(Collectors.toList());
 
                     this.model.getView().repaint();

@@ -1,7 +1,7 @@
 package it.unibo.boomparty;
 
-import it.unibo.boomparty.constants.GameConstans.ROLE_PLAYER;
-import it.unibo.boomparty.constants.GameConstans.TEAM_PLAYER;
+import it.unibo.boomparty.constants.GameConstans.ROLE;
+import it.unibo.boomparty.constants.GameConstans.TEAM;
 import it.unibo.boomparty.service.SimulationService;
 import it.unibo.boomparty.service.model.SimulationArgs;
 import org.apache.logging.log4j.LogManager;
@@ -22,29 +22,29 @@ public class Main {
         simArgs.setDebug(true);
         simArgs.setPlayers(13);
 
-        Map<TEAM_PLAYER, List<ROLE_PLAYER>> carte = new HashMap<TEAM_PLAYER, List<ROLE_PLAYER>>();
-        List<ROLE_PLAYER> rolRed = new ArrayList<ROLE_PLAYER>();
-        List<ROLE_PLAYER> rolBlu = new ArrayList<ROLE_PLAYER>();
-        List<ROLE_PLAYER> rolGrig = new ArrayList<ROLE_PLAYER>();
+        Map<TEAM, List<ROLE>> teamRuoliMap = new HashMap<>();
+        List<ROLE> ruoliInRedTeam = new ArrayList<ROLE>();
+        List<ROLE> ruoliInBluTeam = new ArrayList<ROLE>();
+        List<ROLE> ruoliInGreyTeam = new ArrayList<ROLE>();
 
-        rolRed.add(ROLE_PLAYER.BOMBAROLO);
-        rolRed.add(ROLE_PLAYER.BASE);
-        rolRed.add(ROLE_PLAYER.BASE);
-        rolRed.add(ROLE_PLAYER.BASE);
-        rolRed.add(ROLE_PLAYER.BASE);
-        rolBlu.add(ROLE_PLAYER.PRESIDENTE);
-        rolBlu.add(ROLE_PLAYER.BASE);
-        rolBlu.add(ROLE_PLAYER.BASE);
-        rolBlu.add(ROLE_PLAYER.BASE);
-        rolBlu.add(ROLE_PLAYER.BASE);
-        rolGrig.add(ROLE_PLAYER.AMANTE_PRESIDENTE);
-        rolGrig.add(ROLE_PLAYER.MOGLIE_PRESIDENTE);
-        rolGrig.add(ROLE_PLAYER.NATO_LEADER);
+        ruoliInRedTeam.add(ROLE.BOMBAROLO);
+        ruoliInRedTeam.add(ROLE.BASE);
+        ruoliInRedTeam.add(ROLE.BASE);
+        ruoliInRedTeam.add(ROLE.BASE);
+        ruoliInRedTeam.add(ROLE.BASE);
+        ruoliInBluTeam.add(ROLE.PRESIDENTE);
+        ruoliInBluTeam.add(ROLE.BASE);
+        ruoliInBluTeam.add(ROLE.BASE);
+        ruoliInBluTeam.add(ROLE.BASE);
+        ruoliInBluTeam.add(ROLE.BASE);
+        ruoliInGreyTeam.add(ROLE.AMANTE_PRESIDENTE);
+        ruoliInGreyTeam.add(ROLE.MOGLIE_PRESIDENTE);
+        ruoliInGreyTeam.add(ROLE.NATO_LEADER);
 
-        carte.put(TEAM_PLAYER.ROSSO, rolRed);
-        carte.put(TEAM_PLAYER.BLU, rolBlu);
-        carte.put(TEAM_PLAYER.GRIGIO, rolGrig);
-        simArgs.setCarteRuolo(carte);
+        teamRuoliMap.put(TEAM.ROSSO, ruoliInRedTeam);
+        teamRuoliMap.put(TEAM.BLU, ruoliInBluTeam);
+        teamRuoliMap.put(TEAM.GRIGIO, ruoliInGreyTeam);
+        simArgs.setRuoliInTeamMapping(teamRuoliMap);
 
         // start sim
         SimulationService sim = new SimulationService();

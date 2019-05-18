@@ -1,7 +1,7 @@
 package it.unibo.boomparty.env;
 
-import it.unibo.boomparty.constants.GameConstans.ROLE_PLAYER;
-import it.unibo.boomparty.constants.GameConstans.TEAM_PLAYER;
+import it.unibo.boomparty.constants.GameConstans.ROLE;
+import it.unibo.boomparty.constants.GameConstans.TEAM;
 import jason.environment.grid.Area;
 import jason.environment.grid.GridWorldModel;
 import jason.environment.grid.GridWorldView;
@@ -18,8 +18,8 @@ public class WorldModel extends GridWorldModel {
 	Area roomB;
 	Area hallway;
     private List<HumanModel> players;
-    TEAM_PLAYER squadraVincitrice;
-    List<ROLE_PLAYER> grigiVincitori;
+    TEAM squadraVincitrice;
+    List<ROLE> grigiVincitori;
     String turn;
 	
 	/**

@@ -4,8 +4,8 @@ import alice.logictuple.exceptions.InvalidLogicTupleException;
 import alice.tucson.api.TucsonTupleCentreId;
 import alice.tucson.asynchSupport.actions.ordinary.Out;
 import com.github.javafaker.Faker;
-import it.unibo.boomparty.constants.GameConstans.ROLE_PLAYER;
-import it.unibo.boomparty.constants.GameConstans.TEAM_PLAYER;
+import it.unibo.boomparty.constants.GameConstans.ROLE;
+import it.unibo.boomparty.constants.GameConstans.TEAM;
 import it.unibo.boomparty.domain.tuples.InitialRoleTuple;
 import it.unibo.boomparty.domain.tuples.PlayerTuple;
 import it.unibo.boomparty.env.BasicEnvironment;
@@ -41,13 +41,12 @@ public class SimulationService {
         try {
             // generazione giocatori
             List<String> playersName = generatePlayersName(args.getPlayers());
-            Map<TEAM_PLAYER, List<ROLE_PLAYER>> carteRuolo = args.getCarteRuolo();
 
-            // tucson
+            // start tucson
             TucsonChannel tucsonChannel = startTucson(args.isDebug());
 
             // settings
-            putSettingsOnTupleSpace(tucsonChannel, playersName, carteRuolo);
+            putSettingsOnTupleSpace(tucsonChannel, playersName, args.getRuoliInTeamMapping());
 
             // mas project
             if(args.isDistributed()){
@@ -279,12 +278,12 @@ public class SimulationService {
     /**
      * Inserisco le config di simulazione su tucson
      */
-    private void putSettingsOnTupleSpace(TucsonChannel tChannel, List<String> playersName, Map<TEAM_PLAYER, List<ROLE_PLAYER>> carteRuolo) throws InvalidLogicTupleException {
+    private void putSettingsOnTupleSpace(TucsonChannel tChannel, List<String> playersName, Map<TEAM, List<ROLE>> carteRuolo) throws InvalidLogicTupleException {
         // inserisco i giocatori della partita
         for (String name: playersName){
             tChannel.actionSynch(Out.class, new PlayerTuple(name, null).toTuple());
         }
-        InitialRoleTuple initialRole = new InitialRoleTuple(carteRuolo.get(TEAM_PLAYER.ROSSO), carteRuolo.get(TEAM_PLAYER.BLU), carteRuolo.get(TEAM_PLAYER.GRIGIO));
+        InitialRoleTuple initialRole = new InitialRoleTuple(carteRuolo.get(TEAM.ROSSO), carteRuolo.get(TEAM.BLU), carteRuolo.get(TEAM.GRIGIO));
         tChannel.actionSynch(Out.class, initialRole.toTuple());
 
         // inserisco il token che tutti gli agenti proveranno a "claimare"

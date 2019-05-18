@@ -4,7 +4,8 @@ import java.awt.*;
 
 public class GameConstans {
 
-    public static enum TEAM_PLAYER {
+    public enum TEAM {
+
         ROSSO("Rosso", "rosso", Color.red),
         BLU("Blu", "blu", Color.blue),
         GRIGIO("Grigio", "grigio", Color.gray);
@@ -13,7 +14,7 @@ public class GameConstans {
         private String codice;
         private Color colore;
 
-        private TEAM_PLAYER(String v, String c, Color col) {
+        private TEAM(String v, String c, Color col) {
             value = v;
             codice = c;
             colore = col;
@@ -33,8 +34,8 @@ public class GameConstans {
             return colore;
         }
 
-        public static TEAM_PLAYER byCodice(String codice) {
-            for(TEAM_PLAYER enumItem : values()) {
+        public static TEAM byCodice(String codice) {
+            for(TEAM enumItem : values()) {
                 if(enumItem.getCodice() == null) {
                     if(codice == null) {
                         return enumItem;
@@ -47,7 +48,8 @@ public class GameConstans {
         }
     }
 
-    public static enum ROLE_PLAYER {
+    public enum ROLE {
+
         PRESIDENTE("Presidente", "pres", "P"),
         BOMBAROLO("Bombarolo", "bomb", "B"),
         BASE("Base", "base", "s"),
@@ -59,7 +61,7 @@ public class GameConstans {
         private String codice;
         private String sigla;
 
-        private ROLE_PLAYER(String v, String c, String s) {
+        ROLE(String v, String c, String s) {
             value = v;
             codice = c;
             sigla = s;
@@ -79,8 +81,8 @@ public class GameConstans {
             return sigla;
         }
 
-        public static ROLE_PLAYER byCodice(String codice) {
-            for(ROLE_PLAYER enumItem : values()) {
+        public static ROLE byCodice(String codice) {
+            for(ROLE enumItem : values()) {
                 if(enumItem.getCodice() == null) {
                     if(codice == null) {
                         return enumItem;
