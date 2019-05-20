@@ -4,15 +4,12 @@ import alice.logictuple.LogicTuple;
 import alice.logictuple.exceptions.InvalidLogicTupleException;
 import alice.tucson.api.TucsonTupleCentreId;
 import alice.tucson.asynchSupport.actions.AbstractTucsonOrdinaryAction;
-import alice.tucson.asynchSupport.actions.ordinary.In;
 import alice.tucson.asynchSupport.actions.ordinary.uniform.Uin;
 import jason.asSyntax.Term;
 
 public class uin extends TucsonInternalActionImpl {
 
     private static final long serialVersionUID = 1L;
-    protected static final int RESULT_ARG_INDEX = 4;
-    protected static final int TUPLE_ARG_INDEX = 3;
 
     public uin() {
     }

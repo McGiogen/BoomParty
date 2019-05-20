@@ -175,9 +175,9 @@ giocoFinito(false).         // Booleano che indica se è stato recepito il segna
         for ( .range(I, 0, NumPlayers-1) ) {
             .eval(IsLeader, I < 2);
             if ( I mod 2 == 0 ) {
-                t4jn.api.out("default", "127.0.0.1", "20504", stanzaAssegn(roomA, IsLeader), Op3);
+                !tucsonOpOut(stanzaAssegn(roomA, IsLeader), Op3);
             } else {
-                t4jn.api.out("default", "127.0.0.1", "20504", stanzaAssegn(roomB, IsLeader), Op3);
+                !tucsonOpOut(stanzaAssegn(roomB, IsLeader), Op3);
             }
         }
         .print("Fine assegnazione stanze").
@@ -185,7 +185,7 @@ giocoFinito(false).         // Booleano che indica se è stato recepito il segna
 +!recuperaRuolo
     <-
         .print("Inizio recupero ruolo");
-        t4jn.api.uin("default", "127.0.0.1", "20504", infoRuoloDisp(artifName(NAME)), Op0);
+        !tucsonOpUin(infoRuoloDisp(artifName(NAME)), Op0);
         t4jn.api.getResult(Op0, InfoRuoloDisp);
         if (InfoRuoloDisp \== null) {
             t4jn.api.getArg(InfoRuoloDisp, 0, ArtifAtom);
@@ -203,7 +203,7 @@ giocoFinito(false).         // Booleano che indica se è stato recepito il segna
     <-
         .print("Inizio recupero stanza");
         ?name(MioNome);
-        t4jn.api.uin("default", "127.0.0.1", "20504", stanzaAssegn(St, IsL), Op0);
+        !tucsonOpUin(stanzaAssegn(St, IsL), Op0);
         t4jn.api.getResult(Op0, StanzaAssegnLiteral);
         if (StanzaAssegnLiteral \== null) {
             t4jn.api.getArg(StanzaAssegnLiteral, 0, StanzaAssegnString);
@@ -216,7 +216,7 @@ giocoFinito(false).         // Booleano che indica se è stato recepito il segna
                 .print("Mi è stato assegnato il ruolo di leader");
                 -+ruoloLeader(true);
                 eletto_leader;
-                t4jn.api.out("default", "127.0.0.1", "20504", stanzaData(id(StanzaAssegnAtom), leader(MioNome)), OpL);
+                !tucsonOpOut(stanzaData(id(StanzaAssegnAtom), leader(MioNome)), OpL);
             } else {
                 -+ruoloLeader(false);
                 deposto_leader;
@@ -228,8 +228,8 @@ giocoFinito(false).         // Booleano che indica se è stato recepito il segna
             // Effettuo focus sul timer
             !focusTimer;
 
-            t4jn.api.in("default", "127.0.0.1", "20504", player(name(MioNome),room(R)), OpIU);
-            t4jn.api.out("default", "127.0.0.1", "20504", player(name(MioNome),room(StanzaAssegnAtom)), OpOU);
+            !tucsonOpIn(player(name(MioNome),room(R)), OpIU);
+            !tucsonOpOut(player(name(MioNome),room(StanzaAssegnAtom)), OpOU);
             start_in_area(StanzaAssegnAtom);
         } else {
             .print("Errore recupero stanza");
