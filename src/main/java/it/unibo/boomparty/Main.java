@@ -19,7 +19,7 @@ public class Main {
     public static void main(String[] args) {
 
         SimulationArgs simArgs = new SimulationArgs();
-        simArgs.setDebug(false);
+        simArgs.setDebug(true);
         simArgs.setPlayers(13);
 
         Map<TEAM, List<ROLE>> teamRuoliMap = new HashMap<>();
