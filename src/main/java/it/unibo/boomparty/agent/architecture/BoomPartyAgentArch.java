@@ -52,6 +52,26 @@ public class BoomPartyAgentArch extends CAgentArch implements T4JnArch {
         this.mutex = new ReentrantLock(true);
     }
 
+    @Override
+    public void act(ActionExec action) {
+        // Returns the next architecture in the chain of responsibility pattern
+        AgArch successor = this.getNextAgArch();
+        if (successor != null) {
+            String actionName = action.getActionTerm().getFunctor().toUpperCase();
+            // se è un azione gestita dall'environment -> la passo
+            for (EnvironmentActionsEnum a : EnvironmentActionsEnum.values()) {
+                if (a.name().equals(actionName)) {
+                    successor.act(action);
+                    return;
+                }
+            }
+        }
+        // lo eseguo nell'arch di boomparty agent
+        super.act(action);
+    }
+
+    // TUCSON ARCH IMPL
+
     public final long addTucsonOperationRequest(AbstractTucsonOrdinaryAction var1) {
         AsynchOpsHelper var10000 = this.helper;
         long var10004 = this.counter;
@@ -94,18 +114,4 @@ public class BoomPartyAgentArch extends CAgentArch implements T4JnArch {
         this.logger.info(var1);
     }
 
-    public void act(ActionExec action) {
-        AgArch successor = this.getNextAgArch();
-        if (successor != null) {
-            String actionName = action.getActionTerm().getFunctor().toUpperCase();
-            for (EnvironmentActionsEnum a : EnvironmentActionsEnum.values()) {
-                if (a.name().equals(actionName)) {
-                    successor.act(action);
-                    return;
-                }
-            }
-        }
-
-        super.act(action);
-    }
 }

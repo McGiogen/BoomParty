@@ -185,6 +185,7 @@ public class SimulationService {
         for (String name: playersName){
             tChannel.actionSynch(Out.class, new PlayerTuple(name, null).toTuple());
         }
+        // inserisco tutti i ruoli disponibili sul tuple space
         InitialRoleTuple initialRole = new InitialRoleTuple(carteRuolo.get(TEAM.ROSSO), carteRuolo.get(TEAM.BLU), carteRuolo.get(TEAM.GRIGIO));
         tChannel.actionSynch(Out.class, initialRole.toTuple());
 
