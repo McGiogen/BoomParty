@@ -54,7 +54,7 @@ public class SimulationService {
                 startDistributedJadeMasProject(buildMas2jFile(args, playersName));
             } else {
                 // go centralised
-                startCentralisedMasProject(args.isDebug(), buildMas2jFile(args, playersName));
+                startCentralisedMasProject(buildMas2jFile(args, playersName));
             }
 
         } catch (Exception e) {
@@ -69,15 +69,10 @@ public class SimulationService {
      * It is also useful to test and develop (prototype) systems.
      * Centralised is the default infrastructure.
      */
-    private void startCentralisedMasProject(boolean debug, String mas2jPath) throws JasonException {
+    private void startCentralisedMasProject(String mas2jPath) throws JasonException {
         System.out.println("Launching mas2j project");
         // start mas
-        if(debug){
-            // nb: jason in modalità debug funziona "passo passo"
-            RunCentralisedMAS.main(new String[]{mas2jPath, "-debug"});
-        } else {
-            RunCentralisedMAS.main(new String[]{mas2jPath});
-        }
+        RunCentralisedMAS.main(new String[]{mas2jPath});
     }
 
     /**
