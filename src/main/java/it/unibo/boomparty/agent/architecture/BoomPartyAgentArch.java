@@ -58,7 +58,7 @@ public class BoomPartyAgentArch extends CAgentArch implements T4JnArch {
         AgArch successor = this.getNextAgArch();
         if (successor != null) {
             String actionName = action.getActionTerm().getFunctor().toUpperCase();
-            // se è un azione gestita dall'environment -> la passo
+            // se è un azione gestita dal BasicEnvironment -> la passo
             for (EnvironmentActionsEnum a : EnvironmentActionsEnum.values()) {
                 if (a.name().equals(actionName)) {
                     successor.act(action);
@@ -66,7 +66,7 @@ public class BoomPartyAgentArch extends CAgentArch implements T4JnArch {
                 }
             }
         }
-        // lo eseguo nell'arch di boomparty agent
+        // lo eseguo nell'arch di CAgentArch
         super.act(action);
     }
 
