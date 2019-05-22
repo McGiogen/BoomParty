@@ -1,6 +1,6 @@
 /* Handle movement */
 
-// GO TO
+// GO TO player
 +!goto(Player) // if arrived at destination Player
 	: at(Player)
 	<- true. // that's all, do nothing
@@ -13,7 +13,7 @@
 -!goto(Player)
     <- true.
 
-// GO IN
+// GO IN area
 +!goinStart(Area) // goin needs a start to define a free position in Area, without tests
     <- move_in(Area).
 
@@ -25,6 +25,6 @@
     : not going_to(null)
     <- move_in(Area).
 
-// RANDOM MOVEMENT
+// RANDOM MOVEMENT to a near tile, if possible
 +!moveRandomly
     <- move_randomly.

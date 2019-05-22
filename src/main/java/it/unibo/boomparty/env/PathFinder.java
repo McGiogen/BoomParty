@@ -41,6 +41,15 @@ public class PathFinder {
         return this.constructPath(startNode, goalNode, false);
     }
 
+    /**
+     * Aggiorna la coda per la valutazione (openList) valutando tutti i nodi adiacenti a parent.
+     * Inserisce i nodi incontrati per la prima volta e aggiorna quelli già presenti se accessibili
+     * a minor costo.
+     * @param parent
+     * @param start
+     * @param goal
+     * @param map
+     */
     private void addNeighbor(Node parent, Node start, Node goal, WorldModel map) {
         int x = parent.getLocation().x;
         int y = parent.getLocation().y;
@@ -56,15 +65,17 @@ public class PathFinder {
                         Node node = new Node(new Location(leftTopX, leftTopY), parent, goal);
                         int index = this.openListIndexOf(node);
                         if (this.closedListContains(node)) {
-                            //pass
+                            // Se il nodo è già stato valutato non lo considero
                         }
                         else if (index != -1) {
+                            // Se il nodo è già in coda per la valutazione lo aggiorno se ho trovato un percorso meno costoso
                             Node old = this.m_openList.get(index);
                             if (old.getParent().getCostFromStart() > node.getParent().getCostFromStart()) {
                                 this.m_openList.set(index, node);
                             }
                         }
                         else {
+                            // Aggiungo il nodo in coda per la valutazione
                             this.m_openList.add(node);
                         }
                     }
@@ -105,6 +116,10 @@ public class PathFinder {
         return false;
     }
 
+    /**
+     * Recupera il nodo in coda per la valutazione (openList) con il minor costo.
+     * @return
+     */
     private Node lookingForBestNode() {
         if (this.m_openList.isEmpty()) {
             return null;
