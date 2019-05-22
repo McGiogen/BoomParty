@@ -10,8 +10,7 @@
  * - Ruolo(nomeRuolo, Team(blue|red|gray))
  * - Stanza(1|2)
  * - Posizione(x, y)
- * - ? notifica nuovo giocatore vicino -> NuovoGiocatoreVicino(playerName)
- * - ? tenere traccia dei giocatori col quale è stata avviata una conversazione, come?
+ * - notifica nuovo giocatore vicino -> NuovoGiocatoreVicino(playerName)
  * 
  * Beliefs riguardo terzi:
  * - Numero giocatori totali

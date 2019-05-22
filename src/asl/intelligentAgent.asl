@@ -100,7 +100,7 @@
                             !getLeastKnowledgeIncreaseMode(TempNameAtomD, CommunicationMode, FlagOnlyTeam);
                             !getConversation(self, TempNameAtomD, TempNameAtomD, CommunicationMode, FlagOnlyTeam, "negata", ConvData);
                             if(ConvData == null) {
-                                // Ho trovato un giocatore di cui non so nulla
+                                // Ho trovato un giocatore di cui non so tutte le informazioni
                                 -+tmpDesireToKnow(TempNameD);
                             }
                         }
