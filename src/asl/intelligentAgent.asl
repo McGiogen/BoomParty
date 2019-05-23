@@ -130,7 +130,7 @@
         !inviaRichiestaInfo(PlayerAtom, CommunicationMode, FlagOnlyTeam);
         .
 
-+!tryToCandidateAsLeaderc
++!tryToCandidateAsLeader
     <-
         .count(startVotazioneLeader[source(_)], N);
         if (N == 0 & ruoloLeader(false)) {
